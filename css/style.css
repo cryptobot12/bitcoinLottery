@@ -1,0 +1,52 @@
+.material-icons.left {
+    margin-right: 12px;
+}
+
+.material-icons.right {
+    margin-left: 12px;
+}
+
+.no-link-nav {
+    margin-right: 18px;
+    margin-left: 18px;
+}
+
+.nav-letters {
+    font-size: 16px;
+}
+
+nav ul a {
+    font-size: 16px;
+}
+
+.chip {
+    background-color: #ffe807;
+    color: black;
+}
+
+.win {
+    background-color: #f6fff7;
+}
+
+.lose {
+    background-color: #ffe3df;
+}
+
+.win-text{
+    color: green;
+    font-weight: 600;
+}
+
+.neutral-text{
+    color: black;
+    font-weight: 600;
+}
+
+.lose-text{
+    color: red;
+    font-weight: 600;
+}
+
+.top-buffer-15 {
+    margin-top: 15px;
+}

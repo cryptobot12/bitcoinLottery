@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataSource name="lottery@localhost">
+  <database-model serializer="dbm" rdbms="MYSQL" format-version="4.4">
+    <root id="1"/>
+    <schema id="2" parent="1" name="lottery">
+      <Current>1</Current>
+      <Visible>1</Visible>
+    </schema>
+    <schema id="3" parent="1" name="information_schema"/>
+    <schema id="4" parent="1" name="mysql"/>
+    <schema id="5" parent="1" name="performance_schema"/>
+    <table id="6" parent="2" name="chat"/>
+    <table id="7" parent="2" name="game"/>
+    <table id="8" parent="2" name="gamexuser"/>
+    <table id="9" parent="2" name="numberxuser"/>
+    <table id="10" parent="2" name="stats"/>
+    <table id="11" parent="2" name="user"/>
+    <column id="12" parent="6" name="message_id">
+      <Position>1</Position>
+      <DataType>bigint(20)|0</DataType>
+      <NotNull>1</NotNull>
+      <SequenceIdentity>1</SequenceIdentity>
+    </column>
+    <column id="13" parent="6" name="user_id">
+      <Position>2</Position>
+      <DataType>bigint(20)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="14" parent="6" name="message">
+      <Position>3</Position>
+      <DataType>varchar(1000)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="15" parent="6" name="sentat">
+      <Position>4</Position>
+      <DataType>datetime|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <index id="16" parent="6" name="user_id">
+      <ColNames>user_id</ColNames>
+    </index>
+    <key id="17" parent="6" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <ColNames>message_id</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <foreign-key id="18" parent="6" name="chat_ibfk_1">
+      <ColNames>user_id</ColNames>
+      <RefSchemaName>lottery</RefSchemaName>
+      <RefTableName>user</RefTableName>
+      <RefColNames>user_id</RefColNames>
+      <OnDelete>cascade</OnDelete>
+    </foreign-key>
+    <column id="19" parent="7" name="game_id">
+      <Position>1</Position>
+      <DataType>bigint(20)|0</DataType>
+      <NotNull>1</NotNull>
+      <SequenceIdentity>1</SequenceIdentity>
+    </column>
+    <column id="20" parent="7" name="timedate">
+      <Position>2</Position>
+      <DataType>datetime|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="21" parent="7" name="winner_number">
+      <Position>3</Position>
+      <DataType>int(11)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="22" parent="7" name="amount">
+      <Position>4</Position>
+      <DataType>bigint(20)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <key id="23" parent="7" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <ColNames>game_id</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <column id="24" parent="8" name="game_id">
+      <Position>1</Position>
+      <DataType>bigint(20)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="25" parent="8" name="user_id">
+      <Position>2</Position>
+      <DataType>bigint(20)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="26" parent="8" name="win">
+      <Position>3</Position>
+      <DataType>tinyint(1)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <index id="27" parent="8" name="user_id">
+      <ColNames>user_id</ColNames>
+    </index>
+    <key id="28" parent="8" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <ColNames>game_id
+user_id</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <foreign-key id="29" parent="8" name="gamexuser_ibfk_1">
+      <ColNames>game_id</ColNames>
+      <RefSchemaName>lottery</RefSchemaName>
+      <RefTableName>game</RefTableName>
+      <RefColNames>game_id</RefColNames>
+      <OnDelete>cascade</OnDelete>
+    </foreign-key>
+    <foreign-key id="30" parent="8" name="gamexuser_ibfk_2">
+      <ColNames>user_id</ColNames>
+      <RefSchemaName>lottery</RefSchemaName>
+      <RefTableName>user</RefTableName>
+      <RefColNames>user_id</RefColNames>
+      <OnDelete>cascade</OnDelete>
+    </foreign-key>
+    <column id="31" parent="9" name="numberxuser_id">
+      <Position>1</Position>
+      <DataType>bigint(20)|0</DataType>
+      <NotNull>1</NotNull>
+      <SequenceIdentity>1</SequenceIdentity>
+    </column>
+    <column id="32" parent="9" name="game_id">
+      <Position>2</Position>
+      <DataType>bigint(20)|0</DataType>
+    </column>
+    <column id="33" parent="9" name="number_id">
+      <Position>3</Position>
+      <DataType>int(11)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="34" parent="9" name="user_id">
+      <Position>4</Position>
+      <DataType>bigint(20)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <index id="35" parent="9" name="game_id">
+      <ColNames>game_id
+number_id
+user_id</ColNames>
+      <Unique>1</Unique>
+    </index>
+    <index id="36" parent="9" name="user_id">
+      <ColNames>user_id</ColNames>
+    </index>
+    <key id="37" parent="9" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <ColNames>numberxuser_id</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <key id="38" parent="9" name="game_id">
+      <ColNames>game_id
+number_id
+user_id</ColNames>
+      <UnderlyingIndexName>game_id</UnderlyingIndexName>
+    </key>
+    <foreign-key id="39" parent="9" name="numberxuser_ibfk_1">
+      <ColNames>game_id</ColNames>
+      <RefSchemaName>lottery</RefSchemaName>
+      <RefTableName>game</RefTableName>
+      <RefColNames>game_id</RefColNames>
+      <OnDelete>cascade</OnDelete>
+    </foreign-key>
+    <foreign-key id="40" parent="9" name="numberxuser_ibfk_2">
+      <ColNames>user_id</ColNames>
+      <RefSchemaName>lottery</RefSchemaName>
+      <RefTableName>user</RefTableName>
+      <RefColNames>user_id</RefColNames>
+      <OnDelete>cascade</OnDelete>
+    </foreign-key>
+    <column id="41" parent="10" name="stats_id">
+      <Position>1</Position>
+      <DataType>int(11)|0</DataType>
+      <NotNull>1</NotNull>
+      <SequenceIdentity>1</SequenceIdentity>
+    </column>
+    <column id="42" parent="10" name="deposits">
+      <Position>2</Position>
+      <DataType>bigint(20)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="43" parent="10" name="withdrawals">
+      <Position>3</Position>
+      <DataType>bigint(20)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="44" parent="10" name="net">
+      <Position>4</Position>
+      <DataType>bigint(20)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="45" parent="10" name="games_played">
+      <Position>5</Position>
+      <DataType>bigint(20)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="46" parent="10" name="gross_profit">
+      <Position>6</Position>
+      <DataType>bigint(20)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="47" parent="10" name="our_profit">
+      <Position>7</Position>
+      <DataType>bigint(20)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="48" parent="10" name="max_jackpot">
+      <Position>8</Position>
+      <DataType>bigint(20)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="49" parent="10" name="total_users">
+      <Position>9</Position>
+      <DataType>bigint(20)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="50" parent="10" name="total_plays">
+      <Position>10</Position>
+      <DataType>bigint(20)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <key id="51" parent="10" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <ColNames>stats_id</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <column id="52" parent="11" name="user_id">
+      <Position>1</Position>
+      <DataType>bigint(20)|0</DataType>
+      <NotNull>1</NotNull>
+      <SequenceIdentity>1</SequenceIdentity>
+    </column>
+    <column id="53" parent="11" name="username">
+      <Position>2</Position>
+      <DataType>varchar(50)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="54" parent="11" name="password">
+      <Position>3</Position>
+      <DataType>varchar(300)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="55" parent="11" name="email">
+      <Position>4</Position>
+      <DataType>varchar(60)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="56" parent="11" name="bit_address">
+      <Position>5</Position>
+      <DataType>varchar(150)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="57" parent="11" name="balance">
+      <Position>6</Position>
+      <DataType>bigint(20)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="58" parent="11" name="deposits">
+      <Position>7</Position>
+      <DataType>bigint(20)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="59" parent="11" name="withdrawals">
+      <Position>8</Position>
+      <DataType>bigint(20)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="60" parent="11" name="net_profit">
+      <Position>9</Position>
+      <DataType>bigint(20)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="61" parent="11" name="games_played">
+      <Position>10</Position>
+      <DataType>bigint(20)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="62" parent="11" name="registration_date">
+      <Position>11</Position>
+      <DataType>datetime|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <index id="63" parent="11" name="bit_address">
+      <ColNames>bit_address</ColNames>
+      <Unique>1</Unique>
+    </index>
+    <index id="64" parent="11" name="username">
+      <ColNames>username</ColNames>
+      <Unique>1</Unique>
+    </index>
+    <key id="65" parent="11" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <ColNames>user_id</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <key id="66" parent="11" name="username">
+      <ColNames>username</ColNames>
+      <UnderlyingIndexName>username</UnderlyingIndexName>
+    </key>
+    <key id="67" parent="11" name="bit_address">
+      <ColNames>bit_address</ColNames>
+      <UnderlyingIndexName>bit_address</UnderlyingIndexName>
+    </key>
+  </database-model>
+</dataSource>
