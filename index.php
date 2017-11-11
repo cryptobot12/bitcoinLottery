@@ -76,63 +76,65 @@ require __DIR__ . '/vendor/autoload.php';
             </div>
             <div class="card z-depth-5">
                 <div class="card-content">
-
-
                         <div class="row">
-                            <input class="with-gap" name="inputType" type="radio" id="field" checked value="1"/>
-                            <label for="field">Text</label>
-                            <div class="row">
-                                <div class="input-field col s11 offset-s1">
+                            <ul class="tabs">
+                                <li class="tab col s4 green-text"><a href="#fieldDiv">Text</a></li>
+                                <li class="tab col s4"><a href="#randomDiv">Random selection</a></li>
+                                <li class="tab col s4"><a href="#sequenceDiv">Sequence</a></li>
+                            </ul>
+                            <div id="fieldDiv" class="col s12">
+                                <div class="input-field col s12">
                                     <label for="field"></label>
                                     <textarea id="numbersArea" class="materialize-textarea" placeholder="Type your numbers separated by spaces."></textarea>
                                     <label for="numbersArea"></label>
                                 </div>
+                                <p class="center-align">
+                                    <a class="waves-effect waves-light btn disabled" id="playButtonField">
+                                        <i class="material-icons left">attach_money</i>Bet<i class="material-icons right">attach_money</i></a>
+                                </p>
                             </div>
-
-                        </div>
-                        <div class="row">
-                            <input class="with-gap" name="inputType" type="radio" id="random" value="2">
-                            <label for="random">Random selection</label>
-                            <div class="row top-buffer-15">
-                                <div class="input-field col s3 offset-s1">
-                                    <input disabled placeholder="Start" id="start" type="text" class="validate">
-                                    <label for="start">Start range</label>
+                            <div id="randomDiv" class="col s12">
+                                <div class="row top-buffer-15">
+                                    <div class="input-field col s4">
+                                        <input disabled placeholder="Start" id="start" type="text" class="validate">
+                                        <label for="start">Start range</label>
+                                    </div>
+                                    <div class="input-field col s4">
+                                        <input disabled placeholder="End" id="end" type="text" class="validate">
+                                        <label for="end">End range</label>
+                                    </div>
+                                    <div class="input-field col s4">
+                                        <input disabled placeholder="How many numbers?" id="numberOfNumbers" type="text" class="validate">
+                                        <label for="numberOfNumbers">How many numbers?</label>
+                                    </div>
                                 </div>
-                                <div class="input-field col s4">
-                                    <input disabled placeholder="End" id="end" type="text" class="validate">
-                                    <label for="end">End range</label>
+                                <p class="center-align">
+                                    <a class="waves-effect waves-light btn" id="playButtonRandom">
+                                        <i class="material-icons left">attach_money</i>Bet<i class="material-icons right">attach_money</i></a>
+                                </p>
+                            </div>
+                            <div id="sequenceDiv" class="col s12">
+                                <div class="row top-buffer-15">
+                                    <div class="input-field col s4">
+                                        <input disabled placeholder="Start" id="startSequence" type="text" class="validate">
+                                        <label for="startSequence">Start range</label>
+                                    </div>
+                                    <div class="input-field col s4">
+                                        <input disabled placeholder="End" id="endSequence" type="text" class="validate">
+                                        <label for="endSequence">End range</label>
+                                    </div>
                                 </div>
-                                <div class="input-field col s4">
-                                    <input disabled placeholder="How many numbers?" id="numberOfNumbers" type="text" class="validate">
-                                    <label for="numberOfNumbers">How many numbers?</label>
-                                </div>
+                                <p class="center-align">
+                                    <a class="waves-effect waves-light btn" id="playButtonSequence">
+                                        <i class="material-icons left">attach_money</i>Bet<i class="material-icons right">attach_money</i></a>
+                                </p>
                             </div>
                         </div>
-                        <div class="row">
-                            <input class="with-gap" name="inputType" type="radio" id="sequence" value="3">
-                            <label for="sequence">Sequence</label>
-                            <div class="row top-buffer-15">
-                                <div class="input-field col s4 offset-s1">
-                                    <input disabled placeholder="Start" id="startSequence" type="text" class="validate">
-                                    <label for="startSequence">Start range</label>
-                                </div>
-                                <div class="input-field col s4">
-                                    <input disabled placeholder="End" id="endSequence" type="text" class="validate">
-                                    <label for="endSequence">End range</label>
-                                </div>
-                            </div>
-                        </div>
-                    <p class="center-align">
-                        <a class="waves-effect waves-light btn" id="playButton">
-                            <i class="material-icons left">attach_money</i>Play<i class="material-icons right">attach_money</i></a>
-                    </p>
-
-
                 </div>
             </div>
             <div class="card z-depth-5">
                 <div class="card-content">
-                    <h4>Your numbers</h4>
+                    <h4>Your numbers<span class="subText"> &nbsp;&nbsp; <?php include 'count_numbers.php'?></span></h4>
                     <div id="numbersList">
                         <?php include 'numbers_list.php' ?>
                     </div>

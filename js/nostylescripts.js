@@ -5,8 +5,10 @@ window.onload = function () {
     timer();
 };
 
-$("#playButton").on('click', function () {
-    bet();
+$(function () {
+    $("#playButtonField").on('click', function () {
+        betField();
+    });
 });
 
 var conn = new ab.Session('ws://localhost:8080',
@@ -88,34 +90,36 @@ function updateBalanceAndNumbers() {
     }, type: 'GET'});
 }
 
-function bet() {
-    var betNumber = document.getElementById("betNumber").value;
-    if (betNumber >= 1 && betNumber <= 100000) {
-        if (window.XMLHttpRequest) {
-            // code for IE7+, Firefox, Chrome, Opera, Safari
-            xmlhttp = new XMLHttpRequest();
-        } else {
-            // code for IE6, IE5
-            xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-        }
-        xmlhttp.onreadystatechange = function () {
-            if (this.readyState === 4 && this.status === 200) {
-                var response = JSON.parse(this.responseText);
-                document.getElementById("balanceNumber").innerHTML = response['balance'];
-                var numbersList = $("#numbersList");
-                numbersList.empty();
+function betField() {
 
-                $.each(response['numbers'], function (index, value) {
+    var arrayOfNumbers;
 
-                    numbersList.append('<div class="chip">' + value + '</div>');
-                });
+    var numbersArea = $("#numbersArea").val();
+    arrayOfNumbers = numbersArea.match(/\d+/g);
+    arrayOfNumbers = arrayOfNumbers.slice(0, 200); //Just in case
 
-            }
-        };
-        xmlhttp.open("POST", "play.php", true);
-        xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        xmlhttp.send("betNumber=" + betNumber);
+
+    var jsonSend = JSON.stringify(arrayOfNumbers);
+    $.ajax({url: "play.php", success: function (result) {
+        var response = JSON.parse(result);
+        $("#balanceNumber").html(response['balance']);
+        var numbersList = $("#numbersList");
+        numbersList.empty();
+
+        $.each(response['numbers'], function (index, value) {
+
+            numbersList.append('<div class="chip">' + value + '</div>');
+        });
+
+        $.each(response['inserted'], function (index, value) {
+            console.log(value);
+
+        })
+    }, data: {
+        numbers: jsonSend
     }
+     , type: 'POST'});
+
 }
 
 function timer() {

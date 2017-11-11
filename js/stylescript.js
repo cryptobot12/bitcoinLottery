@@ -1,42 +1,57 @@
-$(function () {
-    $('input:radio[name="inputType"]').change(
-        function () {
-            if (this.value === '1') {
-                //Disabling
-                $("#start").prop("disabled", true);
-                $("#end").prop("disabled", true);
-                $("#numberOfNumbers").prop("disabled", true);
+function isArrayOfNumbersValid(array) {
 
-                $("#startSequence").prop("disabled", true);
-                $("#endSequence").prop("disabled", true);
+    var isValid = true;
 
-                //Enabling
-                $("#numbersArea").prop("disabled", false);
-            }
-            else if(this.value === '2') {
-                //Disabling
-                $("#numbersArea").prop("disabled", true);
+    if (array === null)
+        isValid = false;
+    else {
 
-                $("#startSequence").prop("disabled", true);
-                $("#endSequence").prop("disabled", true);
-
-                //Enabling
-                $("#start").prop("disabled", false);
-                $("#end").prop("disabled", false);
-                $("#numberOfNumbers").prop("disabled", false);
-            }
-            else if(this.value === '3') {
-                //Disabling
-                $("#numbersArea").prop("disabled", true);
-
-                $("#start").prop("disabled", true);
-                $("#end").prop("disabled", true);
-                $("#numberOfNumbers").prop("disabled", true);
-
-                //Enabling
-                $("#startSequence").prop("disabled", false);
-                $("#endSequence").prop("disabled", false);
-            }
+        if (array.length > 200)
+            isValid = false;
+        else {
+            $.each(array, function (index, value) {
+                if (value > 50000 || value < 1)
+                    isValid = false;
+                return isValid;
+            });
         }
-    );
+    }
+
+    return isValid;
+}
+
+$(function () {
+
+    var numbersArea = $("#numbersArea");
+    var playButton = $("#playButtonField");
+    numbersArea.on('keyup', function () {
+
+        var array = numbersArea.val().match(/[^\d\s]/g);
+
+
+            if (array !== null) {
+                numbersArea.removeClass("valid");
+                numbersArea.addClass("invalid");
+                playButton.addClass("disabled");
+            }
+            else {
+
+                array = numbersArea.val().match(/\d+/g);
+
+                if (isArrayOfNumbersValid(array)) {
+                    numbersArea.removeClass("invalid");
+                    numbersArea.addClass("valid");
+                    playButton.removeClass("disabled");
+                }
+                else {
+                    numbersArea.removeClass("valid");
+                    numbersArea.addClass("invalid");
+                    playButton.addClass("disabled");
+                }
+
+            }
+
+
+
+    });
 });

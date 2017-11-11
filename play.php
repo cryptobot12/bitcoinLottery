@@ -12,65 +12,88 @@ session_start();
 
 $servername = "localhost";
 $username = $_SESSION['username'];
-$betNumber = $_POST['betNumber'];
+$betNumber = json_decode(stripslashes($_POST['numbers']));
 
-try {
-    $conn = new PDO("mysql:host=$servername;dbname=lottery", "root", "5720297Ff");
-    // set the PDO error mode to exception
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    $conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-    //echo "Connected successfully";
+//Number verification
+function legalArray($array){
+    $legal = true;
 
-    $stmt = $conn->prepare('SELECT game_id FROM game ORDER BY timedate DESC, game_id DESC LIMIT 1');
-    $stmt->execute();
-    $row = $stmt->fetch(PDO::FETCH_ASSOC);
-    $current_game = $row['game_id'];
+    foreach ($array as $item) {
+        if (!is_numeric($item) || ($item < 1) || ($item > 50000)) {
+            $legal = false;
+            break;
+        }
 
-    $stmt = $conn->prepare('INSERT INTO numberxuser(game_id, number_id, user_id) VALUES (:game_id , :number_id, (SELECT user_id FROM user
-    WHERE username = :username))');
-
-    $stmt->execute(array('game_id' => $current_game, 'number_id' => $betNumber, 'username' => $username));
-
-    $stmt = $conn->prepare('UPDATE user SET balance = balance - 3000 WHERE username = :username');
-
-    $stmt->execute(array('username' => $username));
-
-    //Balance
-    $stmt = $conn->prepare('SELECT balance FROM user WHERE username = :username');
-    $stmt->execute(array('username' => $username));
-    $row = $stmt->fetch(PDO::FETCH_ASSOC);
-    $balance = $row['balance'] / 100;
-
-    //NumbersList
-    $arrayOfNumbers = array();
-    $stmt = $conn->prepare('SELECT number_id FROM numberxuser WHERE user_id = (SELECT user_id
-        FROM user WHERE username = :username) AND game_id = :game_id');
-    $stmt->execute(array('username' => $_SESSION['username'], 'game_id' => $current_game));
-    $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    foreach ($row as $item){
-        array_push($arrayOfNumbers, $item['number_id']);
     }
 
-    $returnAjax = array('balance' => $balance, 'numbers' => $arrayOfNumbers);
-    $jsonAjax = json_encode($returnAjax);
-    echo $jsonAjax;
+    if (count($array) > 200)
+        $legal = false;
 
-    //Broadcasting
-    $stmt = $conn->prepare('SELECT COUNT(*) AS jackpot FROM numberxuser WHERE game_id = :game_id');
-    $stmt->execute(array('game_id' => $current_game));
-    $jackpot = $stmt->fetchColumn() * 30;
-
-    $entryData = array('category' => 'all', 'reload' => 0, 'jackpot' => $jackpot);
-
-    $context = new ZMQContext();
-    $socket = $context->getSocket(ZMQ::SOCKET_PUSH, 'my pusher');
-    $socket->connect("tcp://localhost:5555");
-
-    $socket->send(json_encode($entryData));
-}
-catch(PDOException $e)
-{
-    echo "Connection failed: " . $e->getMessage();
+    return $legal;
 }
 
+if (legalArray($betNumber)) {
+
+    try {
+        $conn = new PDO("mysql:host=$servername;dbname=lottery", "root", "5720297Ff");
+        // set the PDO error mode to exception
+        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+
+        //Selecting current game
+        $stmt = $conn->prepare('SELECT game_id FROM game ORDER BY timedate DESC, game_id DESC LIMIT 1');
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $current_game = $row['game_id'];
+
+        //Inserting numbers
+        $stmt = $conn->prepare('INSERT INTO numberxuser(game_id, number_id, user_id) VALUES (:game_id , :number_id, (SELECT user_id FROM user
+    WHERE username = :username))');
+        foreach ($betNumber as $number) {
+            $stmt->execute(array('game_id' => $current_game, 'number_id' => $number, 'username' => $username));
+        }
+
+        //Updating users balance
+        $stmt = $conn->prepare('UPDATE user SET balance = balance - 3000 WHERE username = :username');
+        $stmt->execute(array('username' => $username));
+
+        //Balance
+        $stmt = $conn->prepare('SELECT balance FROM user WHERE username = :username');
+        $stmt->execute(array('username' => $username));
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $balance = $row['balance'] / 100;
+
+        //NumbersList
+        $arrayOfNumbers = array();
+        $stmt = $conn->prepare('SELECT number_id FROM numberxuser WHERE user_id = (SELECT user_id
+        FROM user WHERE username = :username) AND game_id = :game_id');
+        $stmt->execute(array('username' => $_SESSION['username'], 'game_id' => $current_game));
+        $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        foreach ($row as $item) {
+            array_push($arrayOfNumbers, $item['number_id']);
+        }
+
+        $returnAjax = array('balance' => $balance, 'numbers' => $arrayOfNumbers, 'inserted' => $betNumber);
+        $jsonAjax = json_encode($returnAjax);
+        echo $jsonAjax;
+
+        //Broadcasting
+        $stmt = $conn->prepare('SELECT COUNT(*) AS jackpot FROM numberxuser WHERE game_id = :game_id');
+        $stmt->execute(array('game_id' => $current_game));
+        $jackpot = $stmt->fetchColumn() * 30;
+
+        $entryData = array('category' => 'all', 'reload' => 0, 'jackpot' => $jackpot);
+
+        $context = new ZMQContext();
+        $socket = $context->getSocket(ZMQ::SOCKET_PUSH, 'my pusher');
+        $socket->connect("tcp://localhost:5555");
+
+        $socket->send(json_encode($entryData));
+    } catch (PDOException $e) {
+        echo "Connection failed: " . $e->getMessage();
+    }
+}
+else {
+    echo "Illegal numbers...";
+}
 
