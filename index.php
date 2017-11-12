@@ -22,6 +22,7 @@ require __DIR__ . '/vendor/autoload.php';
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <!-- Compiled and minified JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
     <script src="js/autobahn.js"></script>
     <script src="js/nostylescripts.js"></script>
     <script src="js/stylescript.js"></script>
@@ -82,6 +83,7 @@ require __DIR__ . '/vendor/autoload.php';
                                 <li class="tab col s4"><a href="#randomDiv">Random selection</a></li>
                                 <li class="tab col s4"><a href="#sequenceDiv">Sequence</a></li>
                             </ul>
+                            <!--       Text Area Input             -->
                             <div id="fieldDiv" class="col s12">
                                 <div class="input-field col s12">
                                     <label for="field"></label>
@@ -89,10 +91,23 @@ require __DIR__ . '/vendor/autoload.php';
                                     <label for="numbersArea"></label>
                                 </div>
                                 <p class="center-align">
-                                    <a class="waves-effect waves-light btn disabled" id="playButtonField">
+                                    <a class="waves-effect waves-light btn disabled modal-trigger" id="checkButtonField" href="#modal1">
                                         <i class="material-icons left">attach_money</i>Bet<i class="material-icons right">attach_money</i></a>
                                 </p>
+                                <div class="subText smaller top-buffer-15">Only 200 numbers allowed. Numbers must be between 1 and 50000.</div>
+                                <!-- Modal Structure -->
+                                <div id="modal1" class="modal">
+                                    <div class="modal-content">
+                                        <h4>Check your numbers</h4>
+                                        <div id="confirmationNumbers"></div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <a id="playButtonField" class="modal-action modal-close waves-effect waves-green btn-flat">Confirm</a>
+                                        <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Cancel</a>
+                                    </div>
+                                </div>
                             </div>
+                            <!--   Random Input    -->
                             <div id="randomDiv" class="col s12">
                                 <div class="row top-buffer-15">
                                     <div class="input-field col s4">
@@ -113,6 +128,7 @@ require __DIR__ . '/vendor/autoload.php';
                                         <i class="material-icons left">attach_money</i>Bet<i class="material-icons right">attach_money</i></a>
                                 </p>
                             </div>
+                            <!--     Sequence Input                       -->
                             <div id="sequenceDiv" class="col s12">
                                 <div class="row top-buffer-15">
                                     <div class="input-field col s4">
@@ -134,7 +150,7 @@ require __DIR__ . '/vendor/autoload.php';
             </div>
             <div class="card z-depth-5">
                 <div class="card-content">
-                    <h4>Your numbers<span class="subText"> &nbsp;&nbsp; <?php include 'count_numbers.php'?></span></h4>
+                    <h4>Your numbers<span class="subText" id="count">&nbsp;&nbsp;&nbsp;&nbsp;<?php include 'count_numbers.php'?></span></h4>
                     <div id="numbersList">
                         <?php include 'numbers_list.php' ?>
                     </div>

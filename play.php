@@ -73,7 +73,16 @@ if (legalArray($betNumber)) {
             array_push($arrayOfNumbers, $item['number_id']);
         }
 
-        $returnAjax = array('balance' => $balance, 'numbers' => $arrayOfNumbers, 'inserted' => $betNumber);
+        //Count
+        $stmt = $conn->prepare('SELECT COUNT(number_id) AS countNumbers FROM numberxuser WHERE user_id = (SELECT user_id
+        FROM user WHERE username = :username) AND game_id = :game_id');
+        $stmt->execute(array('username' => $_SESSION['username'], 'game_id' => $current_game));
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $count = $row['countNumbers'];
+
+        setcookie("numbers_list", json_encode($arrayOfNumbers), time() + 86400 * 30, "/bitcoinLottery/");
+
+        $returnAjax = array('balance' => $balance, 'numbers' => $arrayOfNumbers, 'count' => $count);
         $jsonAjax = json_encode($returnAjax);
         echo $jsonAjax;
 

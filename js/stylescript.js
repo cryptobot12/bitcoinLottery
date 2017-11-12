@@ -1,3 +1,8 @@
+$(document).ready(function(){
+
+    $('.modal').modal();
+});
+
 function isArrayOfNumbersValid(array) {
 
     var isValid = true;
@@ -23,7 +28,7 @@ function isArrayOfNumbersValid(array) {
 $(function () {
 
     var numbersArea = $("#numbersArea");
-    var playButton = $("#playButtonField");
+    var playButton = $("#checkButtonField");
     numbersArea.on('keyup', function () {
 
         var array = numbersArea.val().match(/[^\d\s]/g);
@@ -55,3 +60,4 @@ $(function () {
 
     });
 });
+

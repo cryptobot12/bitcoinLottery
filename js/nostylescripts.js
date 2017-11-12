@@ -11,6 +11,35 @@ $(function () {
     });
 });
 
+$(function () {
+
+    $("#checkButtonField").on('click', function () {
+        $('#modal1').modal('open');
+        var arrayOfNumbers;
+
+        console.log("Cookie: " + JSON.stringify(Cookies.get(), null, 2));
+
+        var numbersArea = $("#numbersArea").val();
+        arrayOfNumbers = numbersArea.match(/\d+/g);
+        arrayOfNumbers = arrayOfNumbers.slice(0, 200); //Just in case
+
+        //Keeping only new numbers
+        var currentNumbers = JSON.parse(Cookies.get("numbers_list"));
+        arrayOfNumbers = $.grep(arrayOfNumbers, function (el, index) {
+
+            return ($.inArray(parseInt(el), currentNumbers) !== -1);
+        }, true);
+
+        var numbersList = $("#confirmationNumbers");
+        numbersList.empty();
+        var toAppend = '';
+        $.each(arrayOfNumbers, function (index, value) {
+            toAppend = '<div class="chip">' + value + '</div>';
+            numbersList.append(toAppend);
+        })
+    });
+});
+
 var conn = new ab.Session('ws://localhost:8080',
     function () {
         conn.subscribe('all', function (topic, data) {
@@ -98,6 +127,12 @@ function betField() {
     arrayOfNumbers = numbersArea.match(/\d+/g);
     arrayOfNumbers = arrayOfNumbers.slice(0, 200); //Just in case
 
+    //Keeping only new numbers
+    var currentNumbers = JSON.parse(Cookies.get("numbers_list"));
+    arrayOfNumbers = $.grep(arrayOfNumbers, function (el, index) {
+
+        return ($.inArray(parseInt(el), currentNumbers) !== -1);
+    }, true);
 
     var jsonSend = JSON.stringify(arrayOfNumbers);
     $.ajax({url: "play.php", success: function (result) {
@@ -106,15 +141,15 @@ function betField() {
         var numbersList = $("#numbersList");
         numbersList.empty();
 
+        if (response['count'] > 1)
+            $("#count").html("&nbsp;&nbsp;&nbsp;&nbsp;" + response['count'] + " numbers");
+        else
+            $("#count").html("&nbsp;&nbsp;&nbsp;&nbsp;" + response['count'] + " number");
+
         $.each(response['numbers'], function (index, value) {
 
             numbersList.append('<div class="chip">' + value + '</div>');
         });
-
-        $.each(response['inserted'], function (index, value) {
-            console.log(value);
-
-        })
     }, data: {
         numbers: jsonSend
     }

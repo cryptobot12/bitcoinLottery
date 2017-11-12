@@ -69,3 +69,7 @@ nav ul a {
     font-style: italic;
     font-size: 19px;
 }
+
+.smaller {
+    font-size: 15px;
+}
