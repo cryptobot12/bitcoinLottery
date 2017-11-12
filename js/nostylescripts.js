@@ -5,41 +5,73 @@ window.onload = function () {
     timer();
 };
 
-$(function () {
-    $("#playButtonField").on('click', function () {
-        betField();
-    });
-});
+/* Filter array*/
 
+function filterArrayOfNumbers(newArray) {
+
+    newArray.slice(0, 200); //Keeping only 200 numbers
+
+    //Keeping only new numbers
+    var currentNumbers = JSON.parse(Cookies.get("numbers_list"));
+    newArray = $.grep(newArray, function (el, index) {
+
+        return ($.inArray(parseInt(el), currentNumbers) !== -1);
+    }, true);
+
+    return newArray;
+}
+
+/* Adding numbers to confirmation list*/
+function addNumbersToConfirm(array) {
+
+    var numbersList = $("#confirmationNumbers");
+    numbersList.html("");
+    var toAppend = '';
+    $.each(array, function (index, value) {
+        toAppend = '<div class="chip">' + value + '</div>';
+        numbersList.append(toAppend);
+    })
+}
+
+/* Listeners  */
 $(function () {
 
+    var arrayOfNumbers = new Array(0);
+
+    /* Field listener */
     $("#checkButtonField").on('click', function () {
         $('#modal1').modal('open');
-        var arrayOfNumbers;
-
-        console.log("Cookie: " + JSON.stringify(Cookies.get(), null, 2));
 
         var numbersArea = $("#numbersArea").val();
         arrayOfNumbers = numbersArea.match(/\d+/g);
-        arrayOfNumbers = arrayOfNumbers.slice(0, 200); //Just in case
+        arrayOfNumbers = filterArrayOfNumbers(arrayOfNumbers);
+        addNumbersToConfirm(arrayOfNumbers);
 
-        //Keeping only new numbers
-        var currentNumbers = JSON.parse(Cookies.get("numbers_list"));
-        arrayOfNumbers = $.grep(arrayOfNumbers, function (el, index) {
+    });
 
-            return ($.inArray(parseInt(el), currentNumbers) !== -1);
-        }, true);
+    /* Sequence listener */
+    $("#checkButtonSequence").on('click', function () {
+        $('#modal1').modal('open');
 
-        var numbersList = $("#confirmationNumbers");
-        numbersList.empty();
-        var toAppend = '';
-        $.each(arrayOfNumbers, function (index, value) {
-            toAppend = '<div class="chip">' + value + '</div>';
-            numbersList.append(toAppend);
-        })
+        var startNumber = parseInt($("#startSequence").val());
+        var endNumber = parseInt($("#endSequence").val());
+
+        for (var i = startNumber; i <= endNumber; i++) {
+            arrayOfNumbers.push(i);
+        }
+
+        arrayOfNumbers = filterArrayOfNumbers(arrayOfNumbers);
+        addNumbersToConfirm(arrayOfNumbers);
+    });
+
+    /* Betting */
+    $("#playButton").on('click', function () {
+        bet(arrayOfNumbers);
     });
 });
 
+
+/* Web sockets */
 var conn = new ab.Session('ws://localhost:8080',
     function () {
         conn.subscribe('all', function (topic, data) {
@@ -105,6 +137,7 @@ var conn = new ab.Session('ws://localhost:8080',
     {'skipSubprotocolCheck': true}
 );
 
+/* Ajax request to update numbers and balance */
 function updateBalanceAndNumbers() {
     $.ajax({url: "balance_numbers_ajax.php", success: function(result){
         var response = JSON.parse(result);
@@ -119,20 +152,10 @@ function updateBalanceAndNumbers() {
     }, type: 'GET'});
 }
 
-function betField() {
-
-    var arrayOfNumbers;
-
-    var numbersArea = $("#numbersArea").val();
-    arrayOfNumbers = numbersArea.match(/\d+/g);
-    arrayOfNumbers = arrayOfNumbers.slice(0, 200); //Just in case
-
-    //Keeping only new numbers
-    var currentNumbers = JSON.parse(Cookies.get("numbers_list"));
-    arrayOfNumbers = $.grep(arrayOfNumbers, function (el, index) {
-
-        return ($.inArray(parseInt(el), currentNumbers) !== -1);
-    }, true);
+/*
+* Bet for Text Area
+* */
+function bet(arrayOfNumbers) {
 
     var jsonSend = JSON.stringify(arrayOfNumbers);
     $.ajax({url: "play.php", success: function (result) {

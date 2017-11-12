@@ -1,8 +1,10 @@
+/* Modal initializer*/
 $(document).ready(function(){
 
     $('.modal').modal();
 });
 
+/* Array of numbers validator */
 function isArrayOfNumbersValid(array) {
 
     var isValid = true;
@@ -25,6 +27,7 @@ function isArrayOfNumbersValid(array) {
     return isValid;
 }
 
+/* Text Area Input validator */
 $(function () {
 
     var numbersArea = $("#numbersArea");
@@ -59,5 +62,46 @@ $(function () {
 
 
     });
+});
+
+/* Function validator sequence */
+function validateSequence() {
+
+    var startSequence = $("#startSequence");
+    var endSequence = $("#endSequence");
+    var playButton = $("#checkButtonSequence");
+    
+    var startNumber = parseInt(startSequence.val());
+    var endNumber = parseInt(endSequence.val());
+
+    if (startNumber < 1 || startNumber > 50000 || (startNumber > endNumber) ||
+        ((endNumber - startNumber) > 200) || ((endNumber - startNumber) < 0) ||
+        endNumber < 1 || endNumber > 50000) {
+        startSequence.removeClass("valid");
+        endSequence.removeClass("valid");
+        startSequence.addClass("invalid");
+        endSequence.addClass("invalid");
+        playButton.addClass("disabled");
+    }
+    else {
+        startSequence.removeClass("invalid");
+        endSequence.removeClass("invalid");
+        startSequence.addClass("valid");
+        endSequence.addClass("valid");
+        playButton.removeClass("disabled");
+    }
+}
+
+/* Sequence Input validator listeners */
+$(function () {
+
+    var startSequence = $("#startSequence");
+    var endSequence = $("#endSequence");
+
+    startSequence.on('keyup', function() { validateSequence() });
+    endSequence.on('keyup', function() { validateSequence() });
+
+    startSequence.on('blur', function() { validateSequence() });
+    endSequence.on('blur', function() { validateSequence() });
 });
 

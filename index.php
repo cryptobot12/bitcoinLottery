@@ -34,7 +34,6 @@ require __DIR__ . '/vendor/autoload.php';
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 </head>
 <body>
-    <!-- Navbar goes here -->
     <!-- Profile Structure -->
     <?php
         if (isset($_SESSION['username']) && !empty($_SESSION['username'])) {
@@ -44,6 +43,7 @@ require __DIR__ . '/vendor/autoload.php';
                   </ul>';
         }
     ?>
+    <!-- Navbar goes here -->
     <nav>
         <div class="nav-wrapper green">
             <a href="#" class="brand-logo left">BitPVP</a>
@@ -67,14 +67,17 @@ require __DIR__ . '/vendor/autoload.php';
             </ul>
         </div>
     </nav>
+<!--    Beginning of first row   -->
     <div class="row">
         <div class="col s4">
+    <!--            Jackpot card   -->
             <div class="card z-depth-5">
                 <div class="card-content">
                     <h3 class="center-align" id="jackpot">Jackpot: <span id="jackpotNumber"><?php include 'show_jackpot.php' ?></span> bits</h3>
                     <p class="center-align" style="font-weight: lighter; font-size: 16px;" id="time"><?php include 'timer.php' ?></p>
                 </div>
             </div>
+<!--            Play card    -->
             <div class="card z-depth-5">
                 <div class="card-content">
                         <div class="row">
@@ -83,7 +86,7 @@ require __DIR__ . '/vendor/autoload.php';
                                 <li class="tab col s4"><a href="#randomDiv">Random selection</a></li>
                                 <li class="tab col s4"><a href="#sequenceDiv">Sequence</a></li>
                             </ul>
-                            <!--       Text Area Input             -->
+                            <!--       Text Area Input          -->
                             <div id="fieldDiv" class="col s12">
                                 <div class="input-field col s12">
                                     <label for="field"></label>
@@ -95,31 +98,20 @@ require __DIR__ . '/vendor/autoload.php';
                                         <i class="material-icons left">attach_money</i>Bet<i class="material-icons right">attach_money</i></a>
                                 </p>
                                 <div class="subText smaller top-buffer-15">Only 200 numbers allowed. Numbers must be between 1 and 50000.</div>
-                                <!-- Modal Structure -->
-                                <div id="modal1" class="modal">
-                                    <div class="modal-content">
-                                        <h4>Check your numbers</h4>
-                                        <div id="confirmationNumbers"></div>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <a id="playButtonField" class="modal-action modal-close waves-effect waves-green btn-flat">Confirm</a>
-                                        <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Cancel</a>
-                                    </div>
-                                </div>
                             </div>
                             <!--   Random Input    -->
                             <div id="randomDiv" class="col s12">
                                 <div class="row top-buffer-15">
                                     <div class="input-field col s4">
-                                        <input disabled placeholder="Start" id="start" type="text" class="validate">
+                                        <input placeholder="Start" id="start" type="text" class="validate">
                                         <label for="start">Start range</label>
                                     </div>
                                     <div class="input-field col s4">
-                                        <input disabled placeholder="End" id="end" type="text" class="validate">
+                                        <input placeholder="End" id="end" type="text" class="validate">
                                         <label for="end">End range</label>
                                     </div>
                                     <div class="input-field col s4">
-                                        <input disabled placeholder="How many numbers?" id="numberOfNumbers" type="text" class="validate">
+                                        <input placeholder="How many numbers?" id="numberOfNumbers" type="text" class="validate">
                                         <label for="numberOfNumbers">How many numbers?</label>
                                     </div>
                                 </div>
@@ -132,22 +124,34 @@ require __DIR__ . '/vendor/autoload.php';
                             <div id="sequenceDiv" class="col s12">
                                 <div class="row top-buffer-15">
                                     <div class="input-field col s4">
-                                        <input disabled placeholder="Start" id="startSequence" type="text" class="validate">
+                                        <input placeholder="Start number" id="startSequence" type="number" class="validate" value="1">
                                         <label for="startSequence">Start range</label>
                                     </div>
                                     <div class="input-field col s4">
-                                        <input disabled placeholder="End" id="endSequence" type="text" class="validate">
+                                        <input placeholder="End number" id="endSequence" type="number" class="validate" value="200">
                                         <label for="endSequence">End range</label>
                                     </div>
                                 </div>
                                 <p class="center-align">
-                                    <a class="waves-effect waves-light btn" id="playButtonSequence">
+                                    <a class="waves-effect waves-light btn" id="checkButtonSequence">
                                         <i class="material-icons left">attach_money</i>Bet<i class="material-icons right">attach_money</i></a>
                                 </p>
+                            </div>
+                            <!-- Modal Structure -->
+                            <div id="modal1" class="modal">
+                                <div class="modal-content">
+                                    <h4>Check your numbers</h4>
+                                    <div id="confirmationNumbers"></div>
+                                </div>
+                                <div class="modal-footer">
+                                    <a id="playButton" class="modal-action modal-close waves-effect waves-green btn-flat">Confirm</a>
+                                    <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Cancel</a>
+                                </div>
                             </div>
                         </div>
                 </div>
             </div>
+<!--            Numbers card  -->
             <div class="card z-depth-5">
                 <div class="card-content">
                     <h4>Your numbers<span class="subText" id="count">&nbsp;&nbsp;&nbsp;&nbsp;<?php include 'count_numbers.php'?></span></h4>
@@ -157,6 +161,7 @@ require __DIR__ . '/vendor/autoload.php';
                 </div>
             </div>
         </div>
+<!--        Last game card   -->
         <div class="col s4">
             <div class="card z-depth-4">
                 <div class="card-content">
@@ -167,6 +172,7 @@ require __DIR__ . '/vendor/autoload.php';
                 </div>
             </div>
         </div>
+<!--        Game history card -->
         <div class="col s4">
             <div class="card z-depth-4">
                 <div class="card-content">
@@ -189,5 +195,6 @@ require __DIR__ . '/vendor/autoload.php';
 
         </div>
     </div>
+<!-- End of first row  -->
 </body>
 </html>
