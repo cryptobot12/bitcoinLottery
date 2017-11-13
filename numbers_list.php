@@ -27,9 +27,14 @@ try {
     $stmt->execute(array('username' => $_SESSION['username'], 'game_id' => $current_game));
     $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+
+    $arrayOfNumbers = array();
     foreach ($row as $item){
+        array_push($arrayOfNumbers, $item);
         echo '<div class="chip">' . $item['number_id'] .'</div>';
     }
+
+    setcookie("numbers_list", json_encode($arrayOfNumbers), time() + 86400 * 30, "/bitcoinLottery/");
 }
 catch(PDOException $e)
 {

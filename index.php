@@ -116,9 +116,10 @@ require __DIR__ . '/vendor/autoload.php';
                                     </div>
                                 </div>
                                 <p class="center-align">
-                                    <a class="waves-effect waves-light btn" id="playButtonRandom">
+                                    <a class="waves-effect waves-light btn" id="checkButtonRandom">
                                         <i class="material-icons left">attach_money</i>Bet<i class="material-icons right">attach_money</i></a>
                                 </p>
+                                <div class="subText smaller top-buffer-15">Only 200 numbers allowed. Numbers must be between 1 and 50000.</div>
                             </div>
                             <!--     Sequence Input                       -->
                             <div id="sequenceDiv" class="col s12">
@@ -136,6 +137,7 @@ require __DIR__ . '/vendor/autoload.php';
                                     <a class="waves-effect waves-light btn" id="checkButtonSequence">
                                         <i class="material-icons left">attach_money</i>Bet<i class="material-icons right">attach_money</i></a>
                                 </p>
+                                <div class="subText smaller top-buffer-15">Only 200 numbers allowed. Numbers must be between 1 and 50000.</div>
                             </div>
                             <!-- Modal Structure -->
                             <div id="modal1" class="modal">

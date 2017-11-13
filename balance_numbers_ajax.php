@@ -26,6 +26,13 @@ try {
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
     $current_game = $row['game_id'];
 
+    //Counting numbers
+    $stmt = $conn->prepare('SELECT COUNT(number_id) AS numberCount FROM numberxuser WHERE user_id = (SELECT user_id
+        FROM user WHERE username = :username) AND game_id = :game_id');
+    $stmt->execute(array('username' => $_SESSION['username'], 'game_id' => $current_game));
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    $numbersCount = $row['numberCount'];
+
     //Selecting numbers list
     $stmt = $conn->prepare('SELECT number_id FROM numberxuser WHERE user_id = (SELECT user_id
         FROM user WHERE username = :username) AND game_id = :game_id');
@@ -37,7 +44,7 @@ try {
         array_push($arrayOfNumbers, $item['number_id']);
     }
 
-    $returnAjax = array('balance' => $balance, 'numbers' => $arrayOfNumbers);
+    $returnAjax = array('balance' => $balance, 'numbers' => $arrayOfNumbers, 'count' => $numbersCount);
     $jsonAjax = json_encode($returnAjax);
     echo $jsonAjax;
 }

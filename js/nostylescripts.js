@@ -5,11 +5,12 @@ window.onload = function () {
     timer();
 };
 
-/* Filter array*/
-
+/* Filter array */
 function filterArrayOfNumbers(newArray) {
 
-    newArray.slice(0, 200); //Keeping only 200 numbers
+    var set = new Set(newArray); //Removing duplicates
+    newArray = Array.from(set); //Returning the values to the array
+    newArray = newArray.slice(0, 200); //Keeping only 200 numbers
 
     //Keeping only new numbers
     var currentNumbers = JSON.parse(Cookies.get("numbers_list"));
@@ -25,12 +26,52 @@ function filterArrayOfNumbers(newArray) {
 function addNumbersToConfirm(array) {
 
     var numbersList = $("#confirmationNumbers");
-    numbersList.html("");
+    numbersList.empty();
     var toAppend = '';
     $.each(array, function (index, value) {
         toAppend = '<div class="chip">' + value + '</div>';
         numbersList.append(toAppend);
     })
+}
+
+/* Shuffle array */
+function shuffle(array) {
+    var currentIndex = array.length, temporaryValue, randomIndex;
+
+    // While there remain elements to shuffle...
+    while (0 !== currentIndex) {
+
+        // Pick a remaining element...
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex -= 1;
+
+        // And swap it with the current element.
+        temporaryValue = array[currentIndex];
+        array[currentIndex] = array[randomIndex];
+        array[randomIndex] = temporaryValue;
+    }
+
+    return array;
+}
+
+/* Generate random array */
+function generateArray(ini, end, numbers) {
+
+    var array = new Array(0);
+
+    for (var i = ini; i <= end; i++) {
+        array.push(i);
+    }
+
+    array = shuffle(array);
+
+    while (array.length > numbers) {
+        array.splice(0, 1);
+    }
+
+    return array.sort(function (a, b) {
+        return a > b;
+    });
 }
 
 /* Listeners  */
@@ -40,18 +81,37 @@ $(function () {
 
     /* Field listener */
     $("#checkButtonField").on('click', function () {
-        $('#modal1').modal('open');
 
+        arrayOfNumbers = [];
         var numbersArea = $("#numbersArea").val();
         arrayOfNumbers = numbersArea.match(/\d+/g);
         arrayOfNumbers = filterArrayOfNumbers(arrayOfNumbers);
         addNumbersToConfirm(arrayOfNumbers);
 
+        $('#modal1').modal('open');
+
+    });
+
+    /* Random listener */
+    $("#checkButtonRandom").on('click', function () {
+        arrayOfNumbers = [];
+
+        var startNumber = parseInt($("#start").val());
+        var endNumber = parseInt($("#end").val());
+        var numbers = parseInt($("#numberOfNumbers").val());
+
+        arrayOfNumbers = arrayOfNumbers = generateArray(startNumber, endNumber, numbers);
+        arrayOfNumbers = filterArrayOfNumbers(arrayOfNumbers);
+        arrayOfNumbers = arrayOfNumbers.sort(function (a, b) {
+            return a > b;
+        });
+        addNumbersToConfirm(arrayOfNumbers);
+        $('#modal1').modal('open');
     });
 
     /* Sequence listener */
     $("#checkButtonSequence").on('click', function () {
-        $('#modal1').modal('open');
+        arrayOfNumbers = [];
 
         var startNumber = parseInt($("#startSequence").val());
         var endNumber = parseInt($("#endSequence").val());
@@ -62,6 +122,8 @@ $(function () {
 
         arrayOfNumbers = filterArrayOfNumbers(arrayOfNumbers);
         addNumbersToConfirm(arrayOfNumbers);
+
+        $('#modal1').modal('open');
     });
 
     /* Betting */
@@ -128,7 +190,7 @@ var conn = new ab.Session('ws://localhost:8080',
 
                 updateBalanceAndNumbers();
             }
-                console.log(data);
+                //console.log(data);
         });
     },
     function () {
@@ -149,11 +211,20 @@ function updateBalanceAndNumbers() {
 
             numbersList.append('<div class="chip">' + value + '</div>');
         });
+
+        if (response['count'] > 1)
+            $("#count").html("&nbsp;&nbsp;&nbsp;&nbsp;" + response['count'] + " numbers");
+        else if (response['count'] === 1)
+            $("#count").html("&nbsp;&nbsp;&nbsp;&nbsp;" + response['count'] + " number");
+        else
+            $("#count").html("&nbsp;&nbsp;&nbsp;&nbsp;No numbers");
+
+        Cookies.set('numbers_list', JSON.stringify(response['numbers']));
     }, type: 'GET'});
 }
 
 /*
-* Bet for Text Area
+* Bet (AJAX)
 * */
 function bet(arrayOfNumbers) {
 
@@ -166,8 +237,10 @@ function bet(arrayOfNumbers) {
 
         if (response['count'] > 1)
             $("#count").html("&nbsp;&nbsp;&nbsp;&nbsp;" + response['count'] + " numbers");
-        else
+        else if (response['count'] === 1)
             $("#count").html("&nbsp;&nbsp;&nbsp;&nbsp;" + response['count'] + " number");
+        else
+            $("#count").html("&nbsp;&nbsp;&nbsp;&nbsp;No numbers");
 
         $.each(response['numbers'], function (index, value) {
 

@@ -27,12 +27,12 @@ try {
     $stmt->execute(array('username' => $_SESSION['username'], 'game_id' => $current_game));
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-
-    echo $row['numbersCount'];
     if ($row['numbersCount'] > 1)
-        echo " numbers";
+        echo $row['numbersCount'] . " numbers";
+    else if ($row['numbersCount'] == 1)
+        echo $row['numbersCount'] . " number";
     else
-        echo "number";
+        echo "No numbers";
 }
 catch(PDOException $e)
 {
