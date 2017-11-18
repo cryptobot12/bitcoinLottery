@@ -30,11 +30,11 @@ try {
 
     $arrayOfNumbers = array();
     foreach ($row as $item){
-        array_push($arrayOfNumbers, $item);
+        array_push($arrayOfNumbers, $item['number_id']);
         echo '<div class="chip">' . $item['number_id'] .'</div>';
     }
 
-    setcookie("numbers_list", json_encode($arrayOfNumbers), time() + 86400 * 30, "/bitcoinLottery/");
+    $_SESSION["numbers_list"] = $arrayOfNumbers;
 }
 catch(PDOException $e)
 {

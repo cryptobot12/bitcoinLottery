@@ -80,7 +80,7 @@ if (legalArray($betNumber)) {
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         $count = $row['countNumbers'];
 
-        setcookie("numbers_list", json_encode($arrayOfNumbers), time() + 86400 * 30, "/bitcoinLottery/");
+        $_SESSION["numbers_list"] = $arrayOfNumbers;
 
         $returnAjax = array('balance' => $balance, 'numbers' => $arrayOfNumbers, 'count' => $count);
         $jsonAjax = json_encode($returnAjax);

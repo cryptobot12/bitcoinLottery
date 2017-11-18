@@ -24,6 +24,9 @@ require __DIR__ . '/vendor/autoload.php';
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
     <script src="js/autobahn.js"></script>
+    <script>
+        var numbers = <?php echo json_encode($_SESSION['numbers_list']); ?>;
+    </script>
     <script src="js/nostylescripts.js"></script>
     <script src="js/stylescript.js"></script>
 
@@ -103,15 +106,15 @@ require __DIR__ . '/vendor/autoload.php';
                             <div id="randomDiv" class="col s12">
                                 <div class="row top-buffer-15">
                                     <div class="input-field col s4">
-                                        <input placeholder="Start" id="start" type="text" class="validate">
+                                        <input placeholder="Start" id="start" type="number" class="" value="1">
                                         <label for="start">Start range</label>
                                     </div>
                                     <div class="input-field col s4">
-                                        <input placeholder="End" id="end" type="text" class="validate">
+                                        <input placeholder="End" id="end" type="number" class="" value="200">
                                         <label for="end">End range</label>
                                     </div>
                                     <div class="input-field col s4">
-                                        <input placeholder="How many numbers?" id="numberOfNumbers" type="text" class="validate">
+                                        <input placeholder="How many numbers?" id="numberOfNumbers" type="number" class="" value="20">
                                         <label for="numberOfNumbers">How many numbers?</label>
                                     </div>
                                 </div>
@@ -119,17 +122,19 @@ require __DIR__ . '/vendor/autoload.php';
                                     <a class="waves-effect waves-light btn" id="checkButtonRandom">
                                         <i class="material-icons left">attach_money</i>Bet<i class="material-icons right">attach_money</i></a>
                                 </p>
-                                <div class="subText smaller top-buffer-15">Only 200 numbers allowed. Numbers must be between 1 and 50000.</div>
+                                <div class="subText smaller top-buffer-15">Only 200 numbers allowed. Numbers must be between 1 and 50000.<br>
+                                    Duplicates will be removed.
+                                </div>
                             </div>
                             <!--     Sequence Input                       -->
                             <div id="sequenceDiv" class="col s12">
                                 <div class="row top-buffer-15">
                                     <div class="input-field col s4">
-                                        <input placeholder="Start number" id="startSequence" type="number" class="validate" value="1">
+                                        <input placeholder="Start number" id="startSequence" type="number" class="" value="1">
                                         <label for="startSequence">Start range</label>
                                     </div>
                                     <div class="input-field col s4">
-                                        <input placeholder="End number" id="endSequence" type="number" class="validate" value="200">
+                                        <input placeholder="End number" id="endSequence" type="number" class="" value="200">
                                         <label for="endSequence">End range</label>
                                     </div>
                                 </div>

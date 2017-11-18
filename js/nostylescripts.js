@@ -13,7 +13,8 @@ function filterArrayOfNumbers(newArray) {
     newArray = newArray.slice(0, 200); //Keeping only 200 numbers
 
     //Keeping only new numbers
-    var currentNumbers = JSON.parse(Cookies.get("numbers_list"));
+    var currentNumbers = numbers;
+
     newArray = $.grep(newArray, function (el, index) {
 
         return ($.inArray(parseInt(el), currentNumbers) !== -1);
@@ -219,7 +220,6 @@ function updateBalanceAndNumbers() {
         else
             $("#count").html("&nbsp;&nbsp;&nbsp;&nbsp;No numbers");
 
-        Cookies.set('numbers_list', JSON.stringify(response['numbers']));
     }, type: 'GET'});
 }
 

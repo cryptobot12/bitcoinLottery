@@ -44,6 +44,8 @@ try {
         array_push($arrayOfNumbers, $item['number_id']);
     }
 
+    $_SESSION['numbers_list'] = $arrayOfNumbers;
+
     $returnAjax = array('balance' => $balance, 'numbers' => $arrayOfNumbers, 'count' => $numbersCount);
     $jsonAjax = json_encode($returnAjax);
     echo $jsonAjax;
