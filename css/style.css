@@ -73,3 +73,19 @@ nav ul a {
 .smaller {
     font-size: 15px;
 }
+
+.price-text {
+    font-size: 17px;
+    font-style: italic;
+    font-weight: 500;
+}
+
+.balance-alert {
+    color: red;
+    font-weight: 300;
+    font-size: 18px;
+}
+
+.hidden {
+    visibility: hidden;
+}

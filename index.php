@@ -56,7 +56,7 @@ require __DIR__ . '/vendor/autoload.php';
                 <?php
                     if (isset($_SESSION['username']) && !empty($_SESSION['username'])) {
                         echo '<li class="no-link-nav">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>';
-                        echo '<li class="no-link-nav"><b>Balance: <span id="balanceNumber">';
+                        echo '<li class="no-link-nav"><i class="material-icons left">account_balance</i><b>Balance: <span id="balanceNumber">';
                         include 'updateBalance.php';
                         echo '</span> bits</b></li>
                             <li><a class="dropdown-button" href="#" data-activates="profileDropdown"><b>' .
@@ -101,6 +101,10 @@ require __DIR__ . '/vendor/autoload.php';
                                         <i class="material-icons left">attach_money</i>Bet<i class="material-icons right">attach_money</i></a>
                                 </p>
                                 <div class="subText smaller top-buffer-15">Only 200 numbers allowed. Numbers must be between 1 and 50000.</div>
+                                <br>
+                                <p class="center-align price-text">
+                                    Each number costs 50 bits.
+                                </p>
                             </div>
                             <!--   Random Input    -->
                             <div id="randomDiv" class="col s12">
@@ -125,6 +129,10 @@ require __DIR__ . '/vendor/autoload.php';
                                 <div class="subText smaller top-buffer-15">Only 200 numbers allowed. Numbers must be between 1 and 50000.<br>
                                     Duplicates will be removed.
                                 </div>
+                                <br>
+                                <p class="center-align price-text">
+                                    Each number costs 50 bits.
+                                </p>
                             </div>
                             <!--     Sequence Input                       -->
                             <div id="sequenceDiv" class="col s12">
@@ -143,11 +151,16 @@ require __DIR__ . '/vendor/autoload.php';
                                         <i class="material-icons left">attach_money</i>Bet<i class="material-icons right">attach_money</i></a>
                                 </p>
                                 <div class="subText smaller top-buffer-15">Only 200 numbers allowed. Numbers must be between 1 and 50000.</div>
+                                <br>
+                                <p class="center-align price-text">
+                                    Each number costs 50 bits.
+                                </p>
                             </div>
                             <!-- Modal Structure -->
                             <div id="modal1" class="modal">
                                 <div class="modal-content">
-                                    <h4>Check your numbers</h4>
+                                    <h4>Check your numbers<span class="subText" id="countConfirm">&nbsp;&nbsp;&nbsp;&nbsp;0 numbers (100 bits)</span><br>
+                                        <span class="balance-alert hidden" id="insufficientText">&nbsp;&nbsp;Insufficient balance</span></h4>
                                     <div id="confirmationNumbers"></div>
                                 </div>
                                 <div class="modal-footer">

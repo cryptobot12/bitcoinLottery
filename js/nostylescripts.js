@@ -29,10 +29,32 @@ function addNumbersToConfirm(array) {
     var numbersList = $("#confirmationNumbers");
     numbersList.empty();
     var toAppend = '';
+    var countConfirm = $("#countConfirm");
+    var count = array.length;
+
+    if (count === 1)
+        countConfirm.html("&nbsp;&nbsp;&nbsp;&nbsp;" + count + " number selected (" + (count * 50) + " bits)");
+    else
+        countConfirm.html("&nbsp;&nbsp;&nbsp;&nbsp;" + count + " numbers selected (" + (count * 50) + " bits)");
+
     $.each(array, function (index, value) {
         toAppend = '<div class="chip">' + value + '</div>';
         numbersList.append(toAppend);
-    })
+    });
+
+    var balance = parseInt($("#balanceNumber").html());
+    var insufficientText = $("#insufficientText");
+    var playButton = $("#playButton");
+
+    if ((count * 50) > balance) {
+        insufficientText.removeClass("hidden");
+        playButton.hide();
+    }
+    else {
+        insufficientText.addClass("hidden");
+        playButton.show();
+    }
+
 }
 
 /* Shuffle array */

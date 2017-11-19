@@ -23,7 +23,7 @@ try {
 
     $stmt->execute(array('game_id' => $current_game));
 
-    $jackpot = $stmt->fetchColumn() * 30;
+    $jackpot = $stmt->fetchColumn() * 50;
 
     echo $jackpot;
 }
