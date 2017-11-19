@@ -13,12 +13,23 @@ function filterArrayOfNumbers(newArray) {
     newArray = newArray.slice(0, 200); //Keeping only 200 numbers
 
     //Keeping only new numbers
-    var currentNumbers = numbers;
+    var currentNumbers = numbersGlobal;
 
     newArray = $.grep(newArray, function (el, index) {
 
         return ($.inArray(parseInt(el), currentNumbers) !== -1);
     }, true);
+
+    return newArray;
+}
+
+function converToArrayOfInt(array) {
+
+    var newArray = new Array(0);
+
+    $.each(array, function (index, value) {
+        newArray.push(parseInt(value));
+    });
 
     return newArray;
 }
@@ -93,7 +104,7 @@ function generateArray(ini, end, numbers) {
     }
 
     return array.sort(function (a, b) {
-        return a > b;
+        return a - b;
     });
 }
 
@@ -125,9 +136,8 @@ $(function () {
 
         arrayOfNumbers = arrayOfNumbers = generateArray(startNumber, endNumber, numbers);
         arrayOfNumbers = filterArrayOfNumbers(arrayOfNumbers);
-        arrayOfNumbers = arrayOfNumbers.sort(function (a, b) {
-            return a > b;
-        });
+
+
         addNumbersToConfirm(arrayOfNumbers);
         $('#modal1').modal('open');
     });
@@ -151,6 +161,7 @@ $(function () {
 
     /* Betting */
     $("#playButton").on('click', function () {
+        arrayOfNumbers = converToArrayOfInt(arrayOfNumbers);
         bet(arrayOfNumbers);
     });
 });
@@ -230,8 +241,9 @@ function updateBalanceAndNumbers() {
         var numbersList = $("#numbersList");
         numbersList.empty();
 
+        numbersGlobal = [];
         $.each(response['numbers'], function (index, value) {
-
+            numbersGlobal.push(parseInt(value));
             numbersList.append('<div class="chip">' + value + '</div>');
         });
 
@@ -264,10 +276,13 @@ function bet(arrayOfNumbers) {
         else
             $("#count").html("&nbsp;&nbsp;&nbsp;&nbsp;No numbers");
 
+        numbersGlobal = [];
         $.each(response['numbers'], function (index, value) {
-
+            numbersGlobal.push(parseInt(value));
             numbersList.append('<div class="chip">' + value + '</div>');
         });
+
+
     }, data: {
         numbers: jsonSend
     }

@@ -31,8 +31,8 @@ try {
     $profit_winners = $jackpot * 100 / $row['number_of_w'];
 
     //Selecting winners
-    $stmt = $conn->prepare('SELECT u.username, COUNT(nu.number_id) * 3000 AS bet,
-                                        (:profit_winners - COUNT(nu.number_id) * 3000 ) AS profit
+    $stmt = $conn->prepare('SELECT u.username, COUNT(nu.number_id) * 5000 AS bet,
+                                        (:profit_winners - COUNT(nu.number_id) * 5000 ) AS profit
                                         FROM user as u
                                         INNER JOIN gamexuser AS gu
                                         ON u.user_id = gu.user_id
@@ -78,7 +78,7 @@ try {
     }
 
     //Selecting losers
-    $stmt = $conn->prepare('SELECT u.username, COUNT(number_id) * 30 AS profit
+    $stmt = $conn->prepare('SELECT u.username, COUNT(number_id) * 50 AS profit
                                     FROM user as u
                                     INNER JOIN gamexuser AS gu
                                     ON u.user_id = gu.user_id

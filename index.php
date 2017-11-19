@@ -25,7 +25,7 @@ require __DIR__ . '/vendor/autoload.php';
     <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
     <script src="js/autobahn.js"></script>
     <script>
-        var numbers = <?php echo json_encode($_SESSION['numbers_list']); ?>;
+        var numbersGlobal = <?php echo json_encode($_SESSION['numbers_list']); ?>;
     </script>
     <script src="js/nostylescripts.js"></script>
     <script src="js/stylescript.js"></script>
@@ -201,8 +201,8 @@ require __DIR__ . '/vendor/autoload.php';
                         <thead>
                         <tr>
                             <th>Game #</th>
-                            <th>Number</th>
                             <th>Jackpot</th>
+                            <th>Number</th>
                             <th>Time</th>
                         </tr>
                         </thead>

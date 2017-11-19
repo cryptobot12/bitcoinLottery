@@ -14,16 +14,17 @@ try {
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 
-    $stmt = $conn->prepare('SELECT game_id FROM game ORDER BY timedate DESC, game_id DESC LIMIT 1');
+    $stmt = $conn->prepare('SELECT game_id, amount FROM game ORDER BY timedate DESC, game_id DESC LIMIT 1');
     $stmt->execute();
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
     $current_game = $row['game_id'];
+    $bonus = $row['amount'];
 
     $stmt = $conn->prepare('SELECT COUNT(*) AS jackpot FROM numberxuser WHERE game_id = :game_id');
 
     $stmt->execute(array('game_id' => $current_game));
 
-    $jackpot = $stmt->fetchColumn() * 50;
+    $jackpot = ($stmt->fetchColumn() * 4500 + $bonus) / 100;
 
     echo $jackpot;
 }
