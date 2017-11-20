@@ -43,13 +43,14 @@ try {
                                         WHERE gu.win = 1
                                         AND gu.game_id = :game_id
                                         GROUP BY u.username
-                                        ORDER BY bet DESC');
+                                        ORDER BY bet DESC
+                                        LIMIT 10');
 
     $stmt->execute(array('game_id' => $last_game, 'profit_winners' => $profit_winners));
 
     $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    echo '<p><b>Game #<span id="gameNumberLast">' . $last_game . '</span></b></p>';
+    echo '<p><a href="game_info.php?game_id=' . $last_game . '" target="_blank">Game #<span id="gameNumberLast">' . $last_game . '</span></a></p>';
     echo '<span><b>Winner number: </b><div class="chip"><span id="winnerNumberLast">' . $winner_number . '</span></div></span>';
     echo '<p><b>Jackpot: </b><span id="jackpotLast">' . $jackpot . '</span> bits</p>';
     echo '<table id="lastGameTable" class="bordered">
@@ -88,7 +89,8 @@ try {
                                     AND nu.game_id = gu.game_id
                                     WHERE gu.win = 0
                                     AND gu.game_id = :game_id
-                                    ORDER BY profit DESC');
+                                    ORDER BY profit DESC
+                                    LIMIT 10');
 
     $stmt->execute(array('game_id' => $last_game));
     $row = $stmt->fetchAll(PDO::FETCH_ASSOC);

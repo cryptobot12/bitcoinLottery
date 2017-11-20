@@ -2,6 +2,14 @@
 $(document).ready(function(){
 
     $('.modal').modal();
+    $("#expand").collapsible({
+        onOpen: function (el) {
+            $("#expand-icon").html("expand_more");
+        },
+        onClose: function (el) {
+            $("#expand-icon").html("expand_less");
+        }
+    });
 });
 
 /* Array of numbers validator */

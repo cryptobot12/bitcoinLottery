@@ -172,14 +172,21 @@ require __DIR__ . '/vendor/autoload.php';
                 </div>
             </div>
 <!--            Numbers card  -->
-            <div class="card z-depth-5">
-                <div class="card-content">
-                    <h4>Your numbers<span class="subText" id="count">&nbsp;&nbsp;&nbsp;&nbsp;<?php include 'count_numbers.php'?></span></h4>
-                    <div id="numbersList">
-                        <?php include 'numbers_list.php' ?>
+            <ul class="collapsible z-depth-5" data-collapsible="accordion" id="expand">
+                <li>
+                    <div class="collapsible-header active">
+                        <div class="valign-wrapper"><i class="material-icons" id="expand-icon">expand_less</i></div>
+                        <h4>Your numbers<span class="subText" id="count">&nbsp;&nbsp;&nbsp;&nbsp;<?php include 'count_numbers.php'?></span>
+                        </h4>
+
                     </div>
-                </div>
-            </div>
+                    <div class="collapsible-body">
+                        <div id="numbersList">
+                            <?php include 'numbers_list.php' ?>
+                        </div>
+                    </div>
+                </li>
+            </ul>
         </div>
 <!--        Last game card   -->
         <div class="col s4">

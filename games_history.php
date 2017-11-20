@@ -24,7 +24,7 @@ try {
 
     foreach ($row as $item){
         echo "<tr>
-                <td>" . $item['game_id'] . "</td>" .
+                <td><a href=\"game_info.php?game_id=" . $item['game_id'] . "\" target=\"_blank\">" . $item['game_id'] . "</a></td>" .
                 "<td>" . ($item['amount'] / 100) . " bits</td>" .
                 "<td><div class='chip'>" . $item['winner_number'] . "</div></td>" .
                 "<td>" . $item['time'] . "</td>" .

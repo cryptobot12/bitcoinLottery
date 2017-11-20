@@ -22,6 +22,7 @@ nav ul a {
 .chip {
     background-color: #ffe807;
     color: black;
+    margin-bottom: 0;
 }
 
 .win {
@@ -88,4 +89,13 @@ nav ul a {
 
 .hidden {
     visibility: hidden;
+}
+
+td {
+    padding: 6px 5px;
+}
+
+.collapsible-header {
+    padding: 0.1rem 1.5rem;
+    overflow: auto;
 }

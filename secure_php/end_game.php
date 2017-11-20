@@ -38,7 +38,7 @@ try {
         $stmt = $conn->prepare('SELECT frequency, COUNT(frequency) AS fxf FROM(
                                         SELECT number_id, COUNT(number_id) AS frequency FROM numberxuser 
                                         WHERE game_id = :game_id
-                                        GROUP BY number_id) AS fxf
+                                        GROUP BY number_id) AS data1
                                         WHERE frequency <= 30
                                         GROUP BY frequency
                                         ORDER BY fxf ASC
