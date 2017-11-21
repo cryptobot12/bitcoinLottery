@@ -184,6 +184,7 @@ var conn = new ab.Session('ws://localhost:8080',
             {
                 $("#jackpotNumber").html(data.jackpot);
                 $("#gameNumberLast").html(data.last_game_number);
+                $("#gameLink").attr("href", "game_info.php?game_id=" + data.last_game_number);
                 $("#winnerNumberLast").html(data.last_winner_number);
                 $("#jackpotLast").html(data.last_jackpot);
 
@@ -216,7 +217,7 @@ var conn = new ab.Session('ws://localhost:8080',
                 gameHistoryTable.empty();
 
                 $.each(data.games, function (index, value) {
-                    gameHistoryTable.append('<tr><td>' + value['game_id'] + '</td><td>' +
+                    gameHistoryTable.append('<tr><td><a href="game_info.php?game_id=' + value['game_id'] + '" target="_blank">' + value['game_id'] + '</a></td><td>' +
                         value['amount'] + ' bits</td><td><div class="chip">' + value['winner_number'] + '</div></td><td>' +
                         value['timedate'] + '</td></tr>');
 

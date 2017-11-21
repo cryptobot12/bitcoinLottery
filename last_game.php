@@ -50,7 +50,7 @@ try {
 
     $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    echo '<p><a href="game_info.php?game_id=' . $last_game . '" target="_blank">Game #<span id="gameNumberLast">' . $last_game . '</span></a></p>';
+    echo '<p><a id="gameLink" href="game_info.php?game_id=' . $last_game . '" target="_blank">Game #<span id="gameNumberLast">' . $last_game . '</span></a></p>';
     echo '<span><b>Winner number: </b><div class="chip"><span id="winnerNumberLast">' . $winner_number . '</span></div></span>';
     echo '<p><b>Jackpot: </b><span id="jackpotLast">' . $jackpot . '</span> bits</p>';
     echo '<table id="lastGameTable" class="bordered">
