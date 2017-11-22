@@ -45,20 +45,27 @@ require __DIR__ . '/vendor/autoload.php';
             <li><a href="#!"><i class="material-icons left">exit_to_app</i>Logout</a></li>
         </ul>
     <?php endif; ?>
+    <!-- Stats structure   -->
+    <ul id="statsDropdown" class="dropdown-content">
+        <li><a href="game_info.php"><i class="material-icons left">assignment</i>Game Info</a></li>
+        <li><a href="stats.php"><i class="material-icons left">assessment</i>Server Stats</a></li>
+    </ul>
     <!-- Navbar goes here -->
     <nav>
         <div class="nav-wrapper green">
             <a href="#" class="brand-logo left">BitPVP</a>
             <ul id="nav-mobile" class="right .hide-on-small-only nav-letters">
-                <li><a href="game_info.php"><i class="material-icons left">assignment</i><b>Game Info</b></a></li>
                 <li><a href="rank.php"><i class="material-icons left">assistant_photo</i><b>Ranking</b></a></li>
-                <li><a href="stats.php"><i class="material-icons left">assessment</i><b>Stats</b></a></li>
+                <li><a class="dropdown-button" href="#" data-activates="statsDropdown">
+                        <i class="material-icons left">trending_up</i><b>Stats</b><i
+                                class="material-icons right">arrow_drop_down</i></a></a></li>
+                <li class="no-link-nav">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>
                 <?php if (isset($_SESSION['username']) && !empty($_SESSION['username'])): ?>
-                    <li class="no-link-nav">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>
                     <li class="no-link-nav"><i class="material-icons left">account_balance_wallet</i>
                         <b>Balance: <span id="balanceNumber"><?php include 'updateBalance.php'; ?></span> bits</b></li>
                     <li><a class="dropdown-button" href="#" data-activates="profileDropdown">
-                            <b><?php echo $_SESSION['username']; ?></b><i class="material-icons right">arrow_drop_down</i></a>
+                            <b><?php echo $_SESSION['username']; ?></b><i
+                                    class="material-icons right">arrow_drop_down</i></a>
                     </li>
                 <?php else: ?>
                     <li><a href="registration.php"><b>Register</b></a></li>
@@ -258,7 +265,7 @@ require __DIR__ . '/vendor/autoload.php';
                 <h5 class="white-text">Useful Links</h5>
                 <ul>
                     <li><a class="grey-text text-lighten-3" href="rank.php">Ranking</a></li>
-                    <li><a class="grey-text text-lighten-3" href="stats.php">Stats</a></li>
+                    <li><a class="grey-text text-lighten-3" href="stats.php">Server Stats</a></li>
                     <li><a class="grey-text text-lighten-3" href="game_info.php">Game Info</a></li>
                     <li><a class="grey-text text-lighten-3" href="#!">Guide</a></li>
                     <li><a class="grey-text text-lighten-3" href="#!">Games history</a></li>

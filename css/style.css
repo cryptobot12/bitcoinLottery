@@ -149,3 +149,7 @@ main {
     vertical-align: bottom;
     line-height: 1.5;
 }
+
+table.highlight tbody tr.win:hover {
+    background-color: #9cdcae !important;
+}
