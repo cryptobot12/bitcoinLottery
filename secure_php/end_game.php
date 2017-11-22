@@ -34,27 +34,23 @@ try {
         $stmt = $conn->prepare('UPDATE stats SET games_played = games_played + 1');
         $stmt->execute();
 
-        //Getting least frequent frequency
-        $stmt = $conn->prepare('SELECT frequency, COUNT(frequency) AS fxf FROM(
-                                        SELECT number_id, COUNT(number_id) AS frequency FROM numberxuser 
-                                        WHERE game_id = :game_id
-                                        GROUP BY number_id) AS data1
-                                        WHERE frequency <= 30
-                                        GROUP BY frequency
-                                        ORDER BY fxf ASC
-                                        LIMIT 1');
-        $stmt->execute(array('game_id' => $current_game));
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
-        $infrequent_frequency = $row['frequency'];
-
         //Getting winner number
-        $stmt = $conn->prepare('SELECT number_id, COUNT(number_id) AS frequency FROM numberxuser
-                                        WHERE game_id = :game_id
+        $stmt = $conn->prepare('SELECT nxf.number_id
+                                        FROM (SELECT number_id, COUNT(number_id) AS frequency FROM numberxuser
+                                        WHERE game_id = :game_id1
                                         GROUP BY number_id
-                                        HAVING frequency = :frequency
-                                        ORDER BY number_id ASC
+                                        HAVING frequency <= 30) AS nxf
+                                        INNER JOIN
+                                        (SELECT frequency, COUNT(frequency) AS fxf FROM(
+                                        SELECT number_id, COUNT(number_id) AS frequency FROM numberxuser
+                                        WHERE game_id = :game_id2
+                                        GROUP BY number_id
+                                        HAVING frequency <= 30) AS sometable
+                                        GROUP BY frequency) AS fxft
+                                        ON fxft.frequency = nxf.frequency
+                                        ORDER BY fxft.fxf ASC, nxf.frequency ASC, nxf.number_id ASC
                                         LIMIT 1');
-        $stmt->execute(array('game_id' => $current_game, 'frequency' => $infrequent_frequency));
+        $stmt->execute(array('game_id1' => $current_game, 'game_id2' => $current_game));
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         $winner_number = $row['number_id'];
 

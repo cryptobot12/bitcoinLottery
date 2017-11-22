@@ -10,6 +10,11 @@ $(document).ready(function(){
             $("#expand-icon").html("expand_less");
         }
     });
+
+    /*if ($.trim($("#numbersList").html()) != "")
+    {
+        $("#numbersCollapsible").addClass("active");
+    }*/
 });
 
 /* Array of numbers validator */
