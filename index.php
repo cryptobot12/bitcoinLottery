@@ -37,45 +37,8 @@ require __DIR__ . '/vendor/autoload.php';
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 </head>
 <body>
-<header>
-    <!-- Profile Structure -->
-    <?php if (isset($_SESSION['username']) && !empty($_SESSION['username'])) : ?>
-        <ul id="profileDropdown" class="dropdown-content">
-            <li><a href="#!"><i class="material-icons left">person</i>Profile</a></li>
-            <li><a href="#!"><i class="material-icons left">exit_to_app</i>Logout</a></li>
-        </ul>
-    <?php endif; ?>
-    <!-- Stats structure   -->
-    <ul id="statsDropdown" class="dropdown-content">
-        <li><a href="game_info.php"><i class="material-icons left">assignment</i>Game Info</a></li>
-        <li><a href="stats.php"><i class="material-icons left">assessment</i>Server Stats</a></li>
-    </ul>
-    <!-- Navbar goes here -->
-    <nav>
-        <div class="nav-wrapper green">
-            <a href="#" class="brand-logo left">BitPVP</a>
-            <ul id="nav-mobile" class="right .hide-on-small-only nav-letters">
-                <li><a href="rank.php"><i class="material-icons left">assistant_photo</i><b>Ranking</b></a></li>
-                <li><a class="dropdown-button" href="#" data-activates="statsDropdown">
-                        <i class="material-icons left">trending_up</i><b>Stats</b><i
-                                class="material-icons right">arrow_drop_down</i></a></a></li>
-                <li class="no-link-nav">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>
-                <?php if (isset($_SESSION['username']) && !empty($_SESSION['username'])): ?>
-                    <li class="no-link-nav"><i class="material-icons left">account_balance_wallet</i>
-                        <b>Balance: <span id="balanceNumber"><?php include 'updateBalance.php'; ?></span> bits</b></li>
-                    <li><a class="dropdown-button" href="#" data-activates="profileDropdown">
-                            <b><?php echo $_SESSION['username']; ?></b><i
-                                    class="material-icons right">arrow_drop_down</i></a>
-                    </li>
-                <?php else: ?>
-                    <li><a href="registration.php"><b>Register</b></a></li>
-                    <li><a href="login.php"><b>Login</b></a></li>
-                <?php endif; ?>
-            </ul>
-        </div>
-    </nav>
-</header>
 <!--    Beginning of first row   -->
+<?php include 'header.php' ?>
 <main>
     <div class="row">
         <div class="col s4">
