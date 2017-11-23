@@ -26,42 +26,42 @@ function gameInfoLink($game, $page = 1, $n = 2, $f = 2, $ff = 2, $fi = 1, $se = 
 }
 
 if (isset($_GET['n']) && !empty($_GET['n'])) {
-    $nAsc = $_GET['n'];
+    $nAsc = htmlspecialchars($_GET['n']);
     filterOnlyNumber($nAsc, 2, 2, 1);
 } else {
     $nAsc = 2;
 }
 
 if (isset($_GET['f']) && !empty($_GET['f'])) {
-    $fAsc = $_GET['f'];
+    $fAsc = htmlspecialchars($_GET['f']);
     filterOnlyNumber($fAsc, 2, 2, 1);
 } else {
     $fAsc = 2;
 }
 
 if (isset($_GET['ff']) && !empty($_GET['ff'])) {
-    $ffAsc = $_GET['ff'];
+    $ffAsc = htmlspecialchars($_GET['ff']);
     filterOnlyNumber($ffAsc, 2, 2, 1);
 } else {
     $ffAsc = 2;
 }
 
 if (isset($_GET['fi']) && !empty($_GET['fi'])) {
-    $first = $_GET['fi'];
+    $first = htmlspecialchars($_GET['fi']);
     filterOnlyNumber($first, 1, 3, 1);
 } else {
     $first = 1;
 }
 
 if (isset($_GET['se']) && !empty($_GET['se'])) {
-    $second = $_GET['se'];
+    $second = htmlspecialchars($_GET['se']);
     filterOnlyNumber($second, 2, 3, 1);
 } else {
     $second = 2;
 }
 
 if (isset($_GET['th']) && !empty($_GET['th'])) {
-    $third = $_GET['th'];
+    $third = htmlspecialchars($_GET['th']);
     filterOnlyNumber($third, 3, 3, 1);
 } else {
     $third = 3;
@@ -86,7 +86,7 @@ try {
     $min_game = $row['game_id'];
 
     if (isset($_GET['game_id']) && !empty($_GET['game_id'])) {
-        $game_id = $_GET['game_id'];
+        $game_id = htmlspecialchars($_GET['game_id']);
         filterOnlyNumber($game_id, $current_game - 1, $current_game, $min_game);
     } else {
         $game_id = $current_game - 1;
@@ -154,7 +154,7 @@ try {
 
 
         if (isset($_GET['p']) && !empty($_GET['p'])) {
-            $page = $_GET['p'];
+            $page = htmlspecialchars($_GET['p']);
             filterOnlyNumber($page, 1, $pageCount, 1);
         } else
             $page = 1;
@@ -184,6 +184,7 @@ try {
     <!-- Compiled and minified JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
     <script src="js/autobahn.js"></script>
+    <script src="js/core.js"></script>
     <script src="js/game_info_script.js"></script>
     <script>
         var currentGame = <?php echo $game_id; ?>;

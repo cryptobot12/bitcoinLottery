@@ -1,9 +1,3 @@
-$(function () {
-
-    $('.modal').modal();
-
-});
-
 function showList(number) {
     updateModal(number);
     $("#numberSelected").html(number);

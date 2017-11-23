@@ -1,7 +1,6 @@
 /* Modal initializer*/
 $(document).ready(function(){
 
-    $('.modal').modal();
     $("#expand").collapsible({
         onOpen: function (el) {
             $("#expand-icon").html("expand_more");

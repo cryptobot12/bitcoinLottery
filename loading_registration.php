@@ -8,9 +8,9 @@
 include 'random.php';
 
 $servername = "localhost";
-$username = $_POST['username'];
-$password = password_hash($_POST['password'], PASSWORD_DEFAULT);
-$email = $_POST['email'];
+$username = htmlspecialchars($_POST['username']);
+$password = password_hash(htmlspecialchars($_POST['password']), PASSWORD_DEFAULT);
+$email = htmlspecialchars($_POST['email']);
 $bit_address = rand_string(15);
 
 

@@ -13,7 +13,7 @@ session_start();
 $servername = "localhost";
 $username = $_SESSION['username'];
 
-$betNumber = json_decode($_POST['numbers']);
+$betNumber = json_decode(htmlspecialchars($_POST['numbers']));
 
 if (isset($_SESSION['username'])) {
 //Number verification
@@ -58,6 +58,13 @@ if (isset($_SESSION['username'])) {
 
             if ($balance >= (5000 * $plays)) {
 
+                //Selecting user id
+                $stmt = $conn->prepare('SELECT user_id FROM user
+                                                WHERE username = :username');
+                $stmt->execute(array('username' => $username));
+                $row = $stmt->fetch(PDO::FETCH_ASSOC);
+                $user_id = $row['user_id'];
+
                 //Selecting current game
                 $stmt = $conn->prepare('SELECT game_id, amount FROM game ORDER BY timedate DESC, game_id DESC LIMIT 1');
                 $stmt->execute();
@@ -66,37 +73,49 @@ if (isset($_SESSION['username'])) {
                 $bonus = $row['amount'];
 
                 //Inserting numbers
-                $stmt = $conn->prepare('INSERT INTO numberxuser(game_id, number_id, user_id) VALUES (:game_id , :number_id, (SELECT user_id FROM user
-    WHERE username = :username))');
+                $stmt = $conn->prepare('INSERT INTO numberxuser(game_id, number_id, user_id) 
+                                                VALUES (:game_id , :number_id, :user_id)');
                 foreach ($betNumber as $number) {
-                    $stmt->execute(array('game_id' => $current_game, 'number_id' => $number, 'username' => $username));
+                    $stmt->execute(array('game_id' => $current_game, 'number_id' => $number, 'user_id' => $user_id));
                 }
 
-
                 //Updating users balance
-                $stmt = $conn->prepare('UPDATE user SET balance = balance - (5000 * :plays) WHERE username = :username');
-                $stmt->execute(array('username' => $username, 'plays' => $plays));
+                $stmt = $conn->prepare('UPDATE user SET balance = balance - (5000 * :plays1),
+                                                net_profit = net_profit - (5000 * :plays2)
+                                                WHERE user_id = :user_id');
+                $stmt->execute(array('user_id' => $user_id, 'plays1' => $plays, 'plays2' => $plays));
 
                 //Balance
-                $stmt = $conn->prepare('SELECT balance FROM user WHERE username = :username');
-                $stmt->execute(array('username' => $username));
+                $stmt = $conn->prepare('SELECT balance FROM user WHERE user_id = :user_id');
+                $stmt->execute(array('user_id' => $user_id));
                 $row = $stmt->fetch(PDO::FETCH_ASSOC);
                 $balance = $row['balance'] / 100;
 
+                //Games played
+                $stmt = $conn->prepare('SELECT number_id FROM numberxuser WHERE user_id = :user_id LIMIT 1');
+                $stmt->execute(array('user_id' => $user_id));
+                $row = $stmt->fetch(PDO::FETCH_ASSOC);
+                $havePlayed = (count($row) == 1);
+
+                if (!$havePlayed) {
+                    $stmt = $conn->prepare('UPDATE user SET games_played = games_played + 1
+                                                     WHERE user_id = :user_id');
+                    $stmt->execute(array('user_id' => $user_id));
+                }
+
                 //NumbersList
                 $arrayOfNumbers = array();
-                $stmt = $conn->prepare('SELECT number_id FROM numberxuser WHERE user_id = (SELECT user_id
-        FROM user WHERE username = :username) AND game_id = :game_id');
-                $stmt->execute(array('username' => $_SESSION['username'], 'game_id' => $current_game));
+                $stmt = $conn->prepare('SELECT number_id FROM numberxuser WHERE user_id = :user_id AND game_id = :game_id');
+                $stmt->execute(array('user_id' => $user_id, 'game_id' => $current_game));
                 $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 foreach ($row as $item) {
                     array_push($arrayOfNumbers, $item['number_id']);
                 }
 
                 //Count
-                $stmt = $conn->prepare('SELECT COUNT(number_id) AS countNumbers FROM numberxuser WHERE user_id = (SELECT user_id
-        FROM user WHERE username = :username) AND game_id = :game_id');
-                $stmt->execute(array('username' => $_SESSION['username'], 'game_id' => $current_game));
+                $stmt = $conn->prepare('SELECT COUNT(number_id) AS countNumbers FROM numberxuser WHERE user_id = :user_id
+                                                AND game_id = :game_id');
+                $stmt->execute(array('user_id' => $user_id, 'game_id' => $current_game));
                 $row = $stmt->fetch(PDO::FETCH_ASSOC);
                 $count = $row['countNumbers'];
 

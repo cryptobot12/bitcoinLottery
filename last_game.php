@@ -44,11 +44,12 @@ try {
                                         AND gu.game_id = :game_id
                                         GROUP BY u.username
                                         ORDER BY bet DESC
-                                        LIMIT 10');
+                                        LIMIT 8');
 
     $stmt->execute(array('game_id' => $last_game, 'profit_winners' => $profit_winners));
 
     $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $n_of_winners = count($row);
 
     echo '<p><a id="gameLink" href="game_info.php?game_id=' . $last_game . '" target="_blank">Game #<span id="gameNumberLast">' . $last_game . '</span></a></p>';
     echo '<div><b>Winner number: </b><div class="chip"><span id="winnerNumberLast">' . $winner_number . '</span></div></div>';
@@ -90,9 +91,9 @@ try {
                                     WHERE gu.win = 0
                                     AND gu.game_id = :game_id
                                     ORDER BY profit DESC
-                                    LIMIT 10');
+                                    LIMIT :the_limit');
 
-    $stmt->execute(array('game_id' => $last_game));
+    $stmt->execute(array('game_id' => $last_game, 'the_limit' => (15 - $n_of_winners)));
     $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     if (!empty($row)) {

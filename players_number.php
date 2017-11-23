@@ -7,8 +7,8 @@
  */
 
 $servername = "localhost";
-$game = $_POST['game'];
-$number = $_POST['number'];
+$game = htmlspecialchars($_POST['game']);
+$number = htmlspecialchars($_POST['number']);
 
 try {
     $conn = new PDO("mysql:host=$servername;dbname=lottery", "root", "5720297Ff");

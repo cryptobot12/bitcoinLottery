@@ -27,8 +27,9 @@ require __DIR__ . '/vendor/autoload.php';
     <script>
         var numbersGlobal = <?php echo json_encode($_SESSION['numbers_list']); ?>;
     </script>
-    <script src="js/nostylescripts.js"></script>
-    <script src="js/stylescript.js"></script>
+    <script src="js/core.js"></script>
+    <script src="js/game_script.js"></script>
+    <script src="js/index_script.js"></script>
 
     <link href="css/style.css" rel="stylesheet">
 

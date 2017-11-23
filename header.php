@@ -8,12 +8,13 @@
     <!-- Profile Structure -->
     <?php if (isset($_SESSION['username']) && !empty($_SESSION['username'])) : ?>
         <ul id="profileDropdown" class="dropdown-content">
-            <li><a href="#!"><i class="material-icons left">person</i>Profile</a></li>
+            <li><a href="#!"><i class="material-icons left">account_box</i>Account</a></li>
             <li><a href="#!"><i class="material-icons left">exit_to_app</i>Logout</a></li>
         </ul>
     <?php endif; ?>
     <!-- Stats structure   -->
     <ul id="statsDropdown" class="dropdown-content">
+        <li><a href="user_stats.php"><i class="material-icons left">person</i>User stats</a></li>
         <li><a href="game_info.php"><i class="material-icons left">assignment</i>Game Info</a></li>
         <li><a href="stats.php"><i class="material-icons left">assessment</i>Server Stats</a></li>
     </ul>

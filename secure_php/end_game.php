@@ -90,9 +90,8 @@ try {
         $stmt = $conn->prepare('UPDATE stats SET gross_profit = gross_profit + :jackpot');
         $stmt->execute(array('jackpot' => $jackpot));
 
-        //Giving profit to winners, updating net profit, and games played (only winners)
-        $stmt = $conn->prepare('UPDATE user SET balance = balance + :profit, net_profit = net_profit + :net_profit,
-                              games_played = games_played + 1
+        //Giving profit to winners, updating net profit
+        $stmt = $conn->prepare('UPDATE user SET balance = balance + :profit, net_profit = net_profit + :net_profit
                               WHERE user_id IN (SELECT user_id FROM numberxuser WHERE number_id = :winner_number
                               AND game_id = :game_id)');
         $stmt->execute(array('profit' => $each_receives, 'net_profit' => $each_receives, 'winner_number' => $winner_number, 'game_id' => $current_game));
@@ -131,32 +130,6 @@ try {
             //Inserting winners
             $stmt = $conn->prepare('INSERT INTO gamexuser(game_id, user_id, win) VALUES (:game_id , :user_id, 1)');
             $stmt->execute(array('game_id' => $current_game, 'user_id' => $item['user_id']));
-        }
-
-        //Selecting losers to update net profit and games played
-        $stmt = $conn->prepare('SELECT gu.user_id, COUNT(nu.number_id) * -5000
-                      AS profit
-                    FROM gamexuser AS gu
-                    INNER JOIN numberxuser AS nu
-                    ON gu.user_id = nu.user_id
-                    AND nu.user_id = gu.user_id
-                    AND nu.game_id = gu.game_id
-                    WHERE gu.game_id = :game_id
-                    AND win = 0
-                    GROUP BY gu.user_id
-                    ORDER BY profit DESC');
-        $stmt->execute(array('game_id' => $current_game));
-        $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        //Incrementing number of games played and net profit
-        foreach ($row as $item) {
-            $user_id = $item['user_id'];
-            $profit = $item['profit'];
-
-            $stmt = $conn->prepare('UPDATE user SET games_played = (games_played + 1),
-                                                net_profit = (net_profit + :profit)
-                                              WHERE user_id = :user_id');
-            $stmt->execute(array('user_id' => $user_id, 'profit' => $profit));
         }
 
         //Selecting number of plays (history)
@@ -216,10 +189,12 @@ try {
                                         WHERE gu.win = 1
                                         AND gu.game_id = :game_id
                                         GROUP BY u.username
-                                        ORDER BY bet DESC');
+                                        ORDER BY bet DESC
+                                        LIMIT 8');
 
         $stmt->execute(array('game_id' => $current_game, 'profit_winners' => $each_receives));
         $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $n_of_wrow = count($row);
 
         $arrayOfWinners = array();
         foreach ($row as $item){
@@ -239,9 +214,11 @@ try {
                                     AND nu.game_id = gu.game_id
                                     WHERE gu.win = 0
                                     AND gu.game_id = :game_id
-                                    ORDER BY profit DESC');
+                                    ORDER BY profit DESC
+                                    LIMIT :the_limit');
 
-        $stmt->execute(array('game_id' => $current_game));
+
+        $stmt->execute(array('game_id' => $current_game, 'the_limit' => 15 - $n_of_wrow));
         $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         $arrayOfLosers = array();
