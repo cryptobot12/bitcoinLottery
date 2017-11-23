@@ -175,14 +175,18 @@ try {
 <head>
     <meta charset="UTF-8">
     <title>Bitcoin</title>
+    <!--    Jquery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
     <!-- Compiled and minified CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <!-- Compiled and minified JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
     <script src="js/autobahn.js"></script>
+    <script src="js/game_info_script.js"></script>
     <script>
+        var currentGame = <?php echo $game_id; ?>;
         $(function () {
 
             var searchGame = $("#search_game");
@@ -198,14 +202,27 @@ try {
         });
     </script>
 
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
     <link href="css/style.css" rel="stylesheet">
 
     <!--Let browser know website is optimized for mobile-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 </head>
 <body>
-<?php include 'header.php' ?>
+<header>
+    <?php include "header.php"; ?>
+    <div class="row top-buffer-15">
+        <div class="col s4 offset-s4">
+            <div class="row">
+                <div class="input-field col s12">
+                    <i class="material-icons prefix">search</i>
+                    <input id="search_game" class="validate" type="number" ">
+                    <label for="search_game">Game number</label>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
 <main class="<?php if ($current_game == $game_id) echo 'valign-wrapper'; ?>">
     <div class="container">
         <?php if ($current_game != $game_id) : ?>
@@ -307,12 +324,25 @@ try {
                         echo '<td><div class="chip">' . $item['number_id'] . '</div></td>' .
                             '<td>' . $item['frequency'] . '</td>' .
                             '<td>' . $item['fxf'] . '</td>' .
-                            '<td>Master</td>
+                            '<td><a href="#!" onclick="showList('. $item['number_id'] . ');">See players</a></td>
               </tr>';
                     }
                     ?>
                     </tbody>
                 </table>
+                <!-- Modal Structure -->
+                <div id="modal1" class="modal">
+                    <div class="modal-content">
+                        <div class="h5Span">Number <div id="numberSelected" class="chip"></div></div>
+                        <hr>
+                        <ul class="browser-default discList" id="playersList">
+
+                        </ul>
+                    </div>
+                    <div class="modal-footer">
+                        <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Close</a>
+                    </div>
+                </div>
             </div>
             <div class="row centerWrap">
                 <div class="centeredDiv">
@@ -419,5 +449,5 @@ try {
         <?php endif; ?>
     </div>
 </main>
-<?php include 'footer.php' ?>
+<?php include "footer.php"; ?>
 </body>

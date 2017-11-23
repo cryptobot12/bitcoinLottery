@@ -153,3 +153,15 @@ main {
 table.highlight tbody tr.win:hover {
     background-color: #9cdcae !important;
 }
+
+#numberSelected {
+    vertical-align: bottom;
+}
+
+#playersList {
+    column-count: 5;
+}
+
+ul.browser-default li {
+    list-style-position: inside;
+}

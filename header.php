@@ -5,7 +5,6 @@
  * Date: 11/22/17
  * Time: 1:10 PM
  */?>
-<header>
     <!-- Profile Structure -->
     <?php if (isset($_SESSION['username']) && !empty($_SESSION['username'])) : ?>
         <ul id="profileDropdown" class="dropdown-content">
@@ -42,4 +41,3 @@
             </ul>
         </div>
     </nav>
-</header>
