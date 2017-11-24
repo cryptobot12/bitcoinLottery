@@ -9,16 +9,7 @@ session_start();
 
 $servername = "localhost";
 
-function filterOnlyNumber(&$number, $default, $max, $min)
-{
-    if (is_numeric($number)) {
-        if (($number <= $max) && ($number >= $min))
-            $number = floor($number);
-        else
-            $number = $default;
-    } else
-        $number = $default;
-}
+include "function.php";
 
 function gameInfoLink($game, $page = 1, $n = 2, $f = 2, $ff = 2, $fi = 1, $se = 2, $th = 3)
 {
