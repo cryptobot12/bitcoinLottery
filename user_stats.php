@@ -11,7 +11,7 @@ include "function.php";
 
 $username = htmlspecialchars($_GET['user']);
 
-function userStatsLink($user, $page = 1, $gaAsc = 2, $beAsc = 2, $prAsc = 2, $jaAsc = 2, $arrayOrd, $first)
+function userStatsLink($user, $page = 1, $gaAsc = 1, $beAsc = 2, $prAsc = 2, $jaAsc = 2, $arrayOrd, $first)
 {
     $pos = array_search($first, $arrayOrd);
     array_splice($arrayOrd, $pos, 1);
@@ -20,17 +20,11 @@ function userStatsLink($user, $page = 1, $gaAsc = 2, $beAsc = 2, $prAsc = 2, $ja
 ord[]=$arrayOrd[1]&ord[]=$arrayOrd[2]&ord[]=$arrayOrd[3]";
 }
 
-if (isset($_GET['p']) && !empty($_GET['p'])) {
-    $page = htmlspecialchars($_GET['p']);
-    filterOnlyNumber($page, 1, 1, 1);
-} else
-    $page = 1;
-
 if (isset($_GET['ga']) && !empty($_GET['ga'])) {
     $gaAsc = htmlspecialchars($_GET['ga']);
-    filterOnlyNumber($gaAsc, 2, 2, 1);
+    filterOnlyNumber($gaAsc, 1, 2, 1);
 } else {
-    $gaAsc = 2;
+    $gaAsc = 1;
 }
 
 if (isset($_GET['be']) && !empty($_GET['be'])) {
@@ -61,14 +55,16 @@ if (isset($_GET['ord']) && !empty($_GET['ord'])) {
     $order = array(1, 2, 3, 4);
 }
 
+$rowPerPage = 25;
+
 try {
     $servername = "localhost";
     $conn = new PDO("mysql:host=$servername;dbname=lottery", "root", "5720297Ff");
     // set the PDO error mode to exception
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-    //echo "Connected successfully";
 
+    /* Selecting user information */
     $stmt = $conn->prepare('SELECT u.net_profit, u.games_played
                                       FROM user AS u
                                       WHERE u.username = :username');
@@ -77,6 +73,19 @@ try {
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
     $net_profit = $result['net_profit'];
     $games_played = $result['games_played'];
+
+    /* Getting page count */
+    $stmt = $conn->prepare('SELECT COUNT(game_id) AS pageCount FROM gamexuser WHERE user_id = 
+                                     (SELECT user_id FROM user WHERE username = :username)');
+    $stmt->execute(array('username' => $username));
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    $pageCount = ceil($result['pageCount'] / $rowPerPage);
+
+    if (isset($_GET['p']) && !empty($_GET['p'])) {
+        $page = htmlspecialchars($_GET['p']);
+        filterOnlyNumber($page, 1, $pageCount, 1);
+    } else
+        $page = 1;
 
     if ($gaAsc == 2)
         $gaString = "gu.game_id ASC";
@@ -146,11 +155,11 @@ try {
             $statement = $statement . ", ";
     }
 
-    $statement = $statement . " LIMIT 50";
+    $statement = $statement . " LIMIT :rows OFFSET :the_offset";
 
     $stmt = $conn->prepare($statement);
 
-    $stmt->execute(array('username' => $username));
+    $stmt->execute(array('username' => $username, 'rows' => $rowPerPage, 'the_offset' => (($page - 1) * $rowPerPage)));
     $rowTable = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
@@ -194,113 +203,218 @@ try {
     <?php include 'header.php'; ?>
     <div class="row top-buffer-15">
         <div class="col s4 offset-s4">
-            <div class="row">
-                <div class="input-field col s12">
-                    <i class="material-icons prefix">search</i>
-                    <input id="search_user" class="validate" type="text" ">
-                    <label for="search_user">Username</label>
-                </div>
+            <div class="input-field col s12">
+                <i class="material-icons prefix">search</i>
+                <input id="search_user" class="validate" type="text" ">
+                <label for="search_user">Username</label>
             </div>
         </div>
     </div>
 </header>
-<main class="<?php if ($current_game == $game_id) echo 'valign-wrapper'; ?>">
+<main class="<?php if (count($rowTable) == 0) echo 'valign-wrapper'; ?>">
     <div class="container">
-        <?php if (count($rowTable) > 0): ?>
+        <?php if (!(isset($_GET['user']) && !empty($_GET['user']))): ?>
+            <div class="row">
+                <h3 class="center-align"><i class="medium material-icons vmid">error</i> No user selected.</h3>
+            </div>
+        <?php elseif (count($rowTable) > 0): ?>
             <div class="row">
                 <h3><b><?php echo $username; ?></b></h3>
                 <h5><b>Net profit: </b><?php echo($net_profit / 100); ?> bits</h5>
                 <h5><b>Games played: </b><?php echo $games_played ?></h5>
             </div>
-            <table class="highlight">
-                <thead>
-                <tr>
-                    <th><a href="<?php
-                        if ($gaAsc == 2)
-                            userStatsLink($username, $page, 1, $beAsc, $prAsc, $jaAsc,
-                                $order, 1);
-                        else
-                            userStatsLink($username, $page, 2, $beAsc, $prAsc, $jaAsc,
-                                $order, 1);?>">Game #<i class="tiny material-icons sorter"><?php
-                                if ($gaAsc == 2)
-                                    echo 'arrow_drop_down';
-                                else
-                                    echo 'arrow_drop_up';
-                                ?></i></a></th>
-                    <th><a href="<?php
-                        if ($beAsc == 2)
-                            userStatsLink($username, $page, $gaAsc, 1, $prAsc, $jaAsc,
-                                $order, 2);
-                        else
-                            userStatsLink($username, $page, $gaAsc, 2, $prAsc, $jaAsc,
-                                $order, 2);?>">Bet<i class="tiny material-icons sorter"><?php
-                                if ($beAsc == 2)
-                                    echo 'arrow_drop_down';
-                                else
-                                    echo 'arrow_drop_up';
-                                ?></i></a></th>
-                    <th><a href="<?php
-                        if ($prAsc == 2)
-                            userStatsLink($username, $page, $gaAsc, $beAsc, 1, $jaAsc,
-                                $order, 3);
-                        else
-                            userStatsLink($username, $page, $gaAsc, $beAsc, 2, $jaAsc,
-                                $order, 3);?>">Profit<i class="tiny material-icons sorter"><?php
-                                if ($prAsc == 2)
-                                    echo 'arrow_drop_down';
-                                else
-                                    echo 'arrow_drop_up';
-                                ?></i></a></th>
-                    <th><a href="<?php
-                        if ($jaAsc == 2)
-                            userStatsLink($username, $page, $gaAsc, $beAsc, $prAsc, 1,
-                                $order, 4);
-                        else
-                            userStatsLink($username, $page, $gaAsc, $beAsc, $prAsc, 2,
-                                $order, 4);?>">Jackpot<i class="tiny material-icons sorter"><?php
-                                if ($jaAsc == 2)
-                                    echo 'arrow_drop_down';
-                                else
-                                    echo 'arrow_drop_up';
-                                ?></i></a></th>
-                </tr>
-                </thead>
-                <tbody>
-                <?php
-                foreach ($rowTable as $item) : ?>
-
-                    <tr class="<?php
-                    if ($item['win'] == 1)
-                        echo 'win';
-                    else
-                        echo 'lose';
-                    ?>">
-
-                        <td>
-                            <a href="<?php echo "game_info.php?game=" . $item['game_id']; ?>"><?php echo $item['game_id']; ?></a>
-                        </td>
-                        <td><?php echo $item['bet'] / 100; ?> bits</td>
-                        <td><?php
-
-                            if ($item['profit'] > 0)
-                                echo '<span class="win-text">+';
-                            elseif ($item['profit'] == 0)
-                                echo '<span class="neutral-text">';
-                            else
-                                echo '<span class="lose-text">';
-
-                            echo($item['profit'] / 100); ?> bits</span></td>
-                        <td><?php echo $item['amount'] / 100; ?> bits</td>
-                    </tr>
-
-
-                <?php endforeach; ?>
-                </tbody>
-            </table>
             <div class="row">
+                <table class="highlight">
+                    <thead>
+                    <tr>
+                        <th><a href="<?php
+                            if ($gaAsc == 2)
+                                userStatsLink($username, $page, 1, $beAsc, $prAsc, $jaAsc,
+                                    $order, 1);
+                            else
+                                userStatsLink($username, $page, 2, $beAsc, $prAsc, $jaAsc,
+                                    $order, 1); ?>">Game #<i class="tiny material-icons sorter"><?php
+                                    if ($gaAsc == 2)
+                                        echo 'arrow_drop_down';
+                                    else
+                                        echo 'arrow_drop_up';
+                                    ?></i></a></th>
+                        <th><a href="<?php
+                            if ($beAsc == 2)
+                                userStatsLink($username, $page, $gaAsc, 1, $prAsc, $jaAsc,
+                                    $order, 2);
+                            else
+                                userStatsLink($username, $page, $gaAsc, 2, $prAsc, $jaAsc,
+                                    $order, 2); ?>">Bet<i class="tiny material-icons sorter"><?php
+                                    if ($beAsc == 2)
+                                        echo 'arrow_drop_down';
+                                    else
+                                        echo 'arrow_drop_up';
+                                    ?></i></a></th>
+                        <th><a href="<?php
+                            if ($prAsc == 2)
+                                userStatsLink($username, $page, $gaAsc, $beAsc, 1, $jaAsc,
+                                    $order, 3);
+                            else
+                                userStatsLink($username, $page, $gaAsc, $beAsc, 2, $jaAsc,
+                                    $order, 3); ?>">Profit<i class="tiny material-icons sorter"><?php
+                                    if ($prAsc == 2)
+                                        echo 'arrow_drop_down';
+                                    else
+                                        echo 'arrow_drop_up';
+                                    ?></i></a></th>
+                        <th><a href="<?php
+                            if ($jaAsc == 2)
+                                userStatsLink($username, $page, $gaAsc, $beAsc, $prAsc, 1,
+                                    $order, 4);
+                            else
+                                userStatsLink($username, $page, $gaAsc, $beAsc, $prAsc, 2,
+                                    $order, 4); ?>">Jackpot<i class="tiny material-icons sorter"><?php
+                                    if ($jaAsc == 2)
+                                        echo 'arrow_drop_down';
+                                    else
+                                        echo 'arrow_drop_up';
+                                    ?></i></a></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <?php
+                    foreach ($rowTable as $item) : ?>
+
+                        <tr class="<?php
+                        if ($item['win'] == 1)
+                            echo 'win';
+                        else
+                            echo 'lose';
+                        ?>">
+
+                            <td>
+                                <a href="<?php echo "game_info.php?game=" . $item['game_id']; ?>"><?php echo $item['game_id']; ?></a>
+                            </td>
+                            <td><?php echo $item['bet'] / 100; ?> bits</td>
+                            <td><?php
+
+                                if ($item['profit'] > 0)
+                                    echo '<span class="win-text">+';
+                                elseif ($item['profit'] == 0)
+                                    echo '<span class="neutral-text">';
+                                else
+                                    echo '<span class="lose-text">';
+
+                                echo($item['profit'] / 100); ?> bits</span></td>
+                            <td><?php echo $item['amount'] / 100; ?> bits</td>
+                        </tr>
+
+
+                    <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+            <div class="row centerWrap">
+                <div class="centeredDiv">
+                    <ul class="pagination">
+                        <!--                        Go left (pagination) -->
+                        <li class="<?php
+                        if ($page > 1)
+                            echo 'waves-effect';
+                        else
+                            echo 'disabled';
+                        ?>"><a href="<?php
+                            if ($page > 1)
+                                userStatsLink($username, $page - 1, $gaAsc, $beAsc, $prAsc, $jaAsc, $order, $order[0]);
+                            else
+                                echo '#!';
+                            ?>">
+                                <i class="material-icons">chevron_left</i></a></li>
+                        <!--Pages-->
+                        <?php
+                        if ($pageCount <= 15) {
+                            for ($i = 1; $i <= $pageCount; $i++) : ?>
+                                <li class="<?php if ($page == $i)
+                                    echo 'active';
+                                else
+                                    echo 'waves-effect'; ?>"><a
+                                            href="<?php userStatsLink($username, $i, $gaAsc, $beAsc, $prAsc, $jaAsc, $order, $order[0]); ?>">
+                                        <?php echo $i; ?></a></li>
+                            <?php endfor;
+                        } else {
+                            if ($page <= 8) {
+                                for ($i = 1; $i <= 14; $i++) :?>
+                                    <li class="<?php if ($page == $i)
+                                        echo 'active';
+                                    else
+                                        echo 'waves-effect'; ?>"><a
+                                                href="<?php userStatsLink($username, $i, $gaAsc, $beAsc, $prAsc, $jaAsc, $order, $order[0]); ?>">
+                                            <?php echo $i; ?></a></li>
+                                <?php endfor;
+                                echo '<li>...</li>'; ?>
+                                <li class="<?php if ($page == $pageCount)
+                                    echo 'active';
+                                else
+                                    echo 'waves-effect'; ?>"><a
+                                            href="<?php userStatsLink($username, $i, $gaAsc, $beAsc, $prAsc, $jaAsc, $order, $order[0]); ?>">
+                                        <?php echo $pageCount; ?></a></li>
+                                <?php
+                            } else { ?>
+                                <li class="<?php if ($page == 1)
+                                    echo 'active';
+                                else
+                                    echo 'waves-effect'; ?>"><a
+                                            href="<?php userStatsLink($username, $i, $gaAsc, $beAsc, $prAsc, $jaAsc, $order, $order[0]); ?>">
+                                        <?php echo 1; ?></a></li>
+                                <?php
+                                echo '<li>...</li>';
+                                if ($pageCount - $page > 7) {
+                                    for ($i = $page - 6; $i <= $page + 6; $i++) :?>
+                                        <li class="<?php if ($page == $i)
+                                            echo 'active';
+                                        else
+                                            echo 'waves-effect'; ?>"><a
+                                                    href="<?php userStatsLink($username, $i, $gaAsc, $beAsc, $prAsc, $jaAsc, $order, $order[0]); ?>">
+                                                <?php echo $i; ?></a></li>
+                                    <?php endfor;
+                                    echo '<li>...</li>'; ?>
+                                    <li class="<?php if ($page == $pageCount)
+                                        echo 'active';
+                                    else
+                                        echo 'waves-effect'; ?>"><a
+                                                href="<?php userStatsLink($username, $i, $gaAsc, $beAsc, $prAsc, $jaAsc, $order, $order[0]); ?>">
+                                            <?php echo $pageCount; ?></a></li>
+                                    <?php
+                                } else {
+                                    for ($i = $pageCount - 13; $i <= $pageCount; $i++) :?>
+                                        <li class="<?php if ($page == $i)
+                                            echo 'active';
+                                        else
+                                            echo 'waves-effect'; ?>"><a
+                                                    href="<?php userStatsLink($username, $i, $gaAsc, $beAsc, $prAsc, $jaAsc, $order, $order[0]); ?>">
+                                                <?php echo $i; ?></a></li>
+                                    <?php endfor;
+                                }
+                            }
+
+                        } ?>
+                        <!--                        Go right (pagination) -->
+                        <li class="<?php
+                        if ($page < $pageCount)
+                            echo 'waves-effect';
+                        else
+                            echo 'disabled';
+                        ?>"><a href="<?php
+                            if ($page < $pageCount)
+                                userStatsLink($username, $page + 1, $gaAsc, $beAsc, $prAsc, $jaAsc, $order, $order[0]);
+                            else
+                                echo '#!';
+                            ?>">
+                                <i class="material-icons">chevron_right</i></a></li>
+                    </ul>
+                </div>
+            </div>
         <?php else: ?>
-            <h3 class="center-align"><i class="medium material-icons vmid">error</i> User '<?php echo $_GET['user']; ?>'
-                does not exist.</h3>
+            <div class="row">
+                <h3 class="center-align"><i class="medium material-icons vmid">error</i> User
+                    '<?php echo htmlspecialchars($_GET['user']); ?>'
+                    does not exist.</h3>
             </div>
         <?php endif; ?>
     </div>

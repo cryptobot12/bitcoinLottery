@@ -205,12 +205,10 @@ try {
     <?php include "header.php"; ?>
     <div class="row top-buffer-15">
         <div class="col s4 offset-s4">
-            <div class="row">
-                <div class="input-field col s12">
-                    <i class="material-icons prefix">search</i>
-                    <input id="search_game" class="validate" type="number" ">
-                    <label for="search_game">Game number</label>
-                </div>
+            <div class="input-field col s12">
+                <i class="material-icons prefix">search</i>
+                <input id="search_game" class="validate" type="number" ">
+                <label for="search_game">Game number</label>
             </div>
         </div>
     </div>
@@ -316,7 +314,7 @@ try {
                         echo '<td><div class="chip">' . $item['number_id'] . '</div></td>' .
                             '<td>' . $item['frequency'] . '</td>' .
                             '<td>' . $item['fxf'] . '</td>' .
-                            '<td><a href="#!" onclick="showList('. $item['number_id'] . ');">See players</a></td>
+                            '<td><a href="#!" onclick="showList(' . $item['number_id'] . ');">See players</a></td>
               </tr>';
                     }
                     ?>
@@ -325,7 +323,9 @@ try {
                 <!-- Modal Structure -->
                 <div id="modal1" class="modal">
                     <div class="modal-content">
-                        <div class="h5Span">Number <div id="numberSelected" class="chip"></div></div>
+                        <div class="h5Span">Number
+                            <div id="numberSelected" class="chip"></div>
+                        </div>
                         <hr>
                         <ul class="browser-default discList" id="playersList">
 
@@ -339,6 +339,7 @@ try {
             <div class="row centerWrap">
                 <div class="centeredDiv">
                     <ul class="pagination">
+                        <!--Go left (pagination)-->
                         <li class="<?php
                         if ($page > 1)
                             echo 'waves-effect';
@@ -351,6 +352,7 @@ try {
                                 echo '#!';
                             ?>">
                                 <i class="material-icons">chevron_left</i></a></li>
+                        <!--Pages-->
                         <?php
                         if ($pageCount <= 15) {
                             for ($i = 1; $i <= $pageCount; $i++) : ?>
@@ -418,6 +420,7 @@ try {
                             }
 
                         } ?>
+                        <!--Go right(pagination)-->
                         <li class="<?php
                         if ($page < $pageCount)
                             echo 'waves-effect';
