@@ -10,7 +10,7 @@ session_start();
  * Time: 12:44 PM
  */
 
-$servername = "localhost";
+include "connect.php";
 $username = $_SESSION['username'];
 
 $betNumber = json_decode(htmlspecialchars($_POST['numbers']));
@@ -42,7 +42,7 @@ if (isset($_SESSION['username'])) {
     if (legalArray($betNumber)) {
 
         try {
-            $conn = new PDO("mysql:host=$servername;dbname=lottery", "root", "5720297Ff");
+            $conn = new PDO("mysql:host=$servername;dbname=$dbname", $dbuser, $dbpass);
             // set the PDO error mode to exception
             $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);

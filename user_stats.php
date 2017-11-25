@@ -58,8 +58,8 @@ if (isset($_GET['ord']) && !empty($_GET['ord'])) {
 $rowPerPage = 25;
 
 try {
-    $servername = "localhost";
-    $conn = new PDO("mysql:host=$servername;dbname=lottery", "root", "5720297Ff");
+    include "connect.php";
+    $conn = new PDO("mysql:host=$servername;dbname=$dbname", $dbuser, $dbpass);
     // set the PDO error mode to exception
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
@@ -73,6 +73,29 @@ try {
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
     $net_profit = $result['net_profit'];
     $games_played = $result['games_played'];
+
+    $stmt = $conn->prepare('SELECT
+                      rank
+                    FROM user INNER JOIN
+                      (SELECT
+                        user.user_id,
+                      CASE
+                      WHEN @prevRank = net_profit
+                        THEN @curRank
+                      WHEN @prevRank := net_profit
+                        THEN @curRank := @curRank + 1
+                      END AS rank,
+                      net_profit
+                    FROM user,
+                      (SELECT
+                         @curRank := 0,
+                         @prevRank := NULL) r
+                    ORDER BY net_profit DESC) AS r1
+                    ON user.user_id = r1.user_id
+                    WHERE user.username = :username');
+    $stmt->execute(array('username' => htmlspecialchars($_GET['user'])));
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    $rank = $row['rank'];
 
     /* Getting page count */
     $stmt = $conn->prepare('SELECT COUNT(game_id) AS pageCount FROM gamexuser WHERE user_id = 
@@ -220,95 +243,98 @@ try {
         <?php elseif (count($rowTable) > 0): ?>
             <div class="row">
                 <h3><b><?php echo $username; ?></b></h3>
+                <h5><b>Rank# </b><?php echo $rank; ?></h5>
                 <h5><b>Net profit: </b><?php echo($net_profit / 100); ?> bits</h5>
                 <h5><b>Games played: </b><?php echo $games_played ?></h5>
             </div>
             <div class="row">
-                <table class="highlight">
-                    <thead>
-                    <tr>
-                        <th><a href="<?php
-                            if ($gaAsc == 2)
-                                userStatsLink($username, $page, 1, $beAsc, $prAsc, $jaAsc,
-                                    $order, 1);
-                            else
-                                userStatsLink($username, $page, 2, $beAsc, $prAsc, $jaAsc,
-                                    $order, 1); ?>">Game #<i class="tiny material-icons sorter"><?php
-                                    if ($gaAsc == 2)
-                                        echo 'arrow_drop_down';
-                                    else
-                                        echo 'arrow_drop_up';
-                                    ?></i></a></th>
-                        <th><a href="<?php
-                            if ($beAsc == 2)
-                                userStatsLink($username, $page, $gaAsc, 1, $prAsc, $jaAsc,
-                                    $order, 2);
-                            else
-                                userStatsLink($username, $page, $gaAsc, 2, $prAsc, $jaAsc,
-                                    $order, 2); ?>">Bet<i class="tiny material-icons sorter"><?php
-                                    if ($beAsc == 2)
-                                        echo 'arrow_drop_down';
-                                    else
-                                        echo 'arrow_drop_up';
-                                    ?></i></a></th>
-                        <th><a href="<?php
-                            if ($prAsc == 2)
-                                userStatsLink($username, $page, $gaAsc, $beAsc, 1, $jaAsc,
-                                    $order, 3);
-                            else
-                                userStatsLink($username, $page, $gaAsc, $beAsc, 2, $jaAsc,
-                                    $order, 3); ?>">Profit<i class="tiny material-icons sorter"><?php
-                                    if ($prAsc == 2)
-                                        echo 'arrow_drop_down';
-                                    else
-                                        echo 'arrow_drop_up';
-                                    ?></i></a></th>
-                        <th><a href="<?php
-                            if ($jaAsc == 2)
-                                userStatsLink($username, $page, $gaAsc, $beAsc, $prAsc, 1,
-                                    $order, 4);
-                            else
-                                userStatsLink($username, $page, $gaAsc, $beAsc, $prAsc, 2,
-                                    $order, 4); ?>">Jackpot<i class="tiny material-icons sorter"><?php
-                                    if ($jaAsc == 2)
-                                        echo 'arrow_drop_down';
-                                    else
-                                        echo 'arrow_drop_up';
-                                    ?></i></a></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <?php
-                    foreach ($rowTable as $item) : ?>
-
-                        <tr class="<?php
-                        if ($item['win'] == 1)
-                            echo 'win';
-                        else
-                            echo 'lose';
-                        ?>">
-
-                            <td>
-                                <a href="<?php echo "game_info.php?game=" . $item['game_id']; ?>"><?php echo $item['game_id']; ?></a>
-                            </td>
-                            <td><?php echo $item['bet'] / 100; ?> bits</td>
-                            <td><?php
-
-                                if ($item['profit'] > 0)
-                                    echo '<span class="win-text">+';
-                                elseif ($item['profit'] == 0)
-                                    echo '<span class="neutral-text">';
+                <div class="col l10 offset-l1 m10 offset-m1 s12">
+                    <table class="highlight">
+                        <thead>
+                        <tr>
+                            <th><a href="<?php
+                                if ($gaAsc == 2)
+                                    userStatsLink($username, $page, 1, $beAsc, $prAsc, $jaAsc,
+                                        $order, 1);
                                 else
-                                    echo '<span class="lose-text">';
-
-                                echo($item['profit'] / 100); ?> bits</span></td>
-                            <td><?php echo $item['amount'] / 100; ?> bits</td>
+                                    userStatsLink($username, $page, 2, $beAsc, $prAsc, $jaAsc,
+                                        $order, 1); ?>">Game #<i class="tiny material-icons sorter"><?php
+                                        if ($gaAsc == 2)
+                                            echo 'arrow_drop_down';
+                                        else
+                                            echo 'arrow_drop_up';
+                                        ?></i></a></th>
+                            <th><a href="<?php
+                                if ($beAsc == 2)
+                                    userStatsLink($username, $page, $gaAsc, 1, $prAsc, $jaAsc,
+                                        $order, 2);
+                                else
+                                    userStatsLink($username, $page, $gaAsc, 2, $prAsc, $jaAsc,
+                                        $order, 2); ?>">Bet<i class="tiny material-icons sorter"><?php
+                                        if ($beAsc == 2)
+                                            echo 'arrow_drop_down';
+                                        else
+                                            echo 'arrow_drop_up';
+                                        ?></i></a></th>
+                            <th><a href="<?php
+                                if ($prAsc == 2)
+                                    userStatsLink($username, $page, $gaAsc, $beAsc, 1, $jaAsc,
+                                        $order, 3);
+                                else
+                                    userStatsLink($username, $page, $gaAsc, $beAsc, 2, $jaAsc,
+                                        $order, 3); ?>">Profit<i class="tiny material-icons sorter"><?php
+                                        if ($prAsc == 2)
+                                            echo 'arrow_drop_down';
+                                        else
+                                            echo 'arrow_drop_up';
+                                        ?></i></a></th>
+                            <th><a href="<?php
+                                if ($jaAsc == 2)
+                                    userStatsLink($username, $page, $gaAsc, $beAsc, $prAsc, 1,
+                                        $order, 4);
+                                else
+                                    userStatsLink($username, $page, $gaAsc, $beAsc, $prAsc, 2,
+                                        $order, 4); ?>">Jackpot<i class="tiny material-icons sorter"><?php
+                                        if ($jaAsc == 2)
+                                            echo 'arrow_drop_down';
+                                        else
+                                            echo 'arrow_drop_up';
+                                        ?></i></a></th>
                         </tr>
+                        </thead>
+                        <tbody>
+                        <?php
+                        foreach ($rowTable as $item) : ?>
+
+                            <tr class="<?php
+                            if ($item['win'] == 1)
+                                echo 'win';
+                            else
+                                echo 'lose';
+                            ?>">
+
+                                <td>
+                                    <a href="<?php echo "game_info.php?game=" . $item['game_id']; ?>"><?php echo $item['game_id']; ?></a>
+                                </td>
+                                <td><?php echo $item['bet'] / 100; ?> bits</td>
+                                <td><?php
+
+                                    if ($item['profit'] > 0)
+                                        echo '<span class="win-text">+';
+                                    elseif ($item['profit'] == 0)
+                                        echo '<span class="neutral-text">';
+                                    else
+                                        echo '<span class="lose-text">';
+
+                                    echo($item['profit'] / 100); ?> bits</span></td>
+                                <td><?php echo $item['amount'] / 100; ?> bits</td>
+                            </tr>
 
 
-                    <?php endforeach; ?>
-                    </tbody>
-                </table>
+                        <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
             </div>
             <div class="row centerWrap">
                 <div class="centeredDiv">

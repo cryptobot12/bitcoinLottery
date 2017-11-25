@@ -8,8 +8,8 @@
 session_start();
 
 try {
-    $servername = "localhost";
-    $conn = new PDO("mysql:host=$servername;dbname=lottery", "root", "5720297Ff");
+    include "connect.php";
+    $conn = new PDO("mysql:host=$servername;dbname=$dbname", $dbuser, $dbpass);
     // set the PDO error mode to exception
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
@@ -54,7 +54,7 @@ try {
     echo '<p><a id="gameLink" href="game_info.php?game_id=' . $last_game . '" target="_blank">Game #<span id="gameNumberLast">' . $last_game . '</span></a></p>';
     echo '<div><b>Winner number: </b><div class="chip"><span id="winnerNumberLast">' . $winner_number . '</span></div></div>';
     echo '<p><b>Jackpot: </b><span id="jackpotLast">' . $jackpot . '</span> bits</p>';
-    echo '<table id="lastGameTable" class="bordered responsive-table">
+    echo '<table id="lastGameTable" class="bordered">
             <thead>
             <tr>
               <th>User</th>

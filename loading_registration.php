@@ -7,7 +7,7 @@
  */
 include 'random.php';
 
-$servername = "localhost";
+include "connect.php";
 $username = htmlspecialchars($_POST['username']);
 $password = password_hash(htmlspecialchars($_POST['password']), PASSWORD_DEFAULT);
 $email = htmlspecialchars($_POST['email']);
@@ -15,7 +15,7 @@ $bit_address = rand_string(15);
 
 
 try {
-    $conn = new PDO("mysql:host=$servername;dbname=lottery", "root", "5720297Ff");
+    $conn = new PDO("mysql:host=$servername;dbname=$dbname", $dbuser, $dbpass);
     // set the PDO error mode to exception
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);

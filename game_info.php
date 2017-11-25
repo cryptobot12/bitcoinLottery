@@ -7,7 +7,7 @@
  */
 session_start();
 
-$servername = "localhost";
+include "connect.php";
 
 include "function.php";
 
@@ -59,7 +59,7 @@ if (isset($_GET['th']) && !empty($_GET['th'])) {
 }
 
 try {
-    $conn = new PDO("mysql:host=$servername;dbname=lottery", "root", "5720297Ff");
+    $conn = new PDO("mysql:host=$servername;dbname=$dbname", $dbuser, $dbpass);
     // set the PDO error mode to exception
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
@@ -226,6 +226,7 @@ try {
                 </div>
             </div>
             <div class="row">
+                <div class="col l10 offset-l1 m10 offset-m1 s12">
                 <table class="highlight">
                     <thead>
                     <tr>
@@ -320,6 +321,7 @@ try {
                     ?>
                     </tbody>
                 </table>
+                </div>
                 <!-- Modal Structure -->
                 <div id="modal1" class="modal">
                     <div class="modal-content">

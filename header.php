@@ -21,7 +21,7 @@
     <!-- Navbar goes here -->
     <nav>
         <div class="nav-wrapper green">
-            <a href="#" class="brand-logo left">BitPVP</a>
+            <a href="index.php" class="brand-logo left">BitPVP</a>
             <ul id="nav-mobile" class="right .hide-on-small-only nav-letters">
                 <li><a href="rank.php"><i class="material-icons left">assistant_photo</i><b>Ranking</b></a></li>
                 <li><a class="dropdown-button" href="#" data-activates="statsDropdown">

@@ -198,8 +198,8 @@ require __DIR__ . '/vendor/autoload.php';
         <div class="col s4">
             <div class="card z-depth-4">
                 <div class="card-content">
-                    <h4>Game history</h4>
-                    <table id="gameHistoryTable" class="bordered responsive-table">
+                    <h4>Games history</h4>
+                    <table id="gameHistoryTable" class="bordered">
                         <thead>
                         <tr>
                             <th>Game #</th>

@@ -8,8 +8,8 @@
 
 
 try {
-    $servername = "localhost";
-    $conn = new PDO("mysql:host=$servername;dbname=lottery", "root", "5720297Ff");
+    include "connect.php";
+    $conn = new PDO("mysql:host=$servername;dbname=$dbname", $dbuser, $dbpass);
     // set the PDO error mode to exception
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
@@ -29,55 +29,105 @@ try {
     $total_users = $result['total_users'];
     $total_plays = $result['total_plays'];
 
-    echo "<table>
-            <tr>
-                <th>Deposits</th>
-                <td>" . $deposits . " bits</td>
-            </tr>
-            <tr>
-                <th>Withdrawals</th>
-                <td>" . $withdrawals . " bits</td>
-            </tr>
-            <tr>
-                <th>Net</th>
-                <td>" . $net . " bits</td>
-            </tr>
-            <tr>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-            </tr>
-            <tr>
-                <th>Players Gross Profit</th>
-                <td>" . $gross_profit . " bits</td>
-            </tr>
-            <tr>
-                <th>Our Profit</th>
-                <td>" . $our_profit . " bits</td>
-            </tr>
-            <tr>
-                <th>Biggest Jackpot</th>
-                <td>" . $max_jackpot . " bits</td>
-            </tr>
-            <tr>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-            </tr>
-            <tr>
-                <th>Total Users</th>
-                <td>$total_users</td>
-            </tr>
-            <tr>
-                <th>Games Played</th>
-                <td>$games_played</td>
-            </tr>
-            <tr>
-                <th>Total Plays</th>
-                <td>$total_plays</td>
-            </tr>
-          </table>";
-
-}
-catch(PDOException $e)
-{
+} catch (PDOException $e) {
     echo "Connection failed: " . $e->getMessage();
 }
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bitcoin</title>
+    <!--    Jquery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+    <script src="js/autobahn.js"></script>
+    <script>
+        $(function () {
+
+            var searchUser = $("#search_user");
+            searchUser.on('keypress', function (e) {
+                if (e.which === 13) {
+                    window.location.href = 'user_stats.php?user=' + searchUser.val();
+                }
+            });
+        });
+    </script>
+
+    <link href="css/style.css" rel="stylesheet">
+
+    <!--Let browser know website is optimized for mobile-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+</head>
+<body>
+<header>
+    <?php include "header.php"; ?>
+</header>
+<main>
+    <div class="row top-buffer-15">
+        <div class="col l4 offset-l4 m8 offset-m2 s12">
+            <div class="card z-depth-5">
+                <div class="card-content">
+                    <h3>Server stats</h3>
+                    <table class="striped">
+                        <tbody>
+                        <tr>
+                            <th>Deposits</th>
+                            <td><?php echo $deposits; ?> bits</td>
+                        </tr>
+                        <tr>
+                            <th>Withdrawals</th>
+                            <td><?php echo $withdrawals; ?> bits</td>
+                        </tr>
+                        <tr>
+                            <th>Net</th>
+                            <td><?php echo $net; ?> bits</td>
+                        </tr>
+                        <tr>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                        </tr>
+                        <tr>
+                            <th>Players Gross Profit</th>
+                            <td><?php echo $gross_profit; ?> bits</td>
+                        </tr>
+                        <tr>
+                            <th>Our Profit</th>
+                            <td><?php echo $our_profit; ?> bits</td>
+                        </tr>
+                        <tr>
+                            <th>Biggest Jackpot</th>
+                            <td><?php echo $max_jackpot; ?> bits</td>
+                        </tr>
+                        <tr>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                        </tr>
+                        <tr>
+                            <th>Total Users</th>
+                            <td><?php echo $total_users; ?></td>
+                        </tr>
+                        <tr>
+                            <th>Games Played</th>
+                            <td><?php echo $games_played; ?></td>
+                        </tr>
+                        <tr>
+                            <th>Total Plays</th>
+                            <td><?php echo $total_plays; ?></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<?php include "footer.php"; ?>
+</body>

@@ -42,8 +42,8 @@ if (isset($_GET['ord']) && !empty($_GET['ord'])) {
 
 
 try {
-    $servername = "localhost";
-    $conn = new PDO("mysql:host=$servername;dbname=lottery", "root", "5720297Ff");
+    include "connect.php";
+    $conn = new PDO("mysql:host=$servername;dbname=$dbname", $dbuser, $dbpass);
     // set the PDO error mode to exception
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
@@ -189,52 +189,54 @@ try {
     </div>
 </header>
 <main class="<?php
-        if (isset($_GET['user']) && !empty($_GET['user']) && (!isset($rowTable['username'])))
-            echo 'valign-wrapper'; ?>">
+if (isset($_GET['user']) && !empty($_GET['user']) && (!isset($rowTable['username'])))
+    echo 'valign-wrapper'; ?>">
     <div class="container">
         <?php if (!(isset($_GET['user']) && !empty($_GET['user']))) : ?>
             <div class="row">
-                <table class="highlight">
-                    <thead>
-                    <tr>
-                        <th><a href="<?php
-                            if ($raAsc == 2)
-                                rankLink($page, 1, $gaAsc, $order, 1);
-                            else
-                                rankLink($page, 2, $gaAsc, $order, 1);
-                            ?>">Rank<i class="tiny material-icons sorter"><?php
-                                    if ($raAsc == 2)
-                                        echo 'arrow_drop_down';
-                                    else
-                                        echo 'arrow_drop_up';
-                                    ?></i></a></th>
-                        <th>User</th>
-                        <th>Net Profit</th>
-                        <th><a href="<?php
-                            if ($gaAsc == 2)
-                                rankLink($page, $raAsc, 1, $order, 2);
-                            else
-                                rankLink($page, $raAsc, 2, $order, 2);
-                            ?>">Games played<i class="tiny material-icons sorter"><?php
-                                    if ($gaAsc == 2)
-                                        echo 'arrow_drop_down';
-                                    else
-                                        echo 'arrow_drop_up';
-                                    ?></i></a></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <?php
-                    foreach ($rowTable as $item) {
-                        echo "<tr>
+                <div class="col l10 offset-l1 m10 offset-m1 s12">
+                    <table class="highlight">
+                        <thead>
+                        <tr>
+                            <th><a href="<?php
+                                if ($raAsc == 2)
+                                    rankLink($page, 1, $gaAsc, $order, 1);
+                                else
+                                    rankLink($page, 2, $gaAsc, $order, 1);
+                                ?>">Rank<i class="tiny material-icons sorter"><?php
+                                        if ($raAsc == 2)
+                                            echo 'arrow_drop_down';
+                                        else
+                                            echo 'arrow_drop_up';
+                                        ?></i></a></th>
+                            <th>User</th>
+                            <th>Net Profit</th>
+                            <th><a href="<?php
+                                if ($gaAsc == 2)
+                                    rankLink($page, $raAsc, 1, $order, 2);
+                                else
+                                    rankLink($page, $raAsc, 2, $order, 2);
+                                ?>">Games played<i class="tiny material-icons sorter"><?php
+                                        if ($gaAsc == 2)
+                                            echo 'arrow_drop_down';
+                                        else
+                                            echo 'arrow_drop_up';
+                                        ?></i></a></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <?php
+                        foreach ($rowTable as $item) {
+                            echo "<tr>
             <td><b>" . $item['rank'] . "</b></td>
                 <td><a href='user_stats.php?user=" . $item['username'] . "'>" . $item['username'] . "</a></td>" .
-                            "<td>" . $item['net_profit'] / 100 . " bits</td>" .
-                            "<td>" . $item['games_played'] . "</td>" .
-                            "</tr>";
-                    } ?>
-                    </tbody>
-                </table>
+                                "<td>" . $item['net_profit'] / 100 . " bits</td>" .
+                                "<td>" . $item['games_played'] . "</td>" .
+                                "</tr>";
+                        } ?>
+                        </tbody>
+                    </table>
+                </div>
             </div>
             <div class="row centerWrap">
                 <div class="centeredDiv">
@@ -339,26 +341,28 @@ try {
         <?php else: ?>
             <div class="row">
                 <?php if (isset($rowTable['username'])): ?>
-                    <table class="highlight">
-                        <thead>
-                        <tr>
-                            <th>Rank</th>
-                            <th>User</th>
-                            <th>Net Profit</th>
-                            <th>Games played</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <?php
-                        echo "<tr>
+                    <div class="col l10 offset-l1 m10 offset-m1 s12">
+                        <table class="highlight">
+                            <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>User</th>
+                                <th>Net Profit</th>
+                                <th>Games played</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <?php
+                            echo "<tr>
             <td><b>" . $rowTable['rank'] . "</b></td>
                 <td><a href='user_stats.php?user=" . $rowTable['username'] . "'>" . $rowTable['username'] . "</a></td>" .
-                            "<td>" . $rowTable['net_profit'] / 100 . " bits</td>" .
-                            "<td>" . $rowTable['games_played'] . "</td>" .
-                            "</tr>";
-                        ?>
-                        </tbody>
-                    </table>
+                                "<td>" . $rowTable['net_profit'] / 100 . " bits</td>" .
+                                "<td>" . $rowTable['games_played'] . "</td>" .
+                                "</tr>";
+                            ?>
+                            </tbody>
+                        </table>
+                    </div>
                 <?php else: ?>
                     <h3 class="center-align"><i class="medium material-icons vmid">error</i> User
                         '<?php echo htmlspecialchars($_GET['user']); ?>'

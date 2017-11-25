@@ -6,12 +6,12 @@
  * Time: 4:56 PM
  */
 
-$servername = "localhost";
+include "connect.php";
 $game = htmlspecialchars($_POST['game']);
 $number = htmlspecialchars($_POST['number']);
 
 try {
-    $conn = new PDO("mysql:host=$servername;dbname=lottery", "root", "5720297Ff");
+    $conn = new PDO("mysql:host=$servername;dbname=$dbname", $dbuser, $dbpass);
     // set the PDO error mode to exception
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
