@@ -5,6 +5,7 @@
  * Date: 10/25/2017
  * Time: 6:37 PM
  */
+session_start();
 
 
 try {

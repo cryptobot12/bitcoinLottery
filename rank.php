@@ -5,12 +5,13 @@
  * Date: 10/25/2017
  * Time: 6:16 PM
  */
+session_start();
 
 $rowPerPage = 25;
 
 include "function.php";
 
-function rankLink($page = 1, $raAsc = 2, $gaAsc = 2, $arrayOrd, $first)
+function rankLink($page = 1, $raAsc = 1, $gaAsc = 1, $arrayOrd, $first)
 {
     $pos = array_search($first, $arrayOrd);
     array_splice($arrayOrd, $pos, 1);
@@ -21,9 +22,9 @@ function rankLink($page = 1, $raAsc = 2, $gaAsc = 2, $arrayOrd, $first)
 
 if (isset($_GET['ra']) && !empty($_GET['ra'])) {
     $raAsc = htmlspecialchars($_GET['ra']);
-    filterOnlyNumber($raAsc, 1, 2, 1);
+    filterOnlyNumber($raAsc, 2, 2, 1);
 } else {
-    $raAsc = 1;
+    $raAsc = 2;
 }
 
 if (isset($_GET['ga']) && !empty($_GET['ga'])) {
@@ -67,9 +68,9 @@ try {
             $gaString = "user.games_played DESC";
 
         if ($raAsc == 2)
-            $raString = "rank DESC";
-        else
             $raString = "rank ASC";
+        else
+            $raString = "rank DESC";
 
         $statement = 'SELECT
                       rank,

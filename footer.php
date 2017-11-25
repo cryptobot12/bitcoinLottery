@@ -21,8 +21,9 @@ $_SESSION['url'] = $actual_link;
                     <li><a class="grey-text text-lighten-3" href="rank.php">Ranking</a></li>
                     <li><a class="grey-text text-lighten-3" href="stats.php">Server Stats</a></li>
                     <li><a class="grey-text text-lighten-3" href="game_info.php">Game Info</a></li>
+                    <li><a class="grey-text text-lighten-3" href="games_history.php">Games history</a></li>
+                    <li><a class="grey-text text-lighten-3" href="user_stats.php">User stats</a></li>
                     <li><a class="grey-text text-lighten-3" href="#!">Guide</a></li>
-                    <li><a class="grey-text text-lighten-3" href="#!">Games history</a></li>
                     <li><a class="grey-text text-lighten-3" href="registration.php">Registration</a></li>
                 </ul>
             </div>

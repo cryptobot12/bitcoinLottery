@@ -16,6 +16,7 @@
     <ul id="statsDropdown" class="dropdown-content">
         <li><a href="user_stats.php"><i class="material-icons left">person</i>User stats</a></li>
         <li><a href="game_info.php"><i class="material-icons left">assignment</i>Game Info</a></li>
+        <li><a href="games_history.php"><i class="material-icons left">access_time</i>Games History</a></li>
         <li><a href="stats.php"><i class="material-icons left">assessment</i>Server Stats</a></li>
     </ul>
     <!-- Navbar goes here -->
