@@ -167,7 +167,7 @@ require __DIR__ . '/vendor/autoload.php';
             <!--            Numbers card  -->
             <ul class="collapsible z-depth-5" data-collapsible="accordion" id="expand">
                 <li>
-                    <div id="numbersCollapsible" class="collapsible-header">
+                    <div id="numbersCollapsible" class="collapsible-header col-he-nu">
                         <div class="valign-wrapper"><i class="material-icons" id="expand-icon">expand_less</i></div>
                         <h4>Your numbers<span class="subText"
                                               id="count">&nbsp;&nbsp;&nbsp;&nbsp;<?php include 'count_numbers_part.php' ?></span>
