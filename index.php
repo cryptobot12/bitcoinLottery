@@ -47,7 +47,7 @@ require __DIR__ . '/vendor/autoload.php';
             <div class="card z-depth-5">
                 <div class="card-content">
                     <h3 class="center-align" id="jackpot">Jackpot: <span
-                                id="jackpotNumber"><?php include 'show_jackpot.php' ?></span> bits</h3>
+                                id="jackpotNumber"><?php include 'show_jackpot_part.php' ?></span> bits</h3>
                     <p class="center-align" style="font-weight: lighter; font-size: 16px;"
                        id="time"><?php include 'timer.php' ?></p>
                 </div>
@@ -170,13 +170,13 @@ require __DIR__ . '/vendor/autoload.php';
                     <div id="numbersCollapsible" class="collapsible-header">
                         <div class="valign-wrapper"><i class="material-icons" id="expand-icon">expand_less</i></div>
                         <h4>Your numbers<span class="subText"
-                                              id="count">&nbsp;&nbsp;&nbsp;&nbsp;<?php include 'count_numbers.php' ?></span>
+                                              id="count">&nbsp;&nbsp;&nbsp;&nbsp;<?php include 'count_numbers_part.php' ?></span>
                         </h4>
 
                     </div>
                     <div class="collapsible-body">
                         <div id="numbersList">
-                            <?php include 'numbers_list.php' ?>
+                            <?php include 'numbers_list_part.php' ?>
                         </div>
                     </div>
                 </li>
@@ -188,7 +188,7 @@ require __DIR__ . '/vendor/autoload.php';
                 <div class="card-content">
                     <h4>Last game</h4>
                     <div id="lastGame">
-                        <?php include 'last_game.php'; ?>
+                        <?php include 'last_game_part.php'; ?>
                     </div>
                 </div>
             </div>
@@ -208,7 +208,7 @@ require __DIR__ . '/vendor/autoload.php';
                         </tr>
                         </thead>
                         <tbody>
-                        <?php include 'games_history.php'; ?>
+                        <?php include 'games_history_part.php'; ?>
                         </tbody>
                     </table>
                 </div>

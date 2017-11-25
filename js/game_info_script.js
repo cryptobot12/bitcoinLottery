@@ -6,7 +6,7 @@ function showList(number) {
 
 /* Update modal AJAX */
 function updateModal(number) {
-  $.ajax('players_number.php', {success: function (result) {
+  $.ajax('players_number_ajax.php', {success: function (result) {
         console.log(result);
         var response = JSON.parse(result);
 

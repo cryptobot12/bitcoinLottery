@@ -30,7 +30,7 @@
                 <li class="no-link-nav">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>
                 <?php if (isset($_SESSION['username']) && !empty($_SESSION['username'])): ?>
                     <li class="no-link-nav"><i class="material-icons left">account_balance_wallet</i>
-                        <b>Balance: <span id="balanceNumber"><?php include 'updateBalance.php'; ?></span> bits</b></li>
+                        <b>Balance: <span id="balanceNumber"><?php include 'updateBalance_part.php'; ?></span> bits</b></li>
                     <li><a class="dropdown-button" href="#" data-activates="profileDropdown">
                             <b><?php echo $_SESSION['username']; ?></b><i
                                 class="material-icons right">arrow_drop_down</i></a>
