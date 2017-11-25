@@ -18,7 +18,7 @@ try {
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
     //echo "Connected successfully";
-    $stmt = $conn->prepare('SELECT username, balance, password FROM user WHERE username = :username');
+    $stmt = $conn->prepare('SELECT user_id, username, balance, password FROM user WHERE username = :username');
 
     $stmt->execute(array('username' => $username));
 
@@ -29,7 +29,7 @@ try {
 
 
         $_SESSION['username'] = $row['username'];
-        $_SESSION['balance'] = $row['balance'];
+        $_SESSION['user_id'] = $row['user_id'];
 
         //Selecting current game
         $stmt = $conn->prepare('SELECT game_id FROM game ORDER BY game_id DESC, timedate DESC LIMIT 1');
@@ -52,7 +52,7 @@ try {
         $_SESSION["numbers_list"] = $arrayOfNumbers;
 
 
-        header("Location: index.php");
+        header("Location: " . $_SESSION['url']);
         die();
     }
     else

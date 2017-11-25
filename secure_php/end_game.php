@@ -15,12 +15,25 @@ try {
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 
+    //New game
+    $stmt = $conn->prepare('INSERT INTO game(timedate, winner_number, amount) VALUES 
+                                  (current_timestamp, 0, 0)');
+    $stmt->execute();
+
     //Selecting current game
-    $stmt = $conn->prepare('SELECT game_id, amount FROM game ORDER BY game_id DESC, timedate DESC LIMIT 1');
+    $stmt = $conn->prepare('SELECT game_id, amount FROM game ORDER BY game_id DESC, timedate DESC LIMIT 1 OFFSET 1');
     $stmt->execute();
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
     $current_game = $row['game_id'];
     $bonus = $row['amount'];
+
+    //Updating new game bonus
+    $stmt = $conn->prepare('SELECT game_id FROM game ORDER BY game_id DESC, timedate DESC LIMIT 1');
+    $stmt->execute();
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    $the_new_game = $row['game_id'];
+    $stmt = $conn->prepare('UPDATE game SET amount = :bonus WHERE game_id = :game_id');
+    $stmt->execute(array('bonus' => $bonus, 'game_id' => $the_new_game));
 
     //Counting players
     $stmt = $conn->prepare('SELECT COUNT(DISTINCT user_id) AS number_of_players FROM numberxuser WHERE game_id = :game_id');
@@ -142,11 +155,6 @@ try {
         $stmt = $conn->prepare('UPDATE stats SET total_plays = total_plays + :new_plays');
         $stmt->execute(array('new_plays' => $rowCount));
 
-        //New game
-        $stmt = $conn->prepare('INSERT INTO game(timedate, winner_number, amount) VALUES 
-                                  (current_timestamp, 0, :bonus)');
-        $stmt->execute(array('bonus' => $bonus));
-
         $jackpot_last = $jackpot / 100;
         //After new game
 
@@ -157,7 +165,7 @@ try {
         $actually_current_game = $result['game_id'];
         $bonus = $result['amount'];
 
-        //Update jackpot
+        //Selecting jackpot from new game
         $stmt = $conn->prepare('SELECT COUNT(*) AS jackpot FROM numberxuser WHERE game_id = :game_id');
         $stmt->execute(array('game_id' => $actually_current_game));
         $jackpot = ($stmt->fetchColumn() * 4500 + $bonus) / 100;

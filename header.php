@@ -9,7 +9,7 @@
     <?php if (isset($_SESSION['username']) && !empty($_SESSION['username'])) : ?>
         <ul id="profileDropdown" class="dropdown-content">
             <li><a href="#!"><i class="material-icons left">account_box</i>Account</a></li>
-            <li><a href="#!"><i class="material-icons left">exit_to_app</i>Logout</a></li>
+            <li><a href="logout.php"><i class="material-icons left">exit_to_app</i>Logout</a></li>
         </ul>
     <?php endif; ?>
     <!-- Stats structure   -->

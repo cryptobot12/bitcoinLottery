@@ -5,6 +5,8 @@
  * Date: 11/22/17
  * Time: 1:12 PM
  */
+$actual_link = "{$_SERVER['REQUEST_URI']}";
+$_SESSION['url'] = $actual_link;
 ?>
 <footer class="page-footer green">
     <div class="container">
