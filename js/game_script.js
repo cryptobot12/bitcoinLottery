@@ -180,8 +180,7 @@ var conn = new ab.Session('ws://localhost:8080',
             }
 
 
-            if (data.reload === 1)
-            {
+            if (data.reload === 1) {
                 $("#jackpotNumber").html(data.jackpot);
                 $("#gameNumberLast").html(data.last_game_number);
                 $("#gameLink").attr("href", "game_info.php?game_id=" + data.last_game_number);
@@ -225,7 +224,7 @@ var conn = new ab.Session('ws://localhost:8080',
 
                 updateBalanceAndNumbers();
             }
-                //console.log(data);
+            //console.log(data);
         });
     },
     function () {
@@ -236,26 +235,28 @@ var conn = new ab.Session('ws://localhost:8080',
 
 /* Ajax request to update numbers and balance */
 function updateBalanceAndNumbers() {
-    $.ajax({url: "balance_numbers_ajax.php", success: function(result){
-        var response = JSON.parse(result);
-        $("#balanceNumber").html(response['balance']);
-        var numbersList = $("#numbersList");
-        numbersList.empty();
+    $.ajax({
+        url: "balance_numbers_ajax.php", success: function (result) {
+            var response = JSON.parse(result);
+            $("#balanceNumber").html(response['balance']);
+            var numbersList = $("#numbersList");
+            numbersList.empty();
 
-        numbersGlobal = [];
-        $.each(response['numbers'], function (index, value) {
-            numbersGlobal.push(parseInt(value));
-            numbersList.append('<div class="chip">' + value + '</div>');
-        });
+            numbersGlobal = [];
+            $.each(response['numbers'], function (index, value) {
+                numbersGlobal.push(parseInt(value));
+                numbersList.append('<div class="chip">' + value + '</div>');
+            });
 
-        if (response['count'] > 1)
-            $("#count").html("&nbsp;&nbsp;&nbsp;&nbsp;" + response['count'] + " numbers");
-        else if (response['count'] === 1)
-            $("#count").html("&nbsp;&nbsp;&nbsp;&nbsp;" + response['count'] + " number");
-        else
-            $("#count").html("&nbsp;&nbsp;&nbsp;&nbsp;No numbers");
+            if (response['count'] > 1)
+                $("#count").html("&nbsp;&nbsp;&nbsp;&nbsp;" + response['count'] + " numbers");
+            else if (response['count'] === 1)
+                $("#count").html("&nbsp;&nbsp;&nbsp;&nbsp;" + response['count'] + " number");
+            else
+                $("#count").html("&nbsp;&nbsp;&nbsp;&nbsp;No numbers");
 
-    }, type: 'GET'});
+        }, type: 'GET'
+    });
 }
 
 /*
@@ -264,30 +265,32 @@ function updateBalanceAndNumbers() {
 function bet(arrayOfNumbers) {
 
     var jsonSend = JSON.stringify(arrayOfNumbers);
-    $.ajax({url: "play.php", success: function (result) {
-        var response = JSON.parse(result);
-        $("#balanceNumber").html(response['balance']);
-        var numbersList = $("#numbersList");
-        numbersList.empty();
+    $.ajax({
+        url: "play.php", success: function (result) {
+            var response = JSON.parse(result);
+            $("#balanceNumber").html(response['balance']);
+            var numbersList = $("#numbersList");
+            numbersList.empty();
 
-        if (response['count'] > 1)
-            $("#count").html("&nbsp;&nbsp;&nbsp;&nbsp;" + response['count'] + " numbers");
-        else if (response['count'] === 1)
-            $("#count").html("&nbsp;&nbsp;&nbsp;&nbsp;" + response['count'] + " number");
-        else
-            $("#count").html("&nbsp;&nbsp;&nbsp;&nbsp;No numbers");
+            if (response['count'] > 1)
+                $("#count").html("&nbsp;&nbsp;&nbsp;&nbsp;" + response['count'] + " numbers");
+            else if (response['count'] === 1)
+                $("#count").html("&nbsp;&nbsp;&nbsp;&nbsp;" + response['count'] + " number");
+            else
+                $("#count").html("&nbsp;&nbsp;&nbsp;&nbsp;No numbers");
 
-        numbersGlobal = [];
-        $.each(response['numbers'], function (index, value) {
-            numbersGlobal.push(parseInt(value));
-            numbersList.append('<div class="chip">' + value + '</div>');
-        });
+            numbersGlobal = [];
+            $.each(response['numbers'], function (index, value) {
+                numbersGlobal.push(parseInt(value));
+                numbersList.append('<div class="chip">' + value + '</div>');
+            });
 
 
-    }, data: {
-        numbers: jsonSend
-    }
-     , type: 'POST'});
+        }, data: {
+            numbers: jsonSend
+        }
+        , type: 'POST'
+    });
 
 }
 

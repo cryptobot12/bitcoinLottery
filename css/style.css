@@ -169,3 +169,13 @@ table.highlight tbody tr.lose:hover {
 ul.browser-default li {
     list-style-position: inside;
 }
+
+.input-alert {
+    color: red;
+    font-size: 0.8em;
+    margin-top: 3em;
+}
+
+.upperCaseInput {
+    text-transform: uppercase;
+}

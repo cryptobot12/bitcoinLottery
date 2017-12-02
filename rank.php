@@ -9,6 +9,7 @@ session_start();
 
 $rowPerPage = 25;
 
+include "connect.php";
 include "function.php";
 
 function rankLink($page = 1, $raAsc = 1, $gaAsc = 1, $arrayOrd, $first)
@@ -43,7 +44,7 @@ if (isset($_GET['ord']) && !empty($_GET['ord'])) {
 
 
 try {
-    include "connect.php";
+
     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $dbuser, $dbpass);
     // set the PDO error mode to exception
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);

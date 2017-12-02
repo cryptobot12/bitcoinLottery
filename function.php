@@ -40,3 +40,11 @@ function filterArray(&$array, $size)
         }
     }
 }
+
+function hide_mail($email) {
+
+    $pos = strpos($email, "@");
+    $email = "******" . substr($email, $pos - 5);
+
+    return $email;
+}
