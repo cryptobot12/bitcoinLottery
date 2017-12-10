@@ -10,8 +10,8 @@ session_start();
 include '../random.php';
 include '../connect.php';
 
-$new_email = $_POST['new-email'];
-$confirm_email = $_POST['confirm-email'];
+$new_email = strtolower(filter_var($_POST['new-email'], FILTER_SANITIZE_EMAIL));
+$confirm_email = strtolower(filter_var($_POST['confirm-email'], FILTER_SANITIZE_EMAIL));
 $user_id = $_SESSION['user_id'];
 
 if ($new_email == $confirm_email) {
@@ -66,13 +66,30 @@ if ($new_email == $confirm_email) {
 
                 /*****************************/
             }
+            else {
+                $_SESSION['email_taken'] = true;
+                $_SESSION['new-email'] = $new_email;
+                $_SESSION['confirm-email'] = $confirm_email;
+            }
 
+            $_SESSION['upd_email'] = true;
             header("Location: ../account.php");
         } catch (PDOException $e) {
             echo "Connection failed: " . $e->getMessage();
         }
     } else {
         //Invalid email
-        header("Location: ../error.php");
+        $_SESSION['upd_email'] = true;
+        $_SESSION['invalid_email'] = true;
+        $_SESSION['new-email'] = $new_email;
+        $_SESSION['confirm-email'] = $confirm_email;
+        header("Location: ../account.php");
     }
+}
+else {
+    $_SESSION['upd_email'] = true;
+    $_SESSION['unmatch'] = true;
+    $_SESSION['new-email'] = $new_email;
+    $_SESSION['confirm-email'] = $confirm_email;
+    header("Location: ../account.php");
 }

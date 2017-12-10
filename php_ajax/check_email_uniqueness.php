@@ -9,7 +9,7 @@ session_start();
 
 include "../connect.php";
 
-$email = $_POST['email'];
+$email = strtolower($_POST['email']);
 
 try {
     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $dbuser, $dbpass);
@@ -19,9 +19,12 @@ try {
 
     /*****Checking if email is taken ****/
 
-    $stmt = $conn->prepare('SELECT COUNT(email) AS email_count FROM user WHERE email = :new_email');
+    //echo $email;
+
+    $stmt = $conn->prepare("SELECT COUNT(email) AS email_count FROM user WHERE email = :new_email");
     $stmt->execute(array('new_email' => $email));
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
     $email_count = $result['email_count'];
 
     $email_taken = false;

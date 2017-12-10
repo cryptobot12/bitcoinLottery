@@ -9,7 +9,7 @@ session_start();
 
 include "../connect.php";
 
-$codeInput = $_POST['code'];
+$codeInput = strtoupper($_POST['code']);
 $user_id = $_SESSION['user_id'];
 
 try {

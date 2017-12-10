@@ -70,7 +70,11 @@ if (!(isset($_SESSION['user_id']) && !empty($_SESSION['user_id'])))
                 <div class="col l10 offset-l1 m10 offset-m1 s12">
                     <ul class="collapsible popout" data-collapsible="accordion">
                         <li>
-                            <div class="collapsible-header active"><i class="material-icons">email</i>Update email</div>
+                            <div class="collapsible-header <?php if (!empty($_SESSION['upd_email'])) {
+                                echo "active";
+                                unset($_SESSION['upd_email']);
+                            } ?>"><i class="material-icons">email</i>Update email
+                            </div>
                             <div class="collapsible-body">
                                 <div class="row">
                                     <?php if ((empty($result['code'])) || (time() > strtotime($code_expires))): ?>
@@ -84,10 +88,30 @@ if (!(isset($_SESSION['user_id']) && !empty($_SESSION['user_id'])))
                                                            data-error="Invalid email">Current
                                                         Email</label>
                                                 </div>
-                                                <div class="input-field col s12">
-                                                    <input name="new-email" id="new-email" type="email" class="">
+                                                <div class="input-field col s9">
+                                                    <input name="new-email" id="new-email" type="email" class="<?php
+                                                    if (!empty($_SESSION['invalid_email']) || !empty($_SESSION['email_taken'])) {
+                                                        echo 'invalid';
+                                                    }
+                                                    ?>" value="<?php
+                                                    if (!empty($_SESSION['new-email'])) {
+                                                        echo $_SESSION['new-email'];
+                                                        unset($_SESSION['new-email']);
+                                                    }
+                                                    ?>">
                                                     <label id="newEmailLabel" for="new-email"
-                                                           data-error="Invalid email">New
+                                                           data-error="<?php
+                                                           if (!empty($_SESSION['email_taken'])) {
+                                                               echo "Email is already taken";
+                                                               unset($_SESSION['email_taken']);
+                                                           }
+
+                                                           if (!empty($_SESSION['invalid_email'])) {
+                                                               echo "Invalid email";
+                                                               unset($_SESSION['invalid_email']);
+                                                           }
+
+                                                           ?>" data-success="Email is available">New
                                                         Email
                                                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -98,11 +122,26 @@ if (!(isset($_SESSION['user_id']) && !empty($_SESSION['user_id'])))
                                                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
                                                 </div>
+                                                <div class="input-field col s3 little-top-buffer">
+                                                    <a id="checkAvailability" class=""
+                                                       href="#!">Check&nbsp;availability</a>
+                                                </div>
                                                 <div class="input-field col s12">
                                                     <input name="confirm-email" id="confirm-email" type="email"
-                                                           class="">
+                                                           class="<?php
+                                                           if (!empty($_SESSION['unmatch'])) {
+                                                               echo 'invalid';
+                                                               unset($_SESSION['unmatch']);
+                                                           }
+                                                           ?>" value="<?php
+                                                    if (!empty($_SESSION['confirm-email'])) {
+                                                        echo $_SESSION['confirm-email'];
+                                                        unset($_SESSION['confirm-email']);
+                                                    }
+
+                                                    ?>">
                                                     <label id="confirmEmailLabel" for="confirm-email"
-                                                           data-error="Invalid email">Confirm New Email
+                                                           data-error="Emails do not match">Confirm New Email
                                                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -120,58 +159,87 @@ if (!(isset($_SESSION['user_id']) && !empty($_SESSION['user_id'])))
                                             </div>
                                         </form>
                                     <?php else: ?>
-                                            <form class="col s8 offset-s2"
-                                                  action="php_actions/update_email.php"
-                                                  method="post">
-                                                <div class="row">
-                                                    <div class="input-field col s12">
-                                                        <input disabled name="old-email" id="old-email" type="email"
-                                                               value="<?php echo $email; ?>">
-                                                        <label id="oldEmailLabel" for="old-email"
-                                                               data-error="Invalid email">Current
-                                                            Email</label>
-                                                    </div>
-                                                    <div class="col s12">
-                                                        <p>A code was sent to your current email. Insert the code to
-                                                            update your email.</p><br>
-                                                    </div>
-                                                    <div class="input-field col s2 offset-s5">
-                                                        <input name="code" id="code" type="text"
-                                                               class="upperCaseInput"
-                                                               maxlength="4">
-                                                        <label id="codeLabel" for="code">CODE
-                                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
-                                                    </div>
-                                                    <?php if (isset($_SESSION['incorrect_code']) && !empty($_SESSION['incorrect_code']) &&
-                                                    $_SESSION == true):?>
+                                        <form class="col s8 offset-s2"
+                                              action="php_actions/update_email.php"
+                                              method="post">
+                                            <div class="row">
+                                                <div class="input-field col s12">
+                                                    <input disabled name="old-email" id="old-email" type="email"
+                                                           value="<?php echo $email; ?>">
+                                                    <label id="oldEmailLabel" for="old-email"
+                                                           data-error="Invalid email">Current
+                                                        Email</label>
+                                                </div>
+                                                <div class="col s12">
+                                                    <p>A code was sent to your current email. Insert the code to
+                                                        update your email.</p><br>
+                                                </div>
+                                                <div class="input-field col s2 offset-s5">
+                                                    <input name="code" id="code" type="text"
+                                                           class="upperCaseInput"
+                                                           maxlength="4">
+                                                    <label id="codeLabel" for="code">CODE
+                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                                                </div>
+                                                <?php if (isset($_SESSION['incorrect_code']) && !empty($_SESSION['incorrect_code']) &&
+                                                    $_SESSION == true): ?>
                                                     <div class="col s2">
-                                                    <p class="input-alert">* Incorrect code</p>
+                                                        <p class="input-alert">* Incorrect code</p>
                                                     </div>
                                                     <?php unset($_SESSION['incorrect_code']); ?>
-                                                    <?php endif; ?>
-                                                </div>
-                                                <div class="row">
-                                                    <button type="submit" id="updateEmailCodeButton"
-                                                            class="waves-effect waves-light btn right disabled">
-                                                        Update Email
-                                                    </button>
-                                                </div>
-                                            </form>
+                                                <?php endif; ?>
+                                            </div>
+                                            <div class="row">
+                                                <button type="submit" id="updateEmailCodeButton"
+                                                        class="waves-effect waves-light btn right disabled">
+                                                    Update Email
+                                                </button>
+                                            </div>
+                                        </form>
                                     <?php endif; ?>
                                 </div>
                             </div>
                         </li>
                         <li>
-                            <div class="collapsible-header active"><i class="material-icons">lock</i>Update password
+                            <div class="collapsible-header"><i class="material-icons">lock</i>Update password
                             </div>
-                            <div class="collapsible-body"><span>Lorem ipsum dolor sit amet.</span></div>
+                            <div class="collapsible-body">
+                                <div class="row">
+                                    <form class="col s8 offset-s2" action="php_actions/update_password.php"
+                                          method="post">
+                                        <div class="row">
+                                            <div class="input-field col s12">
+                                                <input name="current_password" id="current_password" type="password"
+                                                       class="">
+                                                <label id="current_password-label" for="current_password">Current
+                                                    password</label>
+                                            </div>
+                                            <div class="input-field col s12">
+                                                <input name="new_password" id="new_password" type="password" class="">
+                                                <label id="new_password-label" for="new_password">New password</label>
+                                            </div>
+                                            <div class="input-field col s12">
+                                                <input name="confirm_new_password" id="confirm_new_password"
+                                                       type="password" class="">
+                                                <label id="confirm_new_password-label" for="confirm_new_password">Confirm
+                                                    new password</label>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <button type="submit" id="update_password_button"
+                                                    class="waves-effect waves-light btn right disabled">Update Password
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
                         </li>
                         <li>
                             <div class="collapsible-header"><i class="material-icons">monetization_on</i>Deposit</div>

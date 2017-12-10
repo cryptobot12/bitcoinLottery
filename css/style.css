@@ -179,3 +179,7 @@ ul.browser-default li {
 .upperCaseInput {
     text-transform: uppercase;
 }
+
+.little-top-buffer {
+    margin-top: 2em;
+}

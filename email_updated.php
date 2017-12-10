@@ -33,6 +33,14 @@ if (!(isset($_SESSION['email_updated']) && !empty($_SESSION['email_updated']))) 
     <!-- Compiled and minified JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
     <script src="js/autobahn.js"></script>
+    <script>
+        window.setTimeout(function(){
+
+            // Move to a new location or you can do something else
+            window.location.href = "<?php echo $_SESSION['url']; ?>";
+
+        }, 5000);
+    </script>
 
     <link href="css/style.css" rel="stylesheet">
 

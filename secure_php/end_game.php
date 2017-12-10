@@ -15,25 +15,13 @@ try {
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 
-    //New game
-    $stmt = $conn->prepare('INSERT INTO game(timedate, winner_number, amount) VALUES 
-                                  (current_timestamp, 0, 0)');
-    $stmt->execute();
-
     //Selecting current game
-    $stmt = $conn->prepare('SELECT game_id, amount FROM game ORDER BY game_id DESC, timedate DESC LIMIT 1 OFFSET 1');
+    $stmt = $conn->prepare('SELECT game_id, amount FROM game ORDER BY game_id DESC, timedate DESC LIMIT 1');
     $stmt->execute();
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
     $current_game = $row['game_id'];
     $bonus = $row['amount'];
 
-    //Updating new game bonus
-    $stmt = $conn->prepare('SELECT game_id FROM game ORDER BY game_id DESC, timedate DESC LIMIT 1');
-    $stmt->execute();
-    $row = $stmt->fetch(PDO::FETCH_ASSOC);
-    $the_new_game = $row['game_id'];
-    $stmt = $conn->prepare('UPDATE game SET amount = :bonus WHERE game_id = :game_id');
-    $stmt->execute(array('bonus' => $bonus, 'game_id' => $the_new_game));
 
     //Counting players
     $stmt = $conn->prepare('SELECT COUNT(DISTINCT user_id) AS number_of_players FROM numberxuser WHERE game_id = :game_id');
@@ -42,6 +30,11 @@ try {
     $playersInThisGame = $row['number_of_players'];
 
     if ($playersInThisGame > 1) {
+
+        //New game
+        $stmt = $conn->prepare('INSERT INTO game(timedate, winner_number, amount) VALUES 
+                                  (current_timestamp, 0, 0)');
+        $stmt->execute();
 
         //Increase number of games (history stats)
         $stmt = $conn->prepare('UPDATE stats SET games_played = games_played + 1');
@@ -82,6 +75,14 @@ try {
 
         $each_receives = floor($jackpot / $number_of_winners);
         $bonus = $jackpot - ($each_receives * $number_of_winners); //Bonus is added to next game
+
+        //Updating new game bonus
+        $stmt = $conn->prepare('SELECT game_id FROM game ORDER BY game_id DESC, timedate DESC LIMIT 1');
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $the_new_game = $row['game_id'];
+        $stmt = $conn->prepare('UPDATE game SET amount = :bonus WHERE game_id = :game_id');
+        $stmt->execute(array('bonus' => $bonus, 'game_id' => $the_new_game));
 
         /****************** Here you should add what to do with the 10% of the money not taken by the users *********/
 

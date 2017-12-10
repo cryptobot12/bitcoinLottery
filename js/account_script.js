@@ -1,66 +1,120 @@
 function isEmail(email) {
-    var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+    var regex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
     return regex.test(email);
 }
 
-function verifyEmailUniqueness(email) {
+function activateUpdateEmailButton() {
+
+    var newEmail = $("#new-email");
+    var confirmEmail = $("#confirm-email");
+    var updateEmailButton = $("#updateEmailButton");
+
+    //Activate button
+    if (confirmEmail.hasClass("valid") && newEmail.hasClass("valid")) {
+        updateEmailButton.removeClass("disabled");
+    }
+    else {
+        updateEmailButton.addClass("disabled");
+    }
+}
+
+function verifyEmailUniqueness() {
 
     var newEmail = $("#new-email");
     var labelNewEmail = $("#newEmailLabel");
+    var confirmEmail = $("#confirm-email");
+    var updateEmailButton = $("#updateEmailButton");
+    var labelConfirmEmail = $("#confirmEmailLabel");
 
-    $.ajax('php_ajax/check_email_uniqueness.php', {
-        success: function (result) {
-            console.log(result);
-            var response = JSON.parse(result);
+    var conEmailVal = confirmEmail.val();
+    var newEmailVal = newEmail.val();
 
-            if (response['taken'] === true) {
-                newEmail.removeClass("valid");
-                newEmail.addClass("invalid");
+    if (isEmail(newEmail.val())) {
 
-                labelNewEmail.attr("data-error", "Email is already taken");
-            }
-        },
-        data: {
-            email: email
-        },
-        error: function () {
-            console.log("error");
-        },
+        $.ajax('php_ajax/check_email_uniqueness.php', {
+            success: function (result) {
+                console.log(result);
+                var response = JSON.parse(result);
 
-        type: "POST"
-    });
+                if (response['taken'] === true) {
+                    newEmail.removeClass("valid");
+                    newEmail.addClass("invalid");
+
+                    labelNewEmail.attr("data-error", "Email is already taken");
+                }
+                else {
+                    newEmail.removeClass("invalid");
+                    newEmail.addClass("valid");
+
+                    if (isEmail(conEmailVal) || conEmailVal !== "") {
+                        if (conEmailVal === newEmailVal && conEmailVal !== "" && newEmailVal !== "") {
+                            confirmEmail.removeClass("invalid");
+                            confirmEmail.addClass("valid");
+                        }
+                        else {
+                            updateEmailButton.addClass("disabled");
+                            confirmEmail.removeClass("valid");
+                            confirmEmail.addClass("invalid");
+
+                            labelConfirmEmail.attr("data-error", "Emails do not match");
+                        }
+                    }
+
+                    activateUpdateEmailButton();
+                }
+            },
+            data: {
+                email: newEmailVal
+            },
+            error: function () {
+                console.log("error");
+            },
+
+            method: "POST"
+        });
+    }
+    else {
+        newEmail.removeClass("valid");
+        newEmail.addClass("invalid");
+
+        labelNewEmail.attr("data-error", "Invalid email");
+    }
+
 
 }
 
 $(function () {
+
+    var checkAvailabilityButton = $("#checkAvailability");
+
+    checkAvailabilityButton.on('click', function () {
+        verifyEmailUniqueness();
+    });
+});
+
+$(function () {
     var newEmail = $("#new-email");
     var confirmEmail = $("#confirm-email");
-    var updateEmailButton = $("#updateEmailButton");
     var labelNewEmail = $("#newEmailLabel");
     var labelConfirmEmail = $("#confirmEmailLabel");
-    var conEmailVal;
-    var newEmailVal;
 
-    confirmEmail.on('keyup click blur input change', function () {
-        conEmailVal = confirmEmail.val().replace(/\s/g, '');
-        newEmailVal = newEmail.val().replace(/\s/g, '');
+    var updateEmailButton = $("#updateEmailButton");
+
+
+    confirmEmail.on('keyup click input change', function () {
+        var conEmailVal = confirmEmail.val();
+        var newEmailVal = newEmail.val();
 
         if (isEmail(conEmailVal)) {
             if (conEmailVal === newEmailVal && conEmailVal !== "" && newEmailVal !== "") {
-                updateEmailButton.removeClass("disabled");
-                newEmail.removeClass("invalid");
                 confirmEmail.removeClass("invalid");
-                newEmail.addClass("valid");
                 confirmEmail.addClass("valid");
             }
             else {
                 updateEmailButton.addClass("disabled");
-                newEmail.removeClass("valid");
                 confirmEmail.removeClass("valid");
-                newEmail.addClass("invalid");
                 confirmEmail.addClass("invalid");
 
-                labelNewEmail.attr("data-error", "Emails do not match");
                 labelConfirmEmail.attr("data-error", "Emails do not match");
             }
         }
@@ -72,55 +126,48 @@ $(function () {
             labelConfirmEmail.attr("data-error", "Invalid email");
         }
 
-        //Activate button
-        if (isEmail(conEmailVal) && isEmail(newEmailVal) &&
-            conEmailVal === newEmailVal && conEmailVal !== "" && newEmailVal !== "") {
-            updateEmailButton.removeClass("disabled");
-        }
+        activateUpdateEmailButton();
     });
 
-    newEmail.on('keyup click input change', function () {
-        conEmailVal = confirmEmail.val().replace(/\s/g, '');
-        newEmailVal = newEmail.val().replace(/\s/g, '');
+    newEmail.on('keyup change input', function () {
+        var conEmailVal = confirmEmail.val();
+        var newEmailVal = newEmail.val();
 
         if (isEmail(newEmailVal)) {
+            newEmail.removeClass("invalid");
+            newEmail.removeClass("valid");
             if (conEmailVal === newEmailVal && conEmailVal !== "" && newEmailVal !== "") {
-                updateEmailButton.removeClass("disabled");
-                newEmail.removeClass("invalid");
                 confirmEmail.removeClass("invalid");
-                newEmail.addClass("valid");
                 confirmEmail.addClass("valid");
+
             }
             else {
                 updateEmailButton.addClass("disabled");
-                newEmail.removeClass("valid");
                 confirmEmail.removeClass("valid");
-                newEmail.addClass("invalid");
                 confirmEmail.addClass("invalid");
-            }
 
-            labelNewEmail.attr("data-error", "Emails do not match");
-            labelConfirmEmail.attr("data-error", "Emails do not match");
+                labelConfirmEmail.attr("data-error", "Emails do not match");
+            }
         }
         else {
-            updateEmailButton.addClass("disabled");
             newEmail.removeClass("valid");
             newEmail.addClass("invalid");
+
             labelNewEmail.attr("data-error", "Invalid email");
         }
 
-        if (isEmail(conEmailVal) && isEmail(newEmailVal) &&
-            conEmailVal === newEmailVal && conEmailVal !== "" && newEmailVal !== "") {
-            updateEmailButton.removeClass("disabled");
-        }
+        activateUpdateEmailButton();
     });
 
-    newEmail.on('blur', function () {
-        newEmailVal = newEmail.val().replace(/\s/g, '');
 
-        if (isEmail(newEmailVal) && newEmailVal !== "")
-            verifyEmailUniqueness(newEmailVal);
-    });
+    var currentPassword = $("#current_password");
+    var newPassword = $("#new_password");
+    var confirmNewPassword = $("#confirm_new_password");
+
+    //Labels
+    var currentPasswordLabel = $("#current_password-label");
+    var newPasswordLabel = $("#new_password-label");
+    var confirmNewPasswordLabel = $("#confirm_new_password-label");
 
 
 });
