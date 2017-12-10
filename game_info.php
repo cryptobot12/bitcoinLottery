@@ -76,11 +76,17 @@ try {
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
     $min_game = $row['game_id'];
 
+    //Selecting last game
+    $stmt = $conn->prepare('SELECT game_id, amount FROM game ORDER BY game_id DESC, timedate DESC LIMIT 1 OFFSET 1');
+    $stmt->execute();
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    $last_game = $row['game_id'];
+
     if (isset($_GET['game_id']) && !empty($_GET['game_id'])) {
         $game_id = htmlspecialchars($_GET['game_id']);
-        filterOnlyNumber($game_id, $current_game - 1, $current_game, $min_game);
+        filterOnlyNumber($game_id, $last_game, $current_game, $min_game);
     } else {
-        $game_id = $current_game - 1;
+        $game_id = $last_game;
     }
 
 
@@ -227,100 +233,101 @@ try {
             </div>
             <div class="row">
                 <div class="col l10 offset-l1 m10 offset-m1 s12">
-                <table class="highlight">
-                    <thead>
-                    <tr>
-                        <th><?php if ($nAsc == 2) : ?>
-                                <a href="<?php
-                                if ($first != 1) {
-                                    if ($second == 1)
-                                        gameInfoLink($game_id, $page, 1, $fAsc, $ffAsc, 1, $first, $third);
-                                    else
-                                        gameInfoLink($game_id, $page, 1, $fAsc, $ffAsc, 1, $first, $second);
-                                } else
-                                    gameInfoLink($game_id, $page, 1, $fAsc, $ffAsc, $first, $second, $third);
-                                ?>">
-                                    Number<i class="tiny material-icons sorter">arrow_drop_down</i></a>
-                            <?php else: ?>
-                                <a href="<?php
-                                if ($first != 1) {
-                                    if ($second == 1)
-                                        gameInfoLink($game_id, $page, 2, $fAsc, $ffAsc, 1, $first, $third);
-                                    else
-                                        gameInfoLink($game_id, $page, 2, $fAsc, $ffAsc, 1, $first, $second);
-                                } else
-                                    gameInfoLink($game_id, $page, 2, $fAsc, $ffAsc, $first, $second, $third);
-                                ?>">
-                                    Number<i class="tiny material-icons sorter">arrow_drop_up</i></a>
-                            <?php endif; ?>
-                        </th>
-                        <th><?php if ($fAsc == 2) : ?>
-                                <a href="<?php
-                                if ($first != 2) {
-                                    if ($second == 2)
-                                        gameInfoLink($game_id, $page, $nAsc, 1, $ffAsc, 2, $first, $third);
-                                    else
-                                        gameInfoLink($game_id, $page, $nAsc, 1, $ffAsc, 2, $first, $second);
-                                } else
-                                    gameInfoLink($game_id, $page, $nAsc, 1, $ffAsc, $first, $second, $third);
-                                ?>">
-                                    Frequency<i class="tiny material-icons sorter">arrow_drop_down</i></a>
-                            <?php else: ?>
-                                <a href="<?php
-                                if ($first != 2) {
-                                    if ($second == 2)
-                                        gameInfoLink($game_id, $page, $nAsc, 2, $ffAsc, 2, $first, $third);
-                                    else
-                                        gameInfoLink($game_id, $page, $nAsc, 2, $ffAsc, 2, $first, $second);
-                                } else
-                                    gameInfoLink($game_id, $page, $nAsc, 2, $ffAsc, $first, $second, $third);
-                                ?>">
-                                    Frequency<i class="tiny material-icons sorter">arrow_drop_up</i></a>
-                            <?php endif; ?>
-                        </th>
-                        <th><?php if ($ffAsc == 2) : ?>
-                                <a href="<?php
-                                if ($first != 3) {
-                                    if ($second == 3)
-                                        gameInfoLink($game_id, $page, $nAsc, $fAsc, 1, 3, $first, $third);
-                                    else
-                                        gameInfoLink($game_id, $page, $nAsc, $fAsc, 1, 3, $first, $second);
-                                } else
-                                    gameInfoLink($game_id, $page, $nAsc, $fAsc, 1, $first, $second, $third);
-                                ?>">
-                                    Frequency of frequency<i class="tiny material-icons sorter">arrow_drop_down</i></a>
-                            <?php else: ?>
-                                <a href="<?php
-                                if ($first != 3) {
-                                    if ($second == 3)
-                                        gameInfoLink($game_id, $page, $nAsc, $fAsc, 2, 3, $first, $third);
-                                    else
-                                        gameInfoLink($game_id, $page, $nAsc, $fAsc, 2, 3, $first, $second);
-                                } else
-                                    gameInfoLink($game_id, $page, $nAsc, $fAsc, 2, $first, $second, $third);
-                                ?>">
-                                    Frequency of frequency<i class="tiny material-icons sorter">arrow_drop_up</i></a>
-                            <?php endif; ?>
-                        </th>
-                        <th>Player</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <?php
-                    foreach ($rowTable as $item) {
-                        if ($item['number_id'] == $winner_number)
-                            echo '<tr class="win">';
-                        else
-                            echo '<tr>';
-                        echo '<td><div class="chip">' . $item['number_id'] . '</div></td>' .
-                            '<td>' . $item['frequency'] . '</td>' .
-                            '<td>' . $item['fxf'] . '</td>' .
-                            '<td><a href="#!" onclick="showList(' . $item['number_id'] . ');">See players</a></td>
+                    <table class="highlight">
+                        <thead>
+                        <tr>
+                            <th><?php if ($nAsc == 2) : ?>
+                                    <a href="<?php
+                                    if ($first != 1) {
+                                        if ($second == 1)
+                                            gameInfoLink($game_id, $page, 1, $fAsc, $ffAsc, 1, $first, $third);
+                                        else
+                                            gameInfoLink($game_id, $page, 1, $fAsc, $ffAsc, 1, $first, $second);
+                                    } else
+                                        gameInfoLink($game_id, $page, 1, $fAsc, $ffAsc, $first, $second, $third);
+                                    ?>">
+                                        Number<i class="tiny material-icons sorter">arrow_drop_down</i></a>
+                                <?php else: ?>
+                                    <a href="<?php
+                                    if ($first != 1) {
+                                        if ($second == 1)
+                                            gameInfoLink($game_id, $page, 2, $fAsc, $ffAsc, 1, $first, $third);
+                                        else
+                                            gameInfoLink($game_id, $page, 2, $fAsc, $ffAsc, 1, $first, $second);
+                                    } else
+                                        gameInfoLink($game_id, $page, 2, $fAsc, $ffAsc, $first, $second, $third);
+                                    ?>">
+                                        Number<i class="tiny material-icons sorter">arrow_drop_up</i></a>
+                                <?php endif; ?>
+                            </th>
+                            <th><?php if ($fAsc == 2) : ?>
+                                    <a href="<?php
+                                    if ($first != 2) {
+                                        if ($second == 2)
+                                            gameInfoLink($game_id, $page, $nAsc, 1, $ffAsc, 2, $first, $third);
+                                        else
+                                            gameInfoLink($game_id, $page, $nAsc, 1, $ffAsc, 2, $first, $second);
+                                    } else
+                                        gameInfoLink($game_id, $page, $nAsc, 1, $ffAsc, $first, $second, $third);
+                                    ?>">
+                                        Frequency<i class="tiny material-icons sorter">arrow_drop_down</i></a>
+                                <?php else: ?>
+                                    <a href="<?php
+                                    if ($first != 2) {
+                                        if ($second == 2)
+                                            gameInfoLink($game_id, $page, $nAsc, 2, $ffAsc, 2, $first, $third);
+                                        else
+                                            gameInfoLink($game_id, $page, $nAsc, 2, $ffAsc, 2, $first, $second);
+                                    } else
+                                        gameInfoLink($game_id, $page, $nAsc, 2, $ffAsc, $first, $second, $third);
+                                    ?>">
+                                        Frequency<i class="tiny material-icons sorter">arrow_drop_up</i></a>
+                                <?php endif; ?>
+                            </th>
+                            <th><?php if ($ffAsc == 2) : ?>
+                                    <a href="<?php
+                                    if ($first != 3) {
+                                        if ($second == 3)
+                                            gameInfoLink($game_id, $page, $nAsc, $fAsc, 1, 3, $first, $third);
+                                        else
+                                            gameInfoLink($game_id, $page, $nAsc, $fAsc, 1, 3, $first, $second);
+                                    } else
+                                        gameInfoLink($game_id, $page, $nAsc, $fAsc, 1, $first, $second, $third);
+                                    ?>">
+                                        Frequency of frequency<i class="tiny material-icons sorter">arrow_drop_down</i></a>
+                                <?php else: ?>
+                                    <a href="<?php
+                                    if ($first != 3) {
+                                        if ($second == 3)
+                                            gameInfoLink($game_id, $page, $nAsc, $fAsc, 2, 3, $first, $third);
+                                        else
+                                            gameInfoLink($game_id, $page, $nAsc, $fAsc, 2, 3, $first, $second);
+                                    } else
+                                        gameInfoLink($game_id, $page, $nAsc, $fAsc, 2, $first, $second, $third);
+                                    ?>">
+                                        Frequency of frequency<i
+                                                class="tiny material-icons sorter">arrow_drop_up</i></a>
+                                <?php endif; ?>
+                            </th>
+                            <th>Player</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <?php
+                        foreach ($rowTable as $item) {
+                            if ($item['number_id'] == $winner_number)
+                                echo '<tr class="win">';
+                            else
+                                echo '<tr>';
+                            echo '<td><div class="chip">' . $item['number_id'] . '</div></td>' .
+                                '<td>' . $item['frequency'] . '</td>' .
+                                '<td>' . $item['fxf'] . '</td>' .
+                                '<td><a href="#!" onclick="showList(' . $item['number_id'] . ');">See players</a></td>
               </tr>';
-                    }
-                    ?>
-                    </tbody>
-                </table>
+                        }
+                        ?>
+                        </tbody>
+                    </table>
                 </div>
                 <!-- Modal Structure -->
                 <div id="modal1" class="modal">
@@ -338,36 +345,28 @@ try {
                     </div>
                 </div>
             </div>
+
             <div class="row centerWrap">
                 <div class="centeredDiv">
-                    <ul class="pagination">
-                        <!--Go left (pagination)-->
-                        <li class="<?php
-                        if ($page > 1)
-                            echo 'waves-effect';
-                        else
-                            echo 'disabled';
-                        ?>"><a href="<?php
+                    <?php if ($pageCount > 1) : ?>
+                        <ul class="pagination">
+                            <!--Go left (pagination)-->
+                            <li class="<?php
                             if ($page > 1)
-                                gameInfoLink($game_id, $page - 1, $nAsc, $fAsc, $ffAsc, $first, $second, $third);
+                                echo 'waves-effect';
                             else
-                                echo '#!';
-                            ?>">
-                                <i class="material-icons">chevron_left</i></a></li>
-                        <!--Pages-->
-                        <?php
-                        if ($pageCount <= 15) {
-                            for ($i = 1; $i <= $pageCount; $i++) : ?>
-                                <li class="<?php if ($page == $i)
-                                    echo 'active';
+                                echo 'disabled';
+                            ?>"><a href="<?php
+                                if ($page > 1)
+                                    gameInfoLink($game_id, $page - 1, $nAsc, $fAsc, $ffAsc, $first, $second, $third);
                                 else
-                                    echo 'waves-effect'; ?>"><a
-                                            href="<?php gameInfoLink($game_id, $i, $nAsc, $fAsc, $ffAsc, $first, $second, $third); ?>">
-                                        <?php echo $i; ?></a></li>
-                            <?php endfor;
-                        } else {
-                            if ($page <= 8) {
-                                for ($i = 1; $i <= 14; $i++) :?>
+                                    echo '#!';
+                                ?>">
+                                    <i class="material-icons">chevron_left</i></a></li>
+                            <!--Pages-->
+                            <?php
+                            if ($pageCount <= 15) {
+                                for ($i = 1; $i <= $pageCount; $i++) : ?>
                                     <li class="<?php if ($page == $i)
                                         echo 'active';
                                     else
@@ -375,25 +374,9 @@ try {
                                                 href="<?php gameInfoLink($game_id, $i, $nAsc, $fAsc, $ffAsc, $first, $second, $third); ?>">
                                             <?php echo $i; ?></a></li>
                                 <?php endfor;
-                                echo '<li>...</li>'; ?>
-                                <li class="<?php if ($page == $pageCount)
-                                    echo 'active';
-                                else
-                                    echo 'waves-effect'; ?>"><a
-                                            href="<?php gameInfoLink($game_id, $pageCount, $nAsc, $fAsc, $ffAsc, $first, $second, $third); ?>">
-                                        <?php echo $pageCount; ?></a></li>
-                                <?php
-                            } else { ?>
-                                <li class="<?php if ($page == 1)
-                                    echo 'active';
-                                else
-                                    echo 'waves-effect'; ?>"><a
-                                            href="<?php gameInfoLink($game_id, 1, $nAsc, $fAsc, $ffAsc, $first, $second, $third); ?>">
-                                        <?php echo 1; ?></a></li>
-                                <?php
-                                echo '<li>...</li>';
-                                if ($pageCount - $page > 7) {
-                                    for ($i = $page - 6; $i <= $page + 6; $i++) :?>
+                            } else {
+                                if ($page <= 8) {
+                                    for ($i = 1; $i <= 14; $i++) :?>
                                         <li class="<?php if ($page == $i)
                                             echo 'active';
                                         else
@@ -409,33 +392,61 @@ try {
                                                 href="<?php gameInfoLink($game_id, $pageCount, $nAsc, $fAsc, $ffAsc, $first, $second, $third); ?>">
                                             <?php echo $pageCount; ?></a></li>
                                     <?php
-                                } else {
-                                    for ($i = $pageCount - 13; $i <= $pageCount; $i++) :?>
-                                        <li class="<?php if ($page == $i)
+                                } else { ?>
+                                    <li class="<?php if ($page == 1)
+                                        echo 'active';
+                                    else
+                                        echo 'waves-effect'; ?>"><a
+                                                href="<?php gameInfoLink($game_id, 1, $nAsc, $fAsc, $ffAsc, $first, $second, $third); ?>">
+                                            <?php echo 1; ?></a></li>
+                                    <?php
+                                    echo '<li>...</li>';
+                                    if ($pageCount - $page > 7) {
+                                        for ($i = $page - 6; $i <= $page + 6; $i++) :?>
+                                            <li class="<?php if ($page == $i)
+                                                echo 'active';
+                                            else
+                                                echo 'waves-effect'; ?>"><a
+                                                        href="<?php gameInfoLink($game_id, $i, $nAsc, $fAsc, $ffAsc, $first, $second, $third); ?>">
+                                                    <?php echo $i; ?></a></li>
+                                        <?php endfor;
+                                        echo '<li>...</li>'; ?>
+                                        <li class="<?php if ($page == $pageCount)
                                             echo 'active';
                                         else
                                             echo 'waves-effect'; ?>"><a
-                                                    href="<?php gameInfoLink($game_id, $i, $nAsc, $fAsc, $ffAsc, $first, $second, $third); ?>">
-                                                <?php echo $i; ?></a></li>
-                                    <?php endfor;
+                                                    href="<?php gameInfoLink($game_id, $pageCount, $nAsc, $fAsc, $ffAsc, $first, $second, $third); ?>">
+                                                <?php echo $pageCount; ?></a></li>
+                                        <?php
+                                    } else {
+                                        for ($i = $pageCount - 13; $i <= $pageCount; $i++) :?>
+                                            <li class="<?php if ($page == $i)
+                                                echo 'active';
+                                            else
+                                                echo 'waves-effect'; ?>"><a
+                                                        href="<?php gameInfoLink($game_id, $i, $nAsc, $fAsc, $ffAsc, $first, $second, $third); ?>">
+                                                    <?php echo $i; ?></a></li>
+                                        <?php endfor;
+                                    }
                                 }
-                            }
 
-                        } ?>
-                        <!--Go right(pagination)-->
-                        <li class="<?php
-                        if ($page < $pageCount)
-                            echo 'waves-effect';
-                        else
-                            echo 'disabled';
-                        ?>"><a href="<?php
+                            } ?>
+                            <!--Go right(pagination)-->
+                            <li class="<?php
                             if ($page < $pageCount)
-                                gameInfoLink($game_id, $page + 1, $nAsc, $fAsc, $ffAsc, $first, $second, $third);
+                                echo 'waves-effect';
                             else
-                                echo '#!';
-                            ?>">
-                                <i class="material-icons">chevron_right</i></a></li>
-                    </ul>
+                                echo 'disabled';
+                            ?>"><a href="<?php
+                                if ($page < $pageCount)
+                                    gameInfoLink($game_id, $page + 1, $nAsc, $fAsc, $ffAsc, $first, $second, $third);
+                                else
+                                    echo '#!';
+                                ?>">
+                                    <i class="material-icons">chevron_right</i></a></li>
+                        </ul>
+
+                    <?php endif; ?>
                 </div>
             </div>
         <?php else : ?>

@@ -9,7 +9,7 @@ include 'random.php';
 
 include "connect.php";
 $username = htmlspecialchars($_POST['username']);
-$password = password_hash(htmlspecialchars($_POST['password']), PASSWORD_DEFAULT);
+$password = password_hash($_POST['password'], PASSWORD_DEFAULT);
 $email = htmlspecialchars($_POST['email']);
 $bit_address = rand_string(15);
 

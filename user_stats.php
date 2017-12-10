@@ -338,6 +338,7 @@ try {
             </div>
             <div class="row centerWrap">
                 <div class="centeredDiv">
+                    <?php if ($pageCount > 1): ?>
                     <ul class="pagination">
                         <!--                        Go left (pagination) -->
                         <li class="<?php
@@ -434,6 +435,7 @@ try {
                             ?>">
                                 <i class="material-icons">chevron_right</i></a></li>
                     </ul>
+    <?php endif; ?>
                 </div>
             </div>
         <?php else: ?>

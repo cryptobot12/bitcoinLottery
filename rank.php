@@ -242,6 +242,7 @@ if (isset($_GET['user']) && !empty($_GET['user']) && (!isset($rowTable['username
             </div>
             <div class="row centerWrap">
                 <div class="centeredDiv">
+                    <?php if ($pageCount > 1): ?>
                     <ul class="pagination">
                         <!--                        Go left (pagination) -->
                         <li class="<?php
@@ -338,6 +339,7 @@ if (isset($_GET['user']) && !empty($_GET['user']) && (!isset($rowTable['username
                             ?>">
                                 <i class="material-icons">chevron_right</i></a></li>
                     </ul>
+                    <?php endif; ?>
                 </div>
             </div>
         <?php else: ?>

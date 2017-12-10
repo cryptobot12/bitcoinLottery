@@ -3,6 +3,18 @@ function isEmail(email) {
     return regex.test(email);
 }
 
+function activatePasswordButton() {
+
+    var newPassword = $("#new_password");
+    var confirmNewPassword = $("#confirm_new_password");
+    var updatePasswordButton = $("#update_password_button");
+
+    if (newPassword.hasClass("valid") && confirmNewPassword.hasClass("valid"))
+        updatePasswordButton.removeClass("disabled");
+    else
+        updatePasswordButton.addClass("disabled");
+}
+
 function activateUpdateEmailButton() {
 
     var newEmail = $("#new-email");
@@ -159,15 +171,45 @@ $(function () {
         activateUpdateEmailButton();
     });
 
-
-    var currentPassword = $("#current_password");
     var newPassword = $("#new_password");
     var confirmNewPassword = $("#confirm_new_password");
-
     //Labels
-    var currentPasswordLabel = $("#current_password-label");
     var newPasswordLabel = $("#new_password-label");
-    var confirmNewPasswordLabel = $("#confirm_new_password-label");
+
+    newPassword.on('keyup blur input change', function () {
+        var newPasswordVal = newPassword.val();
+
+        confirmNewPassword.removeClass("valid");
+        confirmNewPassword.removeClass("invalid");
+        if (newPasswordVal.length < 8) {
+            newPassword.removeClass("valid");
+            newPassword.addClass("invalid");
+            newPasswordLabel.attr("data-error", "Password must be at least 8 characters long");
+        }
+        else {
+            newPassword.removeClass("invalid");
+            newPassword.addClass("valid");
+        }
+
+        activatePasswordButton();
+    });
+
+    confirmNewPassword.on('click keyup blur input change', function () {
+        var confirmNewPasswordVal = confirmNewPassword.val();
+        var newPasswordVal = newPassword.val();
+
+        if (confirmNewPasswordVal !== newPasswordVal) {
+            confirmNewPassword.removeClass("valid");
+            confirmNewPassword.addClass("invalid");
+            confirmNewPassword.attr("data-error", "Passwords do not match");
+        }
+        else {
+            confirmNewPassword.removeClass("invalid");
+            confirmNewPassword.addClass("valid");
+        }
+
+        activatePasswordButton();
+    });
 
 
 });

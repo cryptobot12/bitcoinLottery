@@ -4,7 +4,11 @@
  * User: Frank
  * Date: 10/17/2017
  * Time: 5:51 PM
- */?>
+ */
+
+session_start();
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
