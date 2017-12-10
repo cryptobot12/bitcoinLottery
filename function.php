@@ -48,3 +48,15 @@ function hide_mail($email) {
 
     return $email;
 }
+
+function rand_string( $length ) {
+    $chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    $size = strlen( $chars );
+    $str = "";
+    for( $i = 0; $i < $length; $i++ ) {
+        $str .= $chars[ rand( 0, $size - 1 ) ];
+
+    }
+
+    return $str;
+}

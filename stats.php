@@ -69,7 +69,7 @@ try {
 </head>
 <body>
 <header>
-    <?php include "header.php"; ?>
+    <?php include "inc/header.php"; ?>
 </header>
 <main>
     <div class="row top-buffer-15">
@@ -130,5 +130,5 @@ try {
         </div>
     </div>
 </main>
-<?php include "footer.php"; ?>
+<?php include "inc/footer.php"; ?>
 </body>

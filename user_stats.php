@@ -223,7 +223,7 @@ try {
     </head>
 <body>
 <header>
-    <?php include 'header.php'; ?>
+    <?php include 'inc/header.php'; ?>
     <div class="row top-buffer-15">
         <div class="col s4 offset-s4">
             <div class="input-field col s12">
@@ -447,4 +447,4 @@ try {
         <?php endif; ?>
     </div>
 </main>
-<?php include 'footer.php'; ?>
+<?php include 'inc/footer.php'; ?>

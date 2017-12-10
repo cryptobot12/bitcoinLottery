@@ -84,7 +84,7 @@ $email = hide_mail($email);
 </head>
 <body>
 <header>
-    <?php include "header.php" ?>
+    <?php include "inc/header.php" ?>
 </header>
 <main class="<?php
 if (!(isset($_SESSION['user_id']) && !empty($_SESSION['user_id'])))
@@ -570,5 +570,5 @@ if (!(isset($_SESSION['user_id']) && !empty($_SESSION['user_id'])))
         <?php endif; ?>
     </div>
 </main>
-<?php include "footer.php"; ?>
+<?php include "inc/footer.php"; ?>
 </body>

@@ -7,7 +7,7 @@
  */
 session_start();
 
-include '../random.php';
+include '../function.php';
 include '../connect.php';
 
 $new_email = strtolower(filter_var($_POST['new-email'], FILTER_SANITIZE_EMAIL));

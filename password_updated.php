@@ -49,13 +49,13 @@ if (!(isset($_SESSION['password_updated']) && !empty($_SESSION['password_updated
 </head>
 <body>
 <header>
-    <?php include "header.php" ?>
+    <?php include "inc/header.php" ?>
 </header>
 <main class="valign-wrapper">
-    <div class="container" ?>
+    <div class="container" >
         <h4 class="center-align"><i class="medium material-icons vmid">check</i> Your password has been updated.</h4>
     </div>
 </main>
-<?php include "footer.php"; ?>
+<?php include "inc/footer.php"; ?>
 </body>
 

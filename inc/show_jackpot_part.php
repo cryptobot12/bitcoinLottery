@@ -6,7 +6,6 @@
  * Time: 12:38 PM
  */
 
-include "connect.php";
 
 try {
     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $dbuser, $dbpass);

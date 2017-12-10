@@ -21,7 +21,7 @@
 </head>
 <body>
 <div class="container">
-    <form id="login" method="post" action="loading_login.php">
+    <form id="login" method="post" action="php_actions/loading_login.php">
         <label>Username:
             <input type="text" name="username">
         </label>

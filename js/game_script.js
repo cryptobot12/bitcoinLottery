@@ -236,7 +236,7 @@ var conn = new ab.Session('ws://localhost:8080',
 /* Ajax request to update numbers and balance */
 function updateBalanceAndNumbers() {
     $.ajax({
-        url: "balance_numbers_ajax.php", success: function (result) {
+        url: "php_ajax/balance_numbers_ajax.php", success: function (result) {
             var response = JSON.parse(result);
             $("#balanceNumber").html(response['balance']);
             var numbersList = $("#numbersList");
@@ -266,7 +266,7 @@ function bet(arrayOfNumbers) {
 
     var jsonSend = JSON.stringify(arrayOfNumbers);
     $.ajax({
-        url: "play.php", success: function (result) {
+        url: "php_ajax/play.php", success: function (result) {
             var response = JSON.parse(result);
             $("#balanceNumber").html(response['balance']);
             var numbersList = $("#numbersList");

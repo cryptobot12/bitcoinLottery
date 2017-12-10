@@ -6,7 +6,7 @@
  * Time: 4:56 PM
  */
 
-include "connect.php";
+include "../connect.php";
 $game = htmlspecialchars($_POST['game']);
 $number = htmlspecialchars($_POST['number']);
 

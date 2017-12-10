@@ -25,7 +25,7 @@ session_start();
 </head>
 <body>
 <div class="container">
-    <form id="registration" method="post" action="loading_registration.php">
+    <form id="registration" method="post" action="php_actions/loading_registration.php">
         <label>Username:
             <input type="text" name="username">
         </label>

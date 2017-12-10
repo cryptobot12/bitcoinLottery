@@ -9,7 +9,7 @@
     <?php if (isset($_SESSION['username']) && !empty($_SESSION['username'])) : ?>
         <ul id="profileDropdown" class="dropdown-content">
             <li><a href="account.php"><i class="material-icons left">build</i>Account</a></li>
-            <li><a href="logout.php"><i class="material-icons left">exit_to_app</i>Logout</a></li>
+            <li><a href="php_actions/logout.php"><i class="material-icons left">exit_to_app</i>Logout</a></li>
         </ul>
     <?php endif; ?>
     <!-- Stats structure   -->
@@ -31,7 +31,7 @@
                 <li class="no-link-nav">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>
                 <?php if (isset($_SESSION['username']) && !empty($_SESSION['username'])): ?>
                     <li class="no-link-nav"><i class="material-icons left">account_balance_wallet</i>
-                        <b>Balance: <span id="balanceNumber"><?php include 'updateBalance_part.php'; ?></span> bits</b></li>
+                        <b>Balance: <span id="balanceNumber"><?php include 'update_balance_part.php'; ?></span> bits</b></li>
                     <li><a class="dropdown-button" href="#" data-activates="profileDropdown">
                             <b><?php echo $_SESSION['username']; ?></b><i
                                 class="material-icons right">arrow_drop_down</i></a>
