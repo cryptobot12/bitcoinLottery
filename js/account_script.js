@@ -1,8 +1,10 @@
+/* EMAIL CHECKER */
 function isEmail(email) {
     var regex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
     return regex.test(email);
 }
 
+/* PASSWORD CHANGE BUTTON ACTIVATOR */
 function activatePasswordButton() {
 
     var newPassword = $("#new_password");
@@ -15,6 +17,7 @@ function activatePasswordButton() {
         updatePasswordButton.addClass("disabled");
 }
 
+/* EMAIL UPDATE BUTTON ACTIVATOR */
 function activateUpdateEmailButton() {
 
     var newEmail = $("#new-email");
@@ -30,6 +33,7 @@ function activateUpdateEmailButton() {
     }
 }
 
+/* AJAX EMAIL UNIQUENESS */
 function verifyEmailUniqueness() {
 
     var newEmail = $("#new-email");
@@ -45,7 +49,6 @@ function verifyEmailUniqueness() {
 
         $.ajax('php_ajax/check_email_uniqueness.php', {
             success: function (result) {
-                console.log(result);
                 var response = JSON.parse(result);
 
                 if (response['taken'] === true) {
@@ -95,6 +98,7 @@ function verifyEmailUniqueness() {
 
 }
 
+//Button to check email uniqueness
 $(function () {
 
     var checkAvailabilityButton = $("#checkAvailability");
@@ -104,6 +108,8 @@ $(function () {
     });
 });
 
+
+//Listeners for email and password
 $(function () {
     var newEmail = $("#new-email");
     var confirmEmail = $("#confirm-email");
@@ -211,9 +217,139 @@ $(function () {
         activatePasswordButton();
     });
 
+});
+
+function toggleTransferButton(enable) {
+
+    var transferButton = $("#transfer_button");
+
+    if (enable === true) {
+        transferButton.removeClass('disabled');
+        transferButton.prop("disabled", false);
+    }
+    else {
+        transferButton.addClass('disabled');
+        transferButton.prop("disabled", true);
+    }
+
+}
+
+/* Listeners for transfer */
+$(function () {
+    /*Inputs*/
+    var transferUserInput = $("#transfer_user");
+    var transferAmountInput = $("#transfer_amount");
+
+    /*Labels*/
+    var transferUserLabel = $("#transfer_user_label");
+    var transferAmountLabel = $("#transfer_amount_label");
+
+    /* Button*/
+    var transferButton = $("#transfer_button");
+
+    /*Balance*/
+    var balance = parseInt($("#balanceNumber").html());
+
+    transferUserInput.on('input keyup', function () {
+        transferUserInput.removeClass('invalid');
+        transferUserInput.removeClass('valid');
+
+        toggleTransferButton(false);
+
+        var delay = (function () {
+            var timer = 0;
+            return function (callback, ms) {
+                clearTimeout(timer);
+                timer = setTimeout(callback, ms);
+            };
+        })();
+
+        delay(function () {
+            var username = transferUserInput.val();
+
+            if (username.length > 0) {
+                $.ajax('php_ajax/check_username_uniqueness.php', {
+                    success: function (result) {
+                        var response = JSON.parse(result);
+
+                        if (response['same'] === true) {
+                            transferUserInput.addClass('invalid');
+                            transferUserLabel.attr('data-error', 'User cannot be yourself');
+                        }
+                        else if (response['exists'] === false) {
+                            transferUserInput.addClass('invalid');
+                            transferUserLabel.attr('data-error', 'User does not exist');
+                        }
+                        else {
+                            transferUserInput.removeClass('invalid');
+                            transferUserInput.addClass('valid');
+                        }
+
+                        if (transferUserInput.hasClass('valid') && transferAmountInput.hasClass('valid'))
+                            toggleTransferButton(true);
+
+                    },
+                    data: {
+                        username: username
+                    },
+                    error: function () {
+                        console.log("Could not verify if user exists");
+                    },
+                    method: 'POST'
+                })
+            }
+
+        }, 1800);
+    });
+
+    transferAmountInput.on('input keyup', function () {
+        transferAmountInput.removeClass('invalid');
+        transferAmountInput.removeClass('valid');
+
+        toggleTransferButton(false);
+
+        var delay = (function () {
+            var timer = 0;
+            return function (callback, ms) {
+                clearTimeout(timer);
+                timer = setTimeout(callback, ms);
+            };
+        })();
+
+        delay(function () {
+            var amount = parseFloat(transferAmountInput.val());
+
+            //Not empty inputs
+            if (transferAmountInput.val().length > 0) {
+                if (!Number.isInteger(amount)) {
+                    transferAmountLabel.attr('data-error', "Amount must be an integer number");
+                    transferAmountInput.addClass('invalid');
+                }
+                else if (amount <= 100) {
+                    transferAmountLabel.attr('data-error', "Amount must be greater than 100");
+                    transferAmountInput.addClass('invalid');
+                }
+                else if ((amount + 100) > balance) {
+                    transferAmountLabel.attr('data-error', "Not enough bits");
+                    transferAmountInput.addClass('invalid');
+                }
+                else {
+                    transferAmountInput.removeClass('invalid');
+                    transferAmountInput.addClass('valid');
+                }
+            }
+
+            if (transferUserInput.hasClass('valid') && transferAmountInput.hasClass('valid'))
+                toggleTransferButton(true);
+
+        }, 1800);
+
+
+    });
 
 });
 
+//Code input for email update
 $(function () {
 
     var codeInput = $("#code");

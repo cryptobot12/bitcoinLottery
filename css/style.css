@@ -33,18 +33,23 @@ nav ul a {
     background-color: #ffe3df;
 }
 
-.win-text{
+.win-text {
     color: green;
     font-weight: 600;
 }
 
-.neutral-text{
+.neutral-text {
     color: black;
     font-weight: 600;
 }
 
-.lose-text{
+.lose-text {
     color: red;
+    font-weight: 600;
+}
+
+.warning-text {
+    color: orange;
     font-weight: 600;
 }
 
@@ -56,13 +61,13 @@ nav ul a {
     background-color: green;
 }
 
-.tabs .tab a{
+.tabs .tab a {
     color: #9cdcae;
 }
 
-.tabs .tab a:hover,.tabs .tab a.active {
-    background-color:transparent;
-    color:green;
+.tabs .tab a:hover, .tabs .tab a.active {
+    background-color: transparent;
+    color: green;
 }
 
 .subText {
@@ -84,7 +89,7 @@ nav ul a {
 .balance-alert {
     color: red;
     font-weight: 300;
-    font-size: 	1.125rem;
+    font-size: 1.125rem;
 }
 
 .hidden {
@@ -182,4 +187,24 @@ ul.browser-default li {
 
 .little-top-buffer {
     margin-top: 2em;
+}
+
+.pagination {
+    margin-top: 1.5em;
+}
+
+.w900 {
+    font-weight: 900;
+}
+
+blockquote {
+    border-left: 5px solid #9cdcae;
+}
+
+.no-text-overflow {
+    word-wrap: break-word;
+}
+
+.font-15 {
+    font-size: 0.938em;
 }

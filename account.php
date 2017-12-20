@@ -46,22 +46,65 @@ try {
         $page = 1;
     }
 
+    //Withdraws pageCount
+    $stmt = $conn->prepare('SELECT COUNT(hash) AS the_count FROM withdrawal WHERE user_id = :user_id');
+    $stmt->execute(array('user_id' => $user_id));
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    $withdrawRowCount = $result['the_count']; //Number of pages withdraw
+    $pageWithdrawCount = ceil($withdrawRowCount / $rowPerPage); //Number of pages
+
+    if (!empty($_GET['pw'])) {
+        $pageWithdraw = htmlspecialchars($_GET['pw']);
+        filterOnlyNumber($pageWithdraw, 1, $pageWithdrawCount, 1);
+    } else {
+        $pageWithdraw = 1;
+    }
+
+    //Transfers pageCount
+    $stmt = $conn->prepare('SELECT COUNT(transfer_id) AS the_count FROM transfer WHERE user_id = :user_id');
+    $stmt->execute(array('user_id' => $user_id));
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    $transferRowCount = $result['the_count']; //Number of pages transfer
+    $pageTransferCount = ceil($transferRowCount / $rowPerPage); //Number of pages
+
+    if (!empty($_GET['pt'])) {
+        $pageTransfer = htmlspecialchars($_GET['pt']);
+        filterOnlyNumber($pageTransfer, 1, $pageTransferCount, 1);
+    } else {
+        $pageTransfer = 1;
+    }
+
     //Selecting deposits
-    $stmt = $conn->prepare('SELECT hash, amount, deposit_date FROM deposit WHERE user_id = :user_id
+    $stmt = $conn->prepare('SELECT hash, amount, DATE_FORMAT(deposit_date, "%M %D, %Y") AS deposit_date FROM deposit WHERE user_id = :user_id
                                       ORDER BY deposit_date DESC LIMIT :rows OFFSET :the_offset');
     $stmt->execute(array('user_id' => $user_id, 'rows' => $rowPerPage, 'the_offset' => (($page - 1) * $rowPerPage)));
     $rowTableDeposits = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+    //Selecting withdrawals
+    $stmt = $conn->prepare('SELECT hash, amount, DATE_FORMAT(request_date, "%M %D, %Y") AS request_date,
+ DATE_FORMAT(completed_on, "%M %D, %Y") AS completed_on FROM withdrawal WHERE user_id = :user_id
+                                      ORDER BY request_date DESC LIMIT :rows OFFSET :the_offset');
+    $stmt->execute(array('user_id' => $user_id, 'rows' => $rowPerPage, 'the_offset' => (($pageWithdraw - 1) * $rowPerPage)));
+    $rowTableWithdraws = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    //Selecting transfers
+    $stmt = $conn->prepare('SELECT u.username, hash, amount, DATE_FORMAT(request_date, "%M %D, %Y") AS request_date,
+ DATE_FORMAT(completed_on, "%M %D, %Y") AS completed_on FROM transfer AS t 
+  INNER JOIN user AS u
+  ON t.to_user = u.user_id
+  WHERE t.user_id = :user_id
+                                      ORDER BY request_date DESC LIMIT :rows OFFSET :the_offset');
+    $stmt->execute(array('user_id' => $user_id, 'rows' => $rowPerPage, 'the_offset' => (($pageTransfer - 1) * $rowPerPage)));
+    $rowTableTransfers = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 } catch (PDOException $e) {
     echo "Connection failed: " . $e->getMessage();
 }
 
 $email = hide_mail($email);
-
 ?>
-<!DOCTYPE html>
-<html lang="en">
+    <!DOCTYPE html>
+    <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Bitcoin</title>
@@ -93,6 +136,32 @@ if (!(isset($_SESSION['user_id']) && !empty($_SESSION['user_id'])))
         <?php if (isset($_SESSION['user_id']) && !empty($_SESSION['user_id'])): ?>
             <div class="row top-buffer-30">
                 <div class="col l10 offset-l1 m10 offset-m1 s12">
+                    <?php if (!empty($_SESSION['account_management_success'])) : ?>
+                        <div class="row">
+                            <div class="col l6 offset-l3 m10 offset-m1 s12">
+                                <blockquote class="w900">
+                                    <?php
+
+                                    switch ($_SESSION['account_management_success']) {
+                                        case 1:
+                                            echo "Email successfully updated.";
+                                            break;
+                                        case 2:
+                                            echo "Password successfully updated.";
+                                            break;
+                                        case 3:
+                                            echo "Your withdrawal is being processed.";
+                                            break;
+                                        case 4:
+                                            echo "Your transfer is being processed.";
+                                            break;
+                                    }
+
+                                    ?>
+                                </blockquote>
+                            </div>
+                        </div>
+                    <?php endif; ?>
                     <ul class="collapsible popout" data-collapsible="expandable">
                         <li>
                             <div class="collapsible-header <?php if (!empty($_SESSION['upd_email'])) {
@@ -104,6 +173,10 @@ if (!(isset($_SESSION['user_id']) && !empty($_SESSION['user_id'])))
                                 <div class="row">
                                     <div class="col l8 offset-l2 m10 offset-m1 s12">
                                         <?php if ((empty($result['code'])) || (time() > strtotime($code_expires))): ?>
+                                            <blockquote class="w900">
+                                                We use this email account to recover your password and to keep you
+                                                updated about changes in your account.
+                                            </blockquote>
                                             <form class=""
                                                   action="php_actions/update_email_code.php"
                                                   method="post">
@@ -149,7 +222,7 @@ if (!(isset($_SESSION['user_id']) && !empty($_SESSION['user_id'])))
                                                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
                                                     </div>
-                                                    <div class="input-field col s3 little-top-buffer">
+                                                    <div class="input-field col s3 little-top-buffer no-text-overflow">
                                                         <a id="checkAvailability" class=""
                                                            href="#!">Check&nbsp;availability</a>
                                                     </div>
@@ -254,6 +327,12 @@ if (!(isset($_SESSION['user_id']) && !empty($_SESSION['user_id'])))
                                               action="php_actions/update_password.php"
                                               method="post">
                                             <div class="row">
+                                                <blockquote class="w900">
+                                                    Your new password must be at least 8 characters long. We encourage
+                                                    you
+                                                    to use a combination of symbols, numbers and letters for your new
+                                                    password in order to protect your account.
+                                                </blockquote>
                                                 <div class="input-field col s12">
                                                     <input name="current_password" id="current_password" type="password"
                                                            class="<?php
@@ -384,6 +463,12 @@ if (!(isset($_SESSION['user_id']) && !empty($_SESSION['user_id'])))
                                 <div class="row">
                                     <div class="col l8 offset-l2 m10 offset-m1 s12">
                                         <div class="row">
+                                            <blockquote class="w900">
+                                                This is your bitPVP wallet. Transfer bitcoin to this wallet
+                                                to fund your account.
+                                            </blockquote>
+                                        </div>
+                                        <div class="row">
                                             <div class="input-field">
                                                 <input id="deposit_address" type="text"
                                                        value="<?php echo $bit_address; ?>" readonly>
@@ -392,12 +477,8 @@ if (!(isset($_SESSION['user_id']) && !empty($_SESSION['user_id'])))
                                             </div>
                                         </div>
                                         <div class="row">
-                                            <div class="">
-                                                <h4>Deposits history</h4>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="">
+                                            <h4>Deposits history</h4>
+                                            <div class="col s10 offset-s1">
                                                 <table>
                                                     <thead>
                                                     <tr>
@@ -413,7 +494,7 @@ if (!(isset($_SESSION['user_id']) && !empty($_SESSION['user_id'])))
                                                         foreach ($rowTableDeposits as $i) {
                                                             echo "<tr>
                                                         <td>" . $i['amount'] / 100 . " bits</td>" .
-                                                                "<td>" . $i['hash'] . "</td>" .
+                                                                "<td><a href='" . $i['hash'] . "'>Click here</a></td>" .
                                                                 "<td>" . $i['deposit_date'] . "</td>" .
                                                                 "</tr>";
                                                         }
@@ -428,43 +509,29 @@ if (!(isset($_SESSION['user_id']) && !empty($_SESSION['user_id'])))
                                         </div>
                                         <div class="row centerWrap">
                                             <div class="centeredDiv">
-                                                <ul class="pagination">
-                                                    <!-- Left pagination -->
-                                                    <li class="<?php
-
-                                                    if ($page > 1)
-                                                        echo "waves-effect";
-                                                    else
-                                                        echo "disabled";
-
-
-                                                    ?>"><a href="<?php
+                                                <?php if ($pageCount > 1): ?>
+                                                    <ul class="pagination">
+                                                        <!-- Left pagination -->
+                                                        <li class="<?php
 
                                                         if ($page > 1)
-                                                            echo "account.php?p=" . ($page - 1);
+                                                            echo "waves-effect";
                                                         else
-                                                            echo "#!";
+                                                            echo "disabled";
 
-                                                        ?>"><i class="material-icons">chevron_left</i></a>
-                                                    </li>
-                                                    <!-- Numbers pagination -->
-                                                    <?php if ($pageCount <= 7): ?>
-                                                        <?php for ($i = 1; $i <= $pageCount; $i++) : ?>
-                                                            <li class="<?php
-                                                            if ($i == $page)
-                                                                echo "active";
+
+                                                        ?>"><a href="<?php
+
+                                                            if ($page > 1)
+                                                                echo "account.php?p=" . ($page - 1);
                                                             else
-                                                                echo "waves-effect";
+                                                                echo "#!";
 
-                                                            ?>">
-                                                                <a href="<?php echo "account.php?p=" . $i ?>">
-                                                                    <?php echo $i; ?>
-                                                                </a>
-                                                            </li>
-                                                        <?php endfor; ?>
-                                                    <?php else: ?>
-                                                        <?php if ($page <= 3): ?>
-                                                            <?php for ($i = 1; $i <= 6; $i++): ?>
+                                                            ?>"><i class="material-icons">chevron_left</i></a>
+                                                        </li>
+                                                        <!-- Numbers pagination -->
+                                                        <?php if ($pageCount <= 7): ?>
+                                                            <?php for ($i = 1; $i <= $pageCount; $i++) : ?>
                                                                 <li class="<?php
                                                                 if ($i == $page)
                                                                     echo "active";
@@ -477,73 +544,89 @@ if (!(isset($_SESSION['user_id']) && !empty($_SESSION['user_id'])))
                                                                     </a>
                                                                 </li>
                                                             <?php endfor; ?>
-                                                            <li class="">...</li>
-                                                            <li class="waves-effect">
-                                                                <a href="<?php echo "account.php?p=" . $pageCount ?>">
-                                                                    <?php echo $pageCount; ?>
-                                                                </a>
-                                                            </li>
-                                                        <?php elseif ($page > 3 && $page < ($pageCount - 3)): ?>
-                                                            <li class="waves-effect"><a href="account.php?p=1">1</a>
-                                                            </li>
-                                                            <li>...</li>
-                                                            <?php for ($i = $page - 2; $i <= $page + 2; $i++): ?>
-                                                                <li class="<?php
-                                                                if ($i == $page)
-                                                                    echo "active";
-                                                                else
-                                                                    echo "waves-effect";
-
-                                                                ?>">
-                                                                    <a href="<?php echo "account.php?p=" . $i ?>">
-                                                                        <?php echo $i; ?>
-                                                                    </a>
-                                                                </li>
-                                                            <?php endfor; ?>
-                                                            <li>...</li>
-                                                            <li class="waves-effect">
-                                                                <a href="<?php echo "account.php?p=" . $pageCount ?>">
-                                                                    <?php echo $pageCount; ?>
-                                                                </a>
-                                                            </li>
                                                         <?php else: ?>
-                                                            <li class="waves-effect"><a href="account.php?p=1">1</a>
-                                                            </li>
-                                                            <li>...</li>
-                                                            <?php for ($i = $pageCount - 5; $i <= $pageCount; $i++): ?>
-                                                                <li class="<?php
-                                                                if ($i == $page)
-                                                                    echo "active";
-                                                                else
-                                                                    echo "waves-effect";
+                                                            <?php if ($page <= 3): ?>
+                                                                <?php for ($i = 1; $i <= 6; $i++): ?>
+                                                                    <li class="<?php
+                                                                    if ($i == $page)
+                                                                        echo "active";
+                                                                    else
+                                                                        echo "waves-effect";
 
-                                                                ?>">
-                                                                    <a href="<?php echo "account.php?p=" . $i ?>">
-                                                                        <?php echo $i; ?>
+                                                                    ?>">
+                                                                        <a href="<?php echo "account.php?p=" . $i ?>">
+                                                                            <?php echo $i; ?>
+                                                                        </a>
+                                                                    </li>
+                                                                <?php endfor; ?>
+                                                                <li class="">...</li>
+                                                                <li class="waves-effect">
+                                                                    <a href="<?php echo "account.php?p=" . $pageCount ?>">
+                                                                        <?php echo $pageCount; ?>
                                                                     </a>
                                                                 </li>
-                                                            <?php endfor; ?>
+                                                            <?php elseif ($page > 3 && $page < ($pageCount - 3)): ?>
+                                                                <li class="waves-effect"><a href="account.php?p=1">1</a>
+                                                                </li>
+                                                                <li>...</li>
+                                                                <?php for ($i = $page - 2; $i <= $page + 2; $i++): ?>
+                                                                    <li class="<?php
+                                                                    if ($i == $page)
+                                                                        echo "active";
+                                                                    else
+                                                                        echo "waves-effect";
+
+                                                                    ?>">
+                                                                        <a href="<?php echo "account.php?p=" . $i ?>">
+                                                                            <?php echo $i; ?>
+                                                                        </a>
+                                                                    </li>
+                                                                <?php endfor; ?>
+                                                                <li>...</li>
+                                                                <li class="waves-effect">
+                                                                    <a href="<?php echo "account.php?p=" . $pageCount ?>">
+                                                                        <?php echo $pageCount; ?>
+                                                                    </a>
+                                                                </li>
+                                                            <?php else: ?>
+                                                                <li class="waves-effect"><a href="account.php?p=1">1</a>
+                                                                </li>
+                                                                <li>...</li>
+                                                                <?php for ($i = $pageCount - 5; $i <= $pageCount; $i++): ?>
+                                                                    <li class="<?php
+                                                                    if ($i == $page)
+                                                                        echo "active";
+                                                                    else
+                                                                        echo "waves-effect";
+
+                                                                    ?>">
+                                                                        <a href="<?php echo "account.php?p=" . $i ?>">
+                                                                            <?php echo $i; ?>
+                                                                        </a>
+                                                                    </li>
+                                                                <?php endfor; ?>
+                                                            <?php endif; ?>
                                                         <?php endif; ?>
-                                                    <?php endif; ?>
-                                                    <!-- Right pagination-->
-                                                    <li class="<?php
-
-                                                    if ($page < $pageCount)
-                                                        echo "waves-effect";
-                                                    else
-                                                        echo "disabled";
-
-
-                                                    ?>"><a href="<?php
+                                                        <!-- Right pagination-->
+                                                        <li class="<?php
 
                                                         if ($page < $pageCount)
-                                                            echo "account.php?p=" . ($page + 1);
+                                                            echo "waves-effect";
                                                         else
-                                                            echo "#!";
+                                                            echo "disabled";
 
-                                                        ?>"><i class="material-icons">chevron_right</i></a>
-                                                    </li>
-                                                </ul>
+
+                                                        ?>"><a href="<?php
+
+                                                            if ($page < $pageCount)
+                                                                echo "account.php?p=" . ($page + 1);
+                                                            else
+                                                                echo "#!";
+
+                                                            ?>"><i class="material-icons">chevron_right</i></a>
+                                                        </li>
+                                                    </ul>
+                                                <?php endif; ?>
                                             </div>
                                         </div>
                                     </div>
@@ -551,12 +634,428 @@ if (!(isset($_SESSION['user_id']) && !empty($_SESSION['user_id'])))
                             </div>
                         </li>
                         <li>
-                            <div class="collapsible-header"><i class="material-icons">local_atm</i>Withdraw</div>
-                            <div class="collapsible-body"><span>Lorem ipsum dolor sit amet.</span></div>
+                            <div class="collapsible-header <?php
+
+                            if (!empty($_SESSION['withdraw_address_error']) || !(empty($_SESSION['withdraw_amount_error'])) ||
+                                !empty($_SESSION['withdraw_insufficient']) || !empty($_GET['pw'])) {
+                                echo "active";
+                            }
+
+                            ?>"><i class="material-icons">local_atm</i>Withdraw
+                            </div>
+                            <div class="collapsible-body">
+                                <div class="row">
+                                    <div class="col l10 offset-l1 m10 offset-m1 s12">
+                                        <form method="post" action="php_actions/withdraw.php">
+                                            <blockquote class="w900">
+                                                Transfer bitcoin to your personal wallet. Amount must be an integer
+                                                number greater than 100 bits. A 100 bits
+                                                mining fee will be added to the transaction.
+                                            </blockquote>
+                                            <?php if (!empty($_SESSION['withdraw_insufficient'])) :
+                                                unset($_SESSION['withdraw_insufficient']); ?>
+                                                <div class="row">
+                                                    <p class="input-alert font-15">* You do not have enough bits to do
+                                                        this transaction.</p>
+                                                </div>
+                                            <?php endif; ?>
+                                            <div class="input-field col l8 m7 s6">
+                                                <input class="<?php
+
+                                                if (!empty($_SESSION['withdraw_address_error'])) {
+                                                    echo "invalid";
+                                                }
+
+                                                ?>" type="text" id="withdraw_address" name="withdraw_address"
+                                                       value="<?php
+
+                                                       if (!empty($_SESSION['withdraw_address_input'])) {
+                                                           echo $_SESSION['withdraw_address_input'];
+                                                           unset($_SESSION['withdraw_address_input']);
+                                                       }
+
+                                                       ?>">
+                                                <label for="withdraw_address" data-error="<?php
+
+                                                if (!empty($_SESSION['withdraw_address_error'])) {
+                                                    echo $_SESSION['withdraw_address_error'];
+                                                    unset($_SESSION['withdraw_address_error']);
+                                                }
+
+                                                ?>">Address&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                    &nbsp;&nbsp;</label>
+                                            </div>
+                                            <div class="input-field col l4 m5 s6">
+                                                <input type="number" id="withdraw_amount" name="withdraw_amount"
+                                                       class="<?php
+
+                                                       if (!empty($_SESSION['withdraw_amount_error'])) {
+                                                           echo "invalid";
+                                                       }
+
+                                                       ?>" value="<?php
+
+                                                if (!empty($_SESSION['withdraw_amount_input'])) {
+                                                    echo $_SESSION['withdraw_amount_input'];
+                                                    unset($_SESSION['withdraw_amount_input']);
+                                                }
+
+                                                ?>">
+                                                <label for="withdraw_amount" data-error="<?php
+
+                                                if (!empty($_SESSION['withdraw_amount_error'])) {
+                                                    echo $_SESSION['withdraw_amount_error'];
+                                                    unset($_SESSION['withdraw_amount_error']);
+                                                }
+
+                                                ?>">Amount (bits)&nbsp;&nbsp;&nbsp;&nbsp;
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                                            </div>
+                                            <div class="row">
+
+                                            </div>
+                                            <div class="row">
+                                                <button type="submit" class="waves-effect waves-light btn right">
+                                                    Withdraw
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="col l10 offset-l1 m10 offset-m1 s12">
+                                        <h4>Withdrawals history</h4>
+                                    </div>
+                                    <div class="col l8 offset-l2 m10 offset-m1 s12">
+                                        <table class="">
+                                            <thead>
+                                            <tr>
+                                                <th>Amount</th>
+                                                <th>Link</th>
+                                                <th>Request date</th>
+                                                <th>Completed on</th>
+                                                <th></th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <?php if ($withdrawRowCount > 0): ?>
+                                                <?php foreach ($rowTableWithdraws as $i): ?>
+                                                    <tr>
+                                                        <td><?php echo $i['amount'] / 100; ?> bits</td>
+                                                        <td><a href="<?php echo $i['hash']; ?>">Click here</a></td>
+                                                        <td><?php echo $i['request_date']; ?></td>
+                                                        <td><?php
+                                                            if (empty($i['completed_on']))
+                                                                echo "<span class='warning-text'>Unconfirmed</span>";
+                                                            else
+                                                                echo "<span class='win-text'>" . $i['completed_on'] . "</span>";
+
+                                                            ?></td>
+                                                    </tr>
+                                                <?php endforeach; ?>
+                                            <?php else: ?>
+                                                <tr>
+                                                    <td colspan="4">No withdrawals yet.</td>
+                                                </tr>
+                                            <?php endif; ?>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="row centerWrap">
+                                    <div class="centeredDiv">
+                                        <?php if ($pageWithdrawCount > 1): ?>
+                                            <ul class="pagination">
+                                                <!-- Left pagination -->
+                                                <li class="<?php
+
+                                                if ($pageWithdraw > 1)
+                                                    echo "waves-effect";
+                                                else
+                                                    echo "disabled";
+
+
+                                                ?>"><a href="<?php
+
+                                                    if ($pageWithdraw > 1)
+                                                        echo "account.php?pw=" . ($pageWithdraw - 1);
+                                                    else
+                                                        echo "#!";
+
+                                                    ?>"><i class="material-icons">chevron_left</i></a>
+                                                </li>
+                                                <!-- Numbers pagination -->
+                                                <?php if ($pageWithdrawCount <= 7): ?>
+                                                    <?php for ($i = 1; $i <= $pageWithdrawCount; $i++) : ?>
+                                                        <li class="<?php
+                                                        if ($i == $pageWithdraw)
+                                                            echo "active";
+                                                        else
+                                                            echo "waves-effect";
+
+                                                        ?>">
+                                                            <a href="<?php echo "account.php?pw=" . $i ?>">
+                                                                <?php echo $i; ?>
+                                                            </a>
+                                                        </li>
+                                                    <?php endfor; ?>
+                                                <?php else: ?>
+                                                    <?php if ($pageWithdraw <= 3): ?>
+                                                        <?php for ($i = 1; $i <= 6; $i++): ?>
+                                                            <li class="<?php
+                                                            if ($i == $pageWithdraw)
+                                                                echo "active";
+                                                            else
+                                                                echo "waves-effect";
+
+                                                            ?>">
+                                                                <a href="<?php echo "account.php?pw=" . $i ?>">
+                                                                    <?php echo $i; ?>
+                                                                </a>
+                                                            </li>
+                                                        <?php endfor; ?>
+                                                        <li class="">...</li>
+                                                        <li class="waves-effect">
+                                                            <a href="<?php echo "account.php?p=" . $pageWithdrawCount ?>">
+                                                                <?php echo $pageWithdrawCount; ?>
+                                                            </a>
+                                                        </li>
+                                                    <?php elseif ($pageWithdraw > 3 && $pageWithdraw < ($pageWithdrawCount - 3)): ?>
+                                                        <li class="waves-effect"><a href="account.php?pw=1">1</a>
+                                                        </li>
+                                                        <li>...</li>
+                                                        <?php for ($i = $pageWithdraw - 2; $i <= $pageWithdraw + 2; $i++): ?>
+                                                            <li class="<?php
+                                                            if ($i == $pageWithdraw)
+                                                                echo "active";
+                                                            else
+                                                                echo "waves-effect";
+
+                                                            ?>">
+                                                                <a href="<?php echo "account.php?pw=" . $i ?>">
+                                                                    <?php echo $i; ?>
+                                                                </a>
+                                                            </li>
+                                                        <?php endfor; ?>
+                                                        <li>...</li>
+                                                        <li class="waves-effect">
+                                                            <a href="<?php echo "account.php?pw=" . $pageWithdrawCount ?>">
+                                                                <?php echo $pageWithdrawCount; ?>
+                                                            </a>
+                                                        </li>
+                                                    <?php else: ?>
+                                                        <li class="waves-effect"><a href="account.php?pw=1">1</a>
+                                                        </li>
+                                                        <li>...</li>
+                                                        <?php for ($i = $pageWithdrawCount - 5; $i <= $pageWithdrawCount; $i++): ?>
+                                                            <li class="<?php
+                                                            if ($i == $pageWithdraw)
+                                                                echo "active";
+                                                            else
+                                                                echo "waves-effect";
+
+                                                            ?>">
+                                                                <a href="<?php echo "account.php?pw=" . $i ?>">
+                                                                    <?php echo $i; ?>
+                                                                </a>
+                                                            </li>
+                                                        <?php endfor; ?>
+                                                    <?php endif; ?>
+                                                <?php endif; ?>
+                                                <!-- Right pagination-->
+                                                <li class="<?php
+
+                                                if ($pageWithdraw < $pageWithdrawCount)
+                                                    echo "waves-effect";
+                                                else
+                                                    echo "disabled";
+
+
+                                                ?>"><a href="<?php
+
+                                                    if ($pageWithdraw < $pageWithdrawCount)
+                                                        echo "account.php?pw=" . ($pageWithdraw + 1);
+                                                    else
+                                                        echo "#!";
+
+                                                    ?>"><i class="material-icons">chevron_right</i></a>
+                                                </li>
+                                            </ul>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                            </div>
                         </li>
                         <li>
-                            <div class="collapsible-header"><i class="material-icons">swap_horiz</i>Transfer</div>
-                            <div class="collapsible-body"><span>Lorem ipsum dolor sit amet.</span></div>
+                            <div class="collapsible-header <?php
+
+                            if (!empty($_SESSION['transfer_user_error']) || !empty($_SESSION['transfer_amount_error']))
+                                echo "active";
+
+                            ?>"><i class="material-icons">swap_horiz</i>Transfer
+                            </div>
+                            <div class="collapsible-body">
+                                <div class="row">
+                                    <div class="col l10 offset-l1 m10 offset-m1 s12">
+                                        <div class="row">
+                                            <form id="transfer_form" method="post" action="php_actions/transfer.php">
+                                                <blockquote class="w900">
+                                                    Transfer bitcoin to another user. Amount must be an integer
+                                                    number greater than 100 bits. A 100 bits
+                                                    mining fee will be added to the transaction.
+                                                </blockquote>
+                                                <div class="input-field col l8 m7 s6">
+                                                    <input type="text" id="transfer_user" name="transfer_user"
+                                                           class="<?php
+
+                                                           if (!empty($_SESSION['transfer_user_error']))
+                                                               echo "invalid";
+
+                                                           ?>" value="<?php
+                                                    if (!empty($_SESSION['transfer_user_input']))
+                                                        echo $_SESSION['transfer_user_input'];
+
+                                                    ?>"><label id="transfer_user_label" for="transfer_user"
+                                                               data-error="<?php
+
+                                                               if (!empty($_SESSION['transfer_user_error'])) {
+                                                                   switch ($_SESSION['transfer_user_error']) {
+                                                                       case 1:
+                                                                           echo "Empty field";
+                                                                           break;
+                                                                       case 2:
+                                                                           echo "User does not exist";
+                                                                           break;
+                                                                       case 3:
+                                                                           echo "User cannot be yourself";
+                                                                           break;
+                                                                   }
+                                                               }
+
+                                                               ?>">
+                                                        User&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                        &nbsp;&nbsp;</label>
+                                                </div>
+                                                <div class="input-field col l4 m5 s6">
+                                                    <input type="number" id="transfer_amount" name="transfer_amount"
+                                                           class="<?php
+
+                                                           if (!empty($_SESSION['transfer_amount_error']))
+                                                               echo "invalid";
+
+                                                           ?>" value="<?php
+                                                    if (!empty($_SESSION['transfer_amount_input']))
+                                                        echo $_SESSION['transfer_amount_input'];
+
+                                                    ?>">
+                                                    <label id="transfer_amount_label" for="transfer_amount"
+                                                           data-error="<?php
+
+                                                           if (!empty($_SESSION['transfer_amount_error'])) {
+                                                               switch ($_SESSION['transfer_amount_error']) {
+                                                                   case 1:
+                                                                       echo "Empty field";
+                                                                       break;
+                                                                   case 2:
+                                                                       echo "Amount must be an integer number";
+                                                                       break;
+                                                                   case 3:
+                                                                       echo "Amount must be greater than 100";
+                                                                       break;
+                                                                   case 4:
+                                                                       echo "Not enough bits";
+                                                                       break;
+                                                               }
+                                                           }
+
+                                                           ?>">Amount(bits)&nbsp;&nbsp;&nbsp;&nbsp;
+                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                                                </div>
+                                                <div class="row"></div>
+                                                <div class="row">
+                                                    <button type="submit" id="transfer_button"
+                                                            class="waves-effect waves-light btn right disabled">Transfer
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                        <div class="row">
+                                            <h4>Transfer history</h4>
+                                            <div class="col l10 offset-l1 m12 s12">
+                                                <table>
+                                                    <thead>
+                                                    <tr>
+                                                        <th>User</th>
+                                                        <th>Amount</th>
+                                                        <th>Link</th>
+                                                        <th>Request date</th>
+                                                        <th>Completed on</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    <?php if ($transferRowCount > 0) {
+                                                        foreach ($rowTableTransfers as $i): ?>
+
+                                                            <tr>
+                                                                <td><?php echo $i['username']; ?></td>
+                                                                <td><?php echo $i['amount'] / 100; ?> bits</td>
+                                                                <td><a href="<?php echo $i['hash']; ?>">Click here</a>
+                                                                </td>
+                                                                <td><?php echo $i['request_date']; ?></td>
+                                                                <td><?php
+                                                                    if (empty($i['completed_on']))
+                                                                        echo "<span class='warning-text'>Unconfirmed</span>";
+                                                                    else
+                                                                        echo "<span class='win-text'>" . $i['completed_on'] . "</span>";
+
+                                                                    ?></td>
+                                                            </tr>
+
+                                                        <?php endforeach;
+                                                    } ?>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </li>
                         <li>
                             <div class="collapsible-header"><i class="material-icons">live_help</i>Support</div>
@@ -572,3 +1071,21 @@ if (!(isset($_SESSION['user_id']) && !empty($_SESSION['user_id'])))
 </main>
 <?php include "inc/footer.php"; ?>
 </body>
+<?php
+
+if (!empty($_SESSION['transfer_user_error']))
+    unset($_SESSION['transfer_user_error']);
+
+if (!empty($_SESSION['transfer_amount_error']))
+    unset($_SESSION['transfer_amount_error']);
+
+if (!empty($_SESSION['transfer_amount_input']))
+    unset($_SESSION['transfer_amount_input']);
+
+if (!empty($_SESSION['transfer_user_input']))
+    unset($_SESSION['transfer_user_input']);
+
+if (!empty($_SESSION['account_management_success']))
+    unset($_SESSION['account_management_success']);
+
+?>

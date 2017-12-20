@@ -59,7 +59,7 @@ include "connect.php";
                 <div class="card-content">
                     <?php if (isset($_SESSION['username']) && !empty($_SESSION['username'])): ?>
                         <div class="row">
-                            <ul class="tabs tabs-fixed-width">
+                            <ul class="tabs">
                                 <li class="tab col s4 green-text"><a href="#fieldDiv">Text</a></li>
                                 <li class="tab col s4"><a href="#randomDiv">Random selection</a></li>
                                 <li class="tab col s4"><a href="#sequenceDiv">Sequence</a></li>
