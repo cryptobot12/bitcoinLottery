@@ -30,7 +30,7 @@ $_SESSION['url'] = "{$_SERVER['REQUEST_URI']}";
     </div>
     <div class="footer-copyright">
         <div class="container">
-© <?php echo date('Y'); ?> Copyright BitPVP
-</div>
-</div>
+            © <?php echo date('Y'); ?> Copyright BitcoinPVP
+        </div>
+    </div>
 </footer>

@@ -11,7 +11,7 @@ include "function.php";
 include "connect.php";
 
 $user_id = $_SESSION['user_id'];
-$rowPerPage = 7;
+$rowPerPage = 1;
 
 try {
     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $dbuser, $dbpass);
@@ -137,8 +137,8 @@ if (!(isset($_SESSION['user_id']) && !empty($_SESSION['user_id'])))
             <div class="row top-buffer-30">
                 <div class="col l10 offset-l1 m10 offset-m1 s12">
                     <?php if (!empty($_SESSION['account_management_success'])) : ?>
-                        <div class="row">
-                            <div class="col l6 offset-l3 m10 offset-m1 s12">
+                        <div class="row centerWrap">
+                            <div class="centeredDiv">
                                 <blockquote class="w900">
                                     <?php
 
@@ -835,7 +835,7 @@ if (!(isset($_SESSION['user_id']) && !empty($_SESSION['user_id'])))
                                                         <?php endfor; ?>
                                                         <li class="">...</li>
                                                         <li class="waves-effect">
-                                                            <a href="<?php echo "account.php?p=" . $pageWithdrawCount ?>">
+                                                            <a href="<?php echo "account.php?pw=" . $pageWithdrawCount ?>">
                                                                 <?php echo $pageWithdrawCount; ?>
                                                             </a>
                                                         </li>
@@ -1029,7 +1029,7 @@ if (!(isset($_SESSION['user_id']) && !empty($_SESSION['user_id'])))
                                                     </tr>
                                                     </thead>
                                                     <tbody>
-                                                    <?php if ($transferRowCount > 0) {
+                                                    <?php if ($transferRowCount > 0) :
                                                         foreach ($rowTableTransfers as $i): ?>
 
                                                             <tr>
@@ -1048,9 +1048,138 @@ if (!(isset($_SESSION['user_id']) && !empty($_SESSION['user_id'])))
                                                             </tr>
 
                                                         <?php endforeach;
-                                                    } ?>
+
+                                                    else:?>
+                                                        <tr>
+                                                            <td colspan="5">No transfers yet.</td>
+                                                        </tr>
+                                                    <?php endif; ?>
                                                     </tbody>
                                                 </table>
+                                            </div>
+                                        </div>
+                                        <div class="row centerWrap">
+                                            <div class="centeredDiv">
+                                                <?php if ($pageTransferCount > 1) : ?>
+                                                    <ul class="pagination">
+                                                        <!-- Left pagination -->
+                                                        <li class="<?php
+
+                                                        if ($pageTransfer > 1)
+                                                            echo "waves-effect";
+                                                        else
+                                                            echo "disabled";
+
+
+                                                        ?>"><a href="<?php
+
+                                                            if ($pageTransfer > 1)
+                                                                echo "account.php?pt=" . ($pageTransfer - 1);
+                                                            else
+                                                                echo "#!";
+
+                                                            ?>"><i class="material-icons">chevron_left</i></a>
+                                                        </li>
+                                                        <!-- Numbers pagination -->
+                                                        <?php if ($pageTransferCount <= 7): ?>
+                                                            <?php for ($i = 1; $i <= $pageTransferCount; $i++) : ?>
+                                                                <li class="<?php
+                                                                if ($i == $pageTransfer)
+                                                                    echo "active";
+                                                                else
+                                                                    echo "waves-effect";
+
+                                                                ?>">
+                                                                    <a href="<?php echo "account.php?pt=" . $i ?>">
+                                                                        <?php echo $i; ?>
+                                                                    </a>
+                                                                </li>
+                                                            <?php endfor; ?>
+                                                        <?php else: ?>
+                                                            <?php if ($pageTransfer <= 3): ?>
+                                                                <?php for ($i = 1; $i <= 6; $i++): ?>
+                                                                    <li class="<?php
+                                                                    if ($i == $pageTransfer)
+                                                                        echo "active";
+                                                                    else
+                                                                        echo "waves-effect";
+
+                                                                    ?>">
+                                                                        <a href="<?php echo "account.php?pt=" . $i ?>">
+                                                                            <?php echo $i; ?>
+                                                                        </a>
+                                                                    </li>
+                                                                <?php endfor; ?>
+                                                                <li class="">...</li>
+                                                                <li class="waves-effect">
+                                                                    <a href="<?php echo "account.php?pt=" . $pageTransferCount ?>">
+                                                                        <?php echo $pageTransferCount; ?>
+                                                                    </a>
+                                                                </li>
+                                                            <?php elseif ($pageTransfer > 3 && $pageTransfer < ($pageTransferCount - 3)): ?>
+                                                                <li class="waves-effect"><a
+                                                                            href="account.php?pt=1">1</a>
+                                                                </li>
+                                                                <li>...</li>
+                                                                <?php for ($i = $pageTransfer - 2; $i <= $pageTransfer + 2; $i++): ?>
+                                                                    <li class="<?php
+                                                                    if ($i == $pageTransfer)
+                                                                        echo "active";
+                                                                    else
+                                                                        echo "waves-effect";
+
+                                                                    ?>">
+                                                                        <a href="<?php echo "account.php?pt=" . $i ?>">
+                                                                            <?php echo $i; ?>
+                                                                        </a>
+                                                                    </li>
+                                                                <?php endfor; ?>
+                                                                <li>...</li>
+                                                                <li class="waves-effect">
+                                                                    <a href="<?php echo "account.php?pt=" . $pageTransferCount ?>">
+                                                                        <?php echo $pageTransferCount; ?>
+                                                                    </a>
+                                                                </li>
+                                                            <?php else: ?>
+                                                                <li class="waves-effect"><a
+                                                                            href="account.php?pt=1">1</a>
+                                                                </li>
+                                                                <li>...</li>
+                                                                <?php for ($i = $pageTransferCount - 5; $i <= $pageTransferCount; $i++): ?>
+                                                                    <li class="<?php
+                                                                    if ($i == $pageTransfer)
+                                                                        echo "active";
+                                                                    else
+                                                                        echo "waves-effect";
+
+                                                                    ?>">
+                                                                        <a href="<?php echo "account.php?pt=" . $i ?>">
+                                                                            <?php echo $i; ?>
+                                                                        </a>
+                                                                    </li>
+                                                                <?php endfor; ?>
+                                                            <?php endif; ?>
+                                                        <?php endif; ?>
+                                                        <!-- Right pagination-->
+                                                        <li class="<?php
+
+                                                        if ($pageTransfer < $pageTransferCount)
+                                                            echo "waves-effect";
+                                                        else
+                                                            echo "disabled";
+
+
+                                                        ?>"><a href="<?php
+
+                                                            if ($pageTransfer < $pageTransferCount)
+                                                                echo "account.php?pt=" . ($pageTransfer + 1);
+                                                            else
+                                                                echo "#!";
+
+                                                            ?>"><i class="material-icons">chevron_right</i></a>
+                                                        </li>
+                                                    </ul>
+                                                <?php endif; ?>
                                             </div>
                                         </div>
                                     </div>
@@ -1059,7 +1188,24 @@ if (!(isset($_SESSION['user_id']) && !empty($_SESSION['user_id'])))
                         </li>
                         <li>
                             <div class="collapsible-header"><i class="material-icons">live_help</i>Support</div>
-                            <div class="collapsible-body"><span>Lorem ipsum dolor sit amet.</span></div>
+                            <div class="collapsible-body">
+                                <div class="row">
+                                    <div class="col l8 offset-l2 m10 offset-m1 s12">
+                                        <form method="post" action="php_actions/send_ticket.php">
+                                            <div class="input-field col s12">
+                                                <input type="text" id="support_subject" name="support_subject"
+                                                       placeholder="Subject (optional)">
+                                                <label for="support_subject" id="support_subject_label">Subject</label>
+                                            </div>
+                                            <div class="input-field col s12">
+                                                <textarea id="support_content" name="support_content"
+                                                          class="materialize-textarea"></textarea>
+                                                <label for="support_content" id="support_content_label">Message</label>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
                         </li>
                     </ul>
                 </div>
