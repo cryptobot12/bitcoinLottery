@@ -11,7 +11,7 @@ include "function.php";
 include "connect.php";
 
 $user_id = $_SESSION['user_id'];
-$rowPerPage = 1;
+$rowPerPage = 7;
 
 try {
     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $dbuser, $dbpass);
@@ -117,7 +117,7 @@ $email = hide_mail($email);
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <!-- Compiled and minified JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
-    <script src="js/autobahn.js"></script>
+
     <script src="js/account_script.js"></script>
 
     <link href="css/style.css" rel="stylesheet">
@@ -682,7 +682,7 @@ if (!(isset($_SESSION['user_id']) && !empty($_SESSION['user_id'])))
                                                     unset($_SESSION['withdraw_address_error']);
                                                 }
 
-                                                ?>">Address&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                ?>" id="withdraw_address_label">Address&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -719,7 +719,7 @@ if (!(isset($_SESSION['user_id']) && !empty($_SESSION['user_id'])))
                                                     unset($_SESSION['withdraw_amount_error']);
                                                 }
 
-                                                ?>">Amount (bits)&nbsp;&nbsp;&nbsp;&nbsp;
+                                                ?>" id="withdraw_amount_label">Amount (bits)&nbsp;&nbsp;&nbsp;&nbsp;
                                                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -736,7 +736,7 @@ if (!(isset($_SESSION['user_id']) && !empty($_SESSION['user_id'])))
 
                                             </div>
                                             <div class="row">
-                                                <button type="submit" class="waves-effect waves-light btn right">
+                                                <button id="withdraw_button" type="submit" class="waves-effect waves-light btn right disabled">
                                                     Withdraw
                                                 </button>
                                             </div>

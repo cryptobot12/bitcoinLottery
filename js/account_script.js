@@ -33,6 +33,26 @@ function activateUpdateEmailButton() {
     }
 }
 
+//Code input for email update
+$(function () {
+
+    var codeInput = $("#code");
+    var regex = /\W/;
+    var submitButton = $("#updateEmailCodeButton");
+
+    codeInput.on('keyup click blur input change', function () {
+
+        if (codeInput.val().length === 4 && !regex.test(codeInput.val())) {
+            submitButton.removeClass('disabled');
+        }
+        else {
+            submitButton.addClass('disabled');
+        }
+
+
+    });
+});
+
 /* AJAX EMAIL UNIQUENESS */
 function verifyEmailUniqueness() {
 
@@ -182,22 +202,33 @@ $(function () {
     //Labels
     var newPasswordLabel = $("#new_password-label");
 
-    newPassword.on('keyup blur input change', function () {
-        var newPasswordVal = newPassword.val();
+    newPassword.on('keyup input', function () {
 
-        confirmNewPassword.removeClass("valid");
-        confirmNewPassword.removeClass("invalid");
-        if (newPasswordVal.length < 8) {
-            newPassword.removeClass("valid");
-            newPassword.addClass("invalid");
-            newPasswordLabel.attr("data-error", "Password must be at least 8 characters long");
-        }
-        else {
-            newPassword.removeClass("invalid");
-            newPassword.addClass("valid");
-        }
+        newPassword.removeClass("valid");
+        newPassword.removeClass("invalid");
 
-        activatePasswordButton();
+        var delay = (function () {
+            var timer = 0;
+            return function (callback, ms) {
+                clearTimeout(timer);
+                timer = setTimeout(callback, ms);
+            };
+        })();
+
+        delay(function () {
+            var newPasswordVal = newPassword.val();
+
+            if (newPasswordVal.length < 8) {
+                newPassword.addClass("invalid");
+                newPasswordLabel.attr("data-error", "Password must be at least 8 characters long");
+            }
+            else {
+                newPassword.addClass("valid");
+            }
+
+            activatePasswordButton();
+        }, 2000);
+
     });
 
     confirmNewPassword.on('click keyup blur input change', function () {
@@ -223,7 +254,7 @@ function toggleTransferButton(enable) {
 
     var transferButton = $("#transfer_button");
 
-    if (enable === true) {
+    if (enable) {
         transferButton.removeClass('disabled');
         transferButton.prop("disabled", false);
     }
@@ -243,9 +274,6 @@ $(function () {
     /*Labels*/
     var transferUserLabel = $("#transfer_user_label");
     var transferAmountLabel = $("#transfer_amount_label");
-
-    /* Button*/
-    var transferButton = $("#transfer_button");
 
     /*Balance*/
     var balance = parseInt($("#balanceNumber").html());
@@ -333,10 +361,8 @@ $(function () {
                     transferAmountLabel.attr('data-error', "Not enough bits");
                     transferAmountInput.addClass('invalid');
                 }
-                else {
-                    transferAmountInput.removeClass('invalid');
+                else
                     transferAmountInput.addClass('valid');
-                }
             }
 
             if (transferUserInput.hasClass('valid') && transferAmountInput.hasClass('valid'))
@@ -349,22 +375,121 @@ $(function () {
 
 });
 
-//Code input for email update
+function normalize(s) {
+    var x = String(s) || '';
+    return x.replace(/^[\s\xa0]+|[\s\xa0]+$/g, '');
+}
+
+function checkBitcoinAddress(s) {
+
+    if (s.length < 26 || s.length > 35) {
+        return false;
+    }
+
+    var re = /^[A-Z0-9]+$/i;
+    return re.test(s);
+}
+
+
+/* Withdraw button toggle */
+function toggleWithdrawButton(isEnabled) {
+
+    var withdrawButton = $("#withdraw_button");
+
+    if (isEnabled) {
+        withdrawButton.removeClass('disabled');
+        withdrawButton.prop("disabled", false);
+    }
+    else {
+        withdrawButton.addClass('disabled');
+        withdrawButton.prop("disabled", true);
+    }
+}
+
+/* Listeners for withdrawal */
 $(function () {
+    /* Inputs */
+    var withdrawalAddressInput = $("#withdraw_address");
+    var withdrawalAmountInput = $("#withdraw_amount");
 
-    var codeInput = $("#code");
-    var regex = /\W/;
-    var submitButton = $("#updateEmailCodeButton");
+    /* Labels */
+    var withdrawalAddressLabel = $("#withdraw_address_label");
+    var withdrawalAmountLabel = $("#withdraw_amount_label");
 
-    codeInput.on('keyup click blur input change', function () {
+    /*Balance*/
+    var balance = parseInt($("#balanceNumber").html());
 
-        if (codeInput.val().length === 4 && !regex.test(codeInput.val())) {
-            submitButton.removeClass('disabled');
-        }
-        else {
-            submitButton.addClass('disabled');
-        }
+    withdrawalAddressInput.on('input keyup', function () {
+        withdrawalAddressInput.removeClass('invalid');
+        withdrawalAddressInput.removeClass('valid');
 
+        toggleWithdrawButton(false);
+
+        var delay = (function () {
+            var timer = 0;
+            return function (callback, ms) {
+                clearTimeout(timer);
+                timer = setTimeout(callback, ms);
+            };
+        })();
+
+        delay(function () {
+            var bitcoinAddress = withdrawalAddressInput.val();
+
+            var normalizedBitcoinAddress = normalize(bitcoinAddress);
+
+            if (checkBitcoinAddress(normalizedBitcoinAddress)) {
+                withdrawalAddressInput.addClass('valid');
+            }
+            else {
+                withdrawalAddressInput.addClass('invalid');
+                withdrawalAddressLabel.attr('data-error', 'Invalid address')
+            }
+
+            if (withdrawalAddressInput.hasClass('valid') && withdrawalAmountInput.hasClass('valid'))
+                toggleWithdrawButton(true);
+
+        }, 2000)
 
     });
+
+    withdrawalAmountInput.on('input keyup', function () {
+        withdrawalAmountInput.removeClass('invalid');
+        withdrawalAmountInput.removeClass('valid');
+
+        toggleWithdrawButton(false);
+
+        var delay = (function () {
+            var timer = 0;
+            return function (callback, ms) {
+                clearTimeout(timer);
+                timer = setTimeout(callback, ms);
+            };
+        })();
+
+        delay(function () {
+
+            var amount = parseFloat(withdrawalAmountInput.val());
+
+            if (!Number.isInteger(amount)) {
+                withdrawalAmountLabel.attr('data-error', "Amount must be an integer number");
+                withdrawalAmountInput.addClass('invalid');
+            }
+            else if (amount <= 100) {
+                withdrawalAmountLabel.attr('data-error', "Amount must be greater than 100");
+                withdrawalAmountInput.addClass('invalid');
+            }
+            else if ((amount + 100) > balance) {
+                withdrawalAmountLabel.attr('data-error', "Not enough bits");
+                withdrawalAmountInput.addClass('invalid');
+            }
+            else
+                withdrawalAmountInput.addClass('valid');
+
+            if (withdrawalAddressInput.hasClass('valid') && withdrawalAmountInput.hasClass('valid'))
+                toggleWithdrawButton(true);
+
+        }, 2000);
+    })
+
 });
