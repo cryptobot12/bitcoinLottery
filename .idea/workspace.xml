@@ -2,13 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="10750175-c39d-40d2-8ef4-4cd797eab4f9" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/bitcoinLottery.iml" afterPath="$PROJECT_DIR$/.idea/bitcoinLottery.iml" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/account.php" afterPath="$PROJECT_DIR$/account.php" />
-      <change beforePath="$PROJECT_DIR$/connect.php" afterPath="$PROJECT_DIR$/connect.php" />
-      <change beforePath="$PROJECT_DIR$/js/account_script.js" afterPath="$PROJECT_DIR$/js/account_script.js" />
-      <change beforePath="$PROJECT_DIR$/php_actions/loading_registration.php" afterPath="$PROJECT_DIR$/php_actions/loading_registration.php" />
-      <change beforePath="$PROJECT_DIR$/php_actions/update_email.php" afterPath="$PROJECT_DIR$/php_actions/update_email.php" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -564,7 +558,7 @@
       <workItem from="1516049117735" duration="6021000" />
       <workItem from="1516066922788" duration="1571000" />
       <workItem from="1516216198829" duration="7000" />
-      <workItem from="1516216251551" duration="7038000" />
+      <workItem from="1516216251551" duration="7081000" />
     </task>
     <task id="LOCAL-00001" summary="* Added some style&#10;* Added numbers count&#10;* Can't bet without having numbers on text area">
       <created>1510434723137</created>
@@ -755,11 +749,18 @@
       <option name="project" value="LOCAL" />
       <updated>1514016212598</updated>
     </task>
-    <option name="localTasksCounter" value="28" />
+    <task id="LOCAL-00028" summary="- Fixed javascript validations for account&#10;- Fixed registration bug">
+      <created>1516266209733</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1516266209733</updated>
+    </task>
+    <option name="localTasksCounter" value="29" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="333491000" />
+    <option name="totallyTimeSpent" value="333534000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
@@ -818,7 +819,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="* Sequence input working now." />
     <MESSAGE value="* Fixed repetitions bug for numbers list.&#10;* Added random selection." />
     <MESSAGE value="* Using session for numbers instead of cookies.&#10;* Client side validation for random numbers added.&#10;* Fixed bugs to improve performance of client side validation (random and sequence)." />
     <MESSAGE value="* Number now costs 50 bits.&#10;* Fixed cost of multiple plays bug.&#10;* Can't bet if balance is too low (server side and client side).&#10;* Added balance icon&#10;* Added number cost." />
@@ -843,7 +843,8 @@
     <MESSAGE value="* Files are now organized better" />
     <MESSAGE value="* Fixed tabs bug.&#10;* Withdrawal almost finished(JavaScript missing).&#10;* Advances on transfer." />
     <MESSAGE value="* Transfer finished.&#10;* Support added(unfinished).&#10;* Website name changed&#10;* Added under construction page." />
-    <option name="LAST_COMMIT_MESSAGE" value="* Transfer finished.&#10;* Support added(unfinished).&#10;* Website name changed&#10;* Added under construction page." />
+    <MESSAGE value="- Fixed javascript validations for account&#10;- Fixed registration bug" />
+    <option name="LAST_COMMIT_MESSAGE" value="- Fixed javascript validations for account&#10;- Fixed registration bug" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
