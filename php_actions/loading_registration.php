@@ -21,8 +21,8 @@ try {
     $conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
     //echo "Connected successfully";
     $stmt = $conn->prepare('INSERT INTO user(username, password, email, bit_address, balance, deposits, withdrawals,
-            net_profit, games_played, registration_date) VALUES (:username, :password, :email, :bit_address,
-            0, 0, 0, 0, 0, CURRENT_TIMESTAMP)');
+            net_profit, games_played, registration_date, enabled, code, code_expires, new_email) VALUES (:username, :password, :email, :bit_address,
+            0, 0, 0, 0, 0, CURRENT_TIMESTAMP, false, null, null, null)');
 
     $stmt->execute(array('username' => $username, 'password' => $password, 'email' => $email,
         'bit_address' => $bit_address));

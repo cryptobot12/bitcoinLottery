@@ -24,9 +24,15 @@ try {
     $code = $row['code'];
     $code_expires = $row['code_expires'];
 
-    if ($code == $codeInput && (strtotime($code_expires) > time())) {
+    //Selecting current time
+    $stmt = $conn->prepare('SELECT NOW()');
+    $stmt->execute();
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    $current_time = $result['NOW()'];
 
-        $stmt = $conn->prepare('UPDATE user SET email = new_email, code_expires = CURRENT_TIMESTAMP WHERE user_id = :user_id');
+    if ($code == $codeInput && (strtotime($code_expires) > $current_time)) {
+
+        $stmt = $conn->prepare('UPDATE user SET email = new_email, code_expires = (CURRENT_TIMESTAMP - INTERVAL 1 DAY) WHERE user_id = :user_id');
         $stmt->execute(array('user_id' => $user_id));
 
         $_SESSION['email_updated'] = true;
@@ -36,11 +42,17 @@ try {
          * Email here
          */
 
-        header("Location: ../email_updated.php");
+        $_SESSION['account_management_success'] = 1;
+
+        header('Location: ../account.php');
+        die();
     }
     else {
         $_SESSION['incorrect_code'] = true;
+        $_SESSION['input_code'] = $codeInput;
+        $_SESSION['upd_email'] = true;
         header("Location: ../account.php" );
+        die();
     }
 
 } catch (PDOException $e) {

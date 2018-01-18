@@ -9,4 +9,4 @@
 $servername = "localhost";
 $dbname = "lottery";
 $dbuser = "root";
-$dbpass = "5720297Ff";
+$dbpass = "luck5720297God*";

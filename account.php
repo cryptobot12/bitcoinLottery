@@ -31,6 +31,13 @@ try {
     $stmt->execute(array('user_id' => $user_id));
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
     $code_expires = $result['code_expires'];
+    $email_code = $result['code'];
+
+    //Selecting current time
+    $stmt = $conn->prepare('SELECT NOW()');
+    $stmt->execute();
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    $current_time = $result['NOW()'];
 
     //Deposits pageCount
     $stmt = $conn->prepare('SELECT COUNT(hash) AS the_count FROM deposit WHERE user_id = :user_id');
@@ -118,6 +125,7 @@ $email = hide_mail($email);
     <!-- Compiled and minified JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
 
+    <script src="js/btcvalid.js"></script>
     <script src="js/account_script.js"></script>
 
     <link href="css/style.css" rel="stylesheet">
@@ -172,7 +180,7 @@ if (!(isset($_SESSION['user_id']) && !empty($_SESSION['user_id'])))
                             <div class="collapsible-body">
                                 <div class="row">
                                     <div class="col l8 offset-l2 m10 offset-m1 s12">
-                                        <?php if ((empty($result['code'])) || (time() > strtotime($code_expires))): ?>
+                                        <?php if ((empty($email_code)) || (strtotime($current_time) > strtotime($code_expires))): ?>
                                             <blockquote class="w900">
                                                 We use this email account to recover your password and to keep you
                                                 updated about changes in your account.
@@ -188,7 +196,7 @@ if (!(isset($_SESSION['user_id']) && !empty($_SESSION['user_id'])))
                                                                data-error="Invalid email">Current
                                                             Email</label>
                                                     </div>
-                                                    <div class="input-field col s9">
+                                                    <div class="input-field col s12">
                                                         <input name="new-email" id="new-email" type="email" class="<?php
                                                         if (!empty($_SESSION['invalid_email']) || !empty($_SESSION['email_taken'])) {
                                                             echo 'invalid';
@@ -221,10 +229,6 @@ if (!(isset($_SESSION['user_id']) && !empty($_SESSION['user_id'])))
                                                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
-                                                    </div>
-                                                    <div class="input-field col s3 little-top-buffer no-text-overflow">
-                                                        <a id="checkAvailability" class=""
-                                                           href="#!">Check&nbsp;availability</a>
                                                     </div>
                                                     <div class="input-field col s12">
                                                         <input name="confirm-email" id="confirm-email" type="email"
@@ -260,7 +264,7 @@ if (!(isset($_SESSION['user_id']) && !empty($_SESSION['user_id'])))
                                                 </div>
                                             </form>
                                         <?php else: ?>
-                                            <form class="col l8 offset-l2 m10 offset-m1 s12"
+                                            <form class=""
                                                   action="php_actions/update_email.php"
                                                   method="post">
                                                 <div class="row">
@@ -272,30 +276,41 @@ if (!(isset($_SESSION['user_id']) && !empty($_SESSION['user_id'])))
                                                             Email</label>
                                                     </div>
                                                     <div class="col s12">
-                                                        <p>A code was sent to your current email. Insert the code to
-                                                            update your email.</p><br>
+                                                        <blockquote class="w900">A code was sent to your current email. Type the code to
+                                                            update your email.</blockquote><br>
                                                     </div>
-                                                    <div class="input-field col s2 offset-s5">
-                                                        <input name="code" id="code" type="text"
-                                                               class="upperCaseInput"
-                                                               maxlength="4">
-                                                        <label id="codeLabel" for="code">CODE
-                                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                                                    <div class="input-field col s4 offset-s4">
+                                                        <?php if (isset($_SESSION['incorrect_code']) && !empty($_SESSION['incorrect_code']) &&
+                                                            $_SESSION == true): ?>
+                                                            <input name="code" id="code" type="text"
+                                                                   class="upperCaseInput invalid"
+                                                                   maxlength="4" value="<?php echo $_SESSION['input_code']; ?>">
+                                                            <label id="codeLabel" for="code" data-error="Incorrect code">CODE
+                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                                                            <?php unset($_SESSION['incorrect_code']);
+                                                            ?>
+                                                        <?php else: ?>
+                                                            <input name="code" id="code" type="text"
+                                                                   class="upperCaseInput"
+                                                                   maxlength="4">
+                                                            <label id="codeLabel" for="code">CODE
+                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                                                        <?php endif; ?>
                                                     </div>
-                                                    <?php if (isset($_SESSION['incorrect_code']) && !empty($_SESSION['incorrect_code']) &&
-                                                        $_SESSION == true): ?>
-                                                        <div class="col s2">
-                                                            <p class="input-alert">* Incorrect code</p>
-                                                        </div>
-                                                        <?php unset($_SESSION['incorrect_code']); ?>
-                                                    <?php endif; ?>
                                                 </div>
                                                 <div class="row">
                                                     <button type="submit" id="updateEmailCodeButton"
@@ -1233,5 +1248,8 @@ if (!empty($_SESSION['transfer_user_input']))
 
 if (!empty($_SESSION['account_management_success']))
     unset($_SESSION['account_management_success']);
+
+if (!empty($_SESSION['input_code']))
+    unset($_SESSION['input_code']);
 
 ?>

@@ -66,5 +66,7 @@
     </orderEntry>
     <orderEntry type="library" name="materialize" level="application" />
     <orderEntry type="library" name="jquery" level="application" />
+    <orderEntry type="library" name="materialize" level="application" />
+    <orderEntry type="library" name="jquery" level="application" />
   </component>
 </module>

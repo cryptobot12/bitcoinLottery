@@ -4,35 +4,6 @@ function isEmail(email) {
     return regex.test(email);
 }
 
-/* PASSWORD CHANGE BUTTON ACTIVATOR */
-function activatePasswordButton() {
-
-    var newPassword = $("#new_password");
-    var confirmNewPassword = $("#confirm_new_password");
-    var updatePasswordButton = $("#update_password_button");
-
-    if (newPassword.hasClass("valid") && confirmNewPassword.hasClass("valid"))
-        updatePasswordButton.removeClass("disabled");
-    else
-        updatePasswordButton.addClass("disabled");
-}
-
-/* EMAIL UPDATE BUTTON ACTIVATOR */
-function activateUpdateEmailButton() {
-
-    var newEmail = $("#new-email");
-    var confirmEmail = $("#confirm-email");
-    var updateEmailButton = $("#updateEmailButton");
-
-    //Activate button
-    if (confirmEmail.hasClass("valid") && newEmail.hasClass("valid")) {
-        updateEmailButton.removeClass("disabled");
-    }
-    else {
-        updateEmailButton.addClass("disabled");
-    }
-}
-
 //Code input for email update
 $(function () {
 
@@ -65,157 +36,170 @@ function verifyEmailUniqueness() {
     var conEmailVal = confirmEmail.val();
     var newEmailVal = newEmail.val();
 
-    if (isEmail(newEmail.val())) {
 
-        $.ajax('php_ajax/check_email_uniqueness.php', {
-            success: function (result) {
-                var response = JSON.parse(result);
+    $.ajax('php_ajax/check_email_uniqueness.php', {
+        success: function (result) {
+            var response = JSON.parse(result);
 
-                if (response['taken'] === true) {
-                    newEmail.removeClass("valid");
-                    newEmail.addClass("invalid");
+            if (response['taken'] === true) {
+                newEmail.addClass("invalid");
 
-                    labelNewEmail.attr("data-error", "Email is already taken");
-                }
-                else {
-                    newEmail.removeClass("invalid");
-                    newEmail.addClass("valid");
+                labelNewEmail.attr("data-error", "Email is already taken");
+            }
+            else {
+                newEmail.addClass('valid');
+            }
 
-                    if (isEmail(conEmailVal) || conEmailVal !== "") {
-                        if (conEmailVal === newEmailVal && conEmailVal !== "" && newEmailVal !== "") {
-                            confirmEmail.removeClass("invalid");
-                            confirmEmail.addClass("valid");
-                        }
-                        else {
-                            updateEmailButton.addClass("disabled");
-                            confirmEmail.removeClass("valid");
-                            confirmEmail.addClass("invalid");
+            if (newEmail.hasClass('valid') && confirmEmail.hasClass('valid'))
+                toggleEmailButton(true);
+        },
+        data: {
+            email: newEmailVal
+        },
+        error: function () {
+            console.log("error");
+        },
 
-                            labelConfirmEmail.attr("data-error", "Emails do not match");
-                        }
-                    }
-
-                    activateUpdateEmailButton();
-                }
-            },
-            data: {
-                email: newEmailVal
-            },
-            error: function () {
-                console.log("error");
-            },
-
-            method: "POST"
-        });
-    }
-    else {
-        newEmail.removeClass("valid");
-        newEmail.addClass("invalid");
-
-        labelNewEmail.attr("data-error", "Invalid email");
-    }
+        method: "POST"
+    });
 
 
 }
 
-//Button to check email uniqueness
-$(function () {
+/* EMAIL UPDATE BUTTON ACTIVATOR */
+function toggleEmailButton(enabled) {
 
-    var checkAvailabilityButton = $("#checkAvailability");
+    var updateEmailButton = $("#updateEmailButton");
 
-    checkAvailabilityButton.on('click', function () {
-        verifyEmailUniqueness();
-    });
-});
+    //Activate button
+    if (enabled) {
+        updateEmailButton.removeClass("disabled");
+        updateEmailButton.prop("disabled", false);
+    }
+    else {
+        updateEmailButton.addClass("disabled");
+        updateEmailButton.prop("disabled", true);
+    }
+}
 
+/* PASSWORD CHANGE BUTTON ACTIVATOR */
+function togglePasswordButton(enable) {
+
+    var updatePasswordButton = $("#update_password_button");
+
+    if (enable) {
+        updatePasswordButton.removeClass('disabled');
+        updatePasswordButton.prop("disabled", false);
+    }
+    else {
+        updatePasswordButton.addClass('disabled');
+        updatePasswordButton.prop("disabled", true);
+    }
+}
 
 //Listeners for email and password
 $(function () {
+
+    /* EMAIL */
     var newEmail = $("#new-email");
     var confirmEmail = $("#confirm-email");
     var labelNewEmail = $("#newEmailLabel");
     var labelConfirmEmail = $("#confirmEmailLabel");
 
-    var updateEmailButton = $("#updateEmailButton");
+    var delayNewEmail = (function () {
+        var timer = 0;
+        return function (callback, ms) {
+            clearTimeout(timer);
+            timer = setTimeout(callback, ms);
+        };
+    })();
+
+    newEmail.on('keyup input', function () {
+        newEmail.removeClass('valid');
+        newEmail.removeClass('invalid');
+        confirmEmail.removeClass("valid");
+        confirmEmail.removeClass("invalid");
+
+        toggleEmailButton(false);
+
+        delayNewEmail(function () {
+            var newEmailVal = newEmail.val();
+
+            if (isEmail(newEmailVal)) {
+
+                verifyEmailUniqueness();
+
+            }
+            else {
+                newEmail.addClass("invalid");
+
+                labelNewEmail.attr("data-error", "Invalid email");
+            }
+
+            if (newEmail.hasClass('valid') && confirmEmail.hasClass('valid'))
+                toggleEmailButton(true);
+
+        }, 2000);
 
 
-    confirmEmail.on('keyup click input change', function () {
-        var conEmailVal = confirmEmail.val();
-        var newEmailVal = newEmail.val();
+    });
 
-        if (isEmail(conEmailVal)) {
+    var delayConfirm = (function () {
+        var timer = 0;
+        return function (callback, ms) {
+            clearTimeout(timer);
+            timer = setTimeout(callback, ms);
+        };
+    })();
+
+    confirmEmail.on('keyup input', function () {
+        confirmEmail.removeClass("valid");
+        confirmEmail.removeClass("invalid");
+
+        toggleEmailButton(false);
+
+        delayConfirm(function () {
+            var conEmailVal = confirmEmail.val();
+            var newEmailVal = newEmail.val();
+
             if (conEmailVal === newEmailVal && conEmailVal !== "" && newEmailVal !== "") {
-                confirmEmail.removeClass("invalid");
+
                 confirmEmail.addClass("valid");
             }
             else {
-                updateEmailButton.addClass("disabled");
-                confirmEmail.removeClass("valid");
                 confirmEmail.addClass("invalid");
 
                 labelConfirmEmail.attr("data-error", "Emails do not match");
             }
-        }
-        else {
-            updateEmailButton.addClass("disabled");
-            confirmEmail.removeClass("valid");
-            confirmEmail.addClass("invalid");
 
-            labelConfirmEmail.attr("data-error", "Invalid email");
-        }
-
-        activateUpdateEmailButton();
+            if (newEmail.hasClass('valid') && confirmEmail.hasClass('valid'))
+                toggleEmailButton(true);
+        }, 2000);
     });
 
-    newEmail.on('keyup change input', function () {
-        var conEmailVal = confirmEmail.val();
-        var newEmailVal = newEmail.val();
-
-        if (isEmail(newEmailVal)) {
-            newEmail.removeClass("invalid");
-            newEmail.removeClass("valid");
-            if (conEmailVal === newEmailVal && conEmailVal !== "" && newEmailVal !== "") {
-                confirmEmail.removeClass("invalid");
-                confirmEmail.addClass("valid");
-
-            }
-            else {
-                updateEmailButton.addClass("disabled");
-                confirmEmail.removeClass("valid");
-                confirmEmail.addClass("invalid");
-
-                labelConfirmEmail.attr("data-error", "Emails do not match");
-            }
-        }
-        else {
-            newEmail.removeClass("valid");
-            newEmail.addClass("invalid");
-
-            labelNewEmail.attr("data-error", "Invalid email");
-        }
-
-        activateUpdateEmailButton();
-    });
-
+    /* PASSWORD */
     var newPassword = $("#new_password");
     var confirmNewPassword = $("#confirm_new_password");
     //Labels
     var newPasswordLabel = $("#new_password-label");
 
-    newPassword.on('keyup input', function () {
+    var delayNewPassword = (function () {
+        var timer = 0;
+        return function (callback, ms) {
+            clearTimeout(timer);
+            timer = setTimeout(callback, ms);
+        };
+    })();
 
+    newPassword.on('keyup input', function () {
         newPassword.removeClass("valid");
         newPassword.removeClass("invalid");
+        confirmNewPassword.removeClass("invalid");
+        confirmNewPassword.removeClass("valid");
 
-        var delay = (function () {
-            var timer = 0;
-            return function (callback, ms) {
-                clearTimeout(timer);
-                timer = setTimeout(callback, ms);
-            };
-        })();
+        togglePasswordButton(false);
 
-        delay(function () {
+        delayNewPassword(function () {
             var newPasswordVal = newPassword.val();
 
             if (newPasswordVal.length < 8) {
@@ -226,30 +210,50 @@ $(function () {
                 newPassword.addClass("valid");
             }
 
-            activatePasswordButton();
+            if (newPassword.hasClass("valid") && confirmNewPassword.hasClass("valid"))
+                togglePasswordButton(true);
+
         }, 2000);
 
     });
 
-    confirmNewPassword.on('click keyup blur input change', function () {
-        var confirmNewPasswordVal = confirmNewPassword.val();
-        var newPasswordVal = newPassword.val();
+    var delayConfirmNewPassword = (function () {
+        var timer = 0;
+        return function (callback, ms) {
+            clearTimeout(timer);
+            timer = setTimeout(callback, ms);
+        };
+    })();
 
-        if (confirmNewPasswordVal !== newPasswordVal) {
-            confirmNewPassword.removeClass("valid");
-            confirmNewPassword.addClass("invalid");
-            confirmNewPassword.attr("data-error", "Passwords do not match");
-        }
-        else {
-            confirmNewPassword.removeClass("invalid");
-            confirmNewPassword.addClass("valid");
-        }
+    confirmNewPassword.on('keyup input', function () {
+        confirmNewPassword.removeClass("invalid");
+        confirmNewPassword.removeClass("valid");
 
-        activatePasswordButton();
+        togglePasswordButton(false);
+
+        delayConfirmNewPassword(function () {
+            var confirmNewPasswordVal = confirmNewPassword.val();
+            var newPasswordVal = newPassword.val();
+
+
+            if (confirmNewPasswordVal !== newPasswordVal) {
+                confirmNewPassword.addClass("invalid");
+                confirmNewPassword.attr("data-error", "Passwords do not match");
+            }
+            else {
+                confirmNewPassword.addClass("valid");
+            }
+
+            if (newPassword.hasClass("valid") && confirmNewPassword.hasClass("valid"))
+                togglePasswordButton(true);
+
+        }, 2000);
+
     });
 
 });
 
+/* TRANSFER BUTTON TOGGLE */
 function toggleTransferButton(enable) {
 
     var transferButton = $("#transfer_button");
@@ -278,21 +282,21 @@ $(function () {
     /*Balance*/
     var balance = parseInt($("#balanceNumber").html());
 
+    var delayTransferUser = (function () {
+        var timer = 0;
+        return function (callback, ms) {
+            clearTimeout(timer);
+            timer = setTimeout(callback, ms);
+        };
+    })();
+
     transferUserInput.on('input keyup', function () {
         transferUserInput.removeClass('invalid');
         transferUserInput.removeClass('valid');
 
         toggleTransferButton(false);
 
-        var delay = (function () {
-            var timer = 0;
-            return function (callback, ms) {
-                clearTimeout(timer);
-                timer = setTimeout(callback, ms);
-            };
-        })();
-
-        delay(function () {
+        delayTransfer(function () {
             var username = transferUserInput.val();
 
             if (username.length > 0) {
@@ -330,21 +334,21 @@ $(function () {
         }, 1800);
     });
 
+    var delayTransferAmount = (function () {
+        var timer = 0;
+        return function (callback, ms) {
+            clearTimeout(timer);
+            timer = setTimeout(callback, ms);
+        };
+    })();
+
     transferAmountInput.on('input keyup', function () {
         transferAmountInput.removeClass('invalid');
         transferAmountInput.removeClass('valid');
 
         toggleTransferButton(false);
 
-        var delay = (function () {
-            var timer = 0;
-            return function (callback, ms) {
-                clearTimeout(timer);
-                timer = setTimeout(callback, ms);
-            };
-        })();
-
-        delay(function () {
+        delayTransferAmount(function () {
             var amount = parseFloat(transferAmountInput.val());
 
             //Not empty inputs
@@ -375,22 +379,6 @@ $(function () {
 
 });
 
-function normalize(s) {
-    var x = String(s) || '';
-    return x.replace(/^[\s\xa0]+|[\s\xa0]+$/g, '');
-}
-
-function checkBitcoinAddress(s) {
-
-    if (s.length < 26 || s.length > 35) {
-        return false;
-    }
-
-    var re = /^[A-Z0-9]+$/i;
-    return re.test(s);
-}
-
-
 /* Withdraw button toggle */
 function toggleWithdrawButton(isEnabled) {
 
@@ -419,26 +407,24 @@ $(function () {
     /*Balance*/
     var balance = parseInt($("#balanceNumber").html());
 
+    var delayWAddress = (function () {
+        var timer = 0;
+        return function (callback, ms) {
+            clearTimeout(timer);
+            timer = setTimeout(callback, ms);
+        };
+    })();
+
     withdrawalAddressInput.on('input keyup', function () {
         withdrawalAddressInput.removeClass('invalid');
         withdrawalAddressInput.removeClass('valid');
 
         toggleWithdrawButton(false);
 
-        var delay = (function () {
-            var timer = 0;
-            return function (callback, ms) {
-                clearTimeout(timer);
-                timer = setTimeout(callback, ms);
-            };
-        })();
-
-        delay(function () {
+        delayWA(function () {
             var bitcoinAddress = withdrawalAddressInput.val();
 
-            var normalizedBitcoinAddress = normalize(bitcoinAddress);
-
-            if (checkBitcoinAddress(normalizedBitcoinAddress)) {
+            if (checkAddress(normalizedBitcoinAddress)) {
                 withdrawalAddressInput.addClass('valid');
             }
             else {
@@ -453,21 +439,21 @@ $(function () {
 
     });
 
+    var delayWAmount = (function () {
+        var timer = 0;
+        return function (callback, ms) {
+            clearTimeout(timer);
+            timer = setTimeout(callback, ms);
+        };
+    })();
+
     withdrawalAmountInput.on('input keyup', function () {
         withdrawalAmountInput.removeClass('invalid');
         withdrawalAmountInput.removeClass('valid');
 
         toggleWithdrawButton(false);
 
-        var delay = (function () {
-            var timer = 0;
-            return function (callback, ms) {
-                clearTimeout(timer);
-                timer = setTimeout(callback, ms);
-            };
-        })();
-
-        delay(function () {
+        delayWAmount(function () {
 
             var amount = parseFloat(withdrawalAmountInput.val());
 
