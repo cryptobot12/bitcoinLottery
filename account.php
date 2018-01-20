@@ -109,13 +109,29 @@ try {
 }
 
 $email = hide_mail($email);
+/* Ticket form*/
+$ticket_content_error = (!empty($_SESSION['ticket_content_error']) ? $_SESSION['ticket_content_error'] : 0);
+
+
+$ticket_subject_error = (!empty($_SESSION['ticket_subject_error']) ? $_SESSION['ticket_subject_error'] : 0);
+
+$is_ticket_subject_invalid = !empty($_SESSION['ticket_subject_error']) ? 'invalid' : '';
+
+if ($ticket_subject_error == 1)
+    $ticket_subject_data_error = 'Subject is too long';
+else
+    $ticket_subject_data_error = '';
+
+unset($_SESSION['ticket_subject_error']);
+unset($_SESSION['ticket_content_error']);
+
 ?>
     <!DOCTYPE html>
     <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Bitcoin</title>
-    <!--    Jquery -->
+    <!-- Jquery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
     <!-- Compiled and minified CSS -->
@@ -125,13 +141,26 @@ $email = hide_mail($email);
     <!-- Compiled and minified JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
 
+    <!-- Custom scripts -->
     <script src="js/btcvalid.js"></script>
     <script src="js/account_script.js"></script>
 
+    <!-- Custom style -->
     <link href="css/style.css" rel="stylesheet">
+
+    <!-- Recaptcha-->
+    <script src='https://www.google.com/recaptcha/api.js'></script>
 
     <!--Let browser know website is optimized for mobile-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <!-- Form submits -->
+    <script>
+        function submitTicket() {
+            $("#ticket_form").submit();
+
+        }
+    </script>
 </head>
 <body>
 <header>
@@ -162,6 +191,9 @@ if (!(isset($_SESSION['user_id']) && !empty($_SESSION['user_id'])))
                                             break;
                                         case 4:
                                             echo "Your transfer is being processed.";
+                                            break;
+                                        case 5:
+                                            echo "Your support ticket has been successfully created! Please allow up to 72 hours for a response.";
                                             break;
                                     }
 
@@ -276,16 +308,21 @@ if (!(isset($_SESSION['user_id']) && !empty($_SESSION['user_id'])))
                                                             Email</label>
                                                     </div>
                                                     <div class="col s12">
-                                                        <blockquote class="w900">A code was sent to your current email. Type the code to
-                                                            update your email.</blockquote><br>
+                                                        <blockquote class="w900">A code was sent to your current email.
+                                                            Type the code to
+                                                            update your email.
+                                                        </blockquote>
+                                                        <br>
                                                     </div>
                                                     <div class="input-field col s4 offset-s4">
                                                         <?php if (isset($_SESSION['incorrect_code']) && !empty($_SESSION['incorrect_code']) &&
                                                             $_SESSION == true): ?>
                                                             <input name="code" id="code" type="text"
                                                                    class="upperCaseInput invalid"
-                                                                   maxlength="4" value="<?php echo $_SESSION['input_code']; ?>">
-                                                            <label id="codeLabel" for="code" data-error="Incorrect code">CODE
+                                                                   maxlength="4"
+                                                                   value="<?php echo $_SESSION['input_code']; ?>">
+                                                            <label id="codeLabel" for="code"
+                                                                   data-error="Incorrect code">CODE
                                                                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                                                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                                                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -751,7 +788,8 @@ if (!(isset($_SESSION['user_id']) && !empty($_SESSION['user_id'])))
 
                                             </div>
                                             <div class="row">
-                                                <button id="withdraw_button" type="submit" class="waves-effect waves-light btn right disabled">
+                                                <button id="withdraw_button" type="submit"
+                                                        class="waves-effect waves-light btn right disabled">
                                                     Withdraw
                                                 </button>
                                             </div>
@@ -1202,20 +1240,72 @@ if (!(isset($_SESSION['user_id']) && !empty($_SESSION['user_id'])))
                             </div>
                         </li>
                         <li>
-                            <div class="collapsible-header"><i class="material-icons">live_help</i>Support</div>
+                            <?php if ($ticket_content_error != 0): ?>
+                                <div class="collapsible-header active"><i class="material-icons">live_help</i>Support
+                                </div>
+                            <?php else: ?>
+                                <div class="collapsible-header"><i class="material-icons">live_help</i>Support</div>
+                            <?php endif; ?>
                             <div class="collapsible-body">
                                 <div class="row">
                                     <div class="col l8 offset-l2 m10 offset-m1 s12">
-                                        <form method="post" action="php_actions/send_ticket.php">
+                                        <form method="post" action="php_actions/send_ticket.php" id="ticket_form">
+                                            <blockquote class="w900">
+                                                Do you have a question or concern? Send a ticket, and we will be happy
+                                                to help you.
+                                            </blockquote>
+                                            <br>
                                             <div class="input-field col s12">
-                                                <input type="text" id="support_subject" name="support_subject"
-                                                       placeholder="Subject (optional)">
-                                                <label for="support_subject" id="support_subject_label">Subject</label>
+                                                <input type="text" id="support_subject" class="<?php echo $is_ticket_subject_invalid; ?>" name="support_subject"
+                                                       placeholder="Subject (optional)" data-length="80"
+                                                       value="<?php
+                                                       if (!empty($_SESSION['ticket_input_subject']))
+                                                           echo $_SESSION['ticket_input_subject']; ?>">
+                                                <label for="support_subject" id="support_subject_label"
+                                                data-error="<?php echo $ticket_subject_data_error; ?>">Subject&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
                                             </div>
                                             <div class="input-field col s12">
-                                                <textarea id="support_content" name="support_content"
-                                                          class="materialize-textarea"></textarea>
-                                                <label for="support_content" id="support_content_label">Message</label>
+                                                <?php //If there is an error
+                                                //Add invalid class
+                                                if ($ticket_content_error != 0): ?>
+                                                    <textarea id="support_content" name="support_content"
+                                                              class="materialize-textarea invalid"
+                                                              data-length="2000"><?php
+                                                        if (!empty($_SESSION['ticket_input_content']))
+                                                            echo $_SESSION['ticket_input_content']; ?></textarea>
+                                                <?php else: ?>
+                                                    <textarea id="support_content" name="support_content"
+                                                              class="materialize-textarea"
+                                                              data-length="2000"><?php
+                                                        if (!empty($_SESSION['ticket_input_content']))
+                                                            echo $_SESSION['ticket_input_content']; ?></textarea>
+                                                <?php endif; ?>
+                                                <?php if ($ticket_content_error == 2): ?>
+                                                    <label for="support_content" id="support_content_label"
+                                                           data-error="Message must have at least 50 characters">
+                                                        Message&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                                                <?php else: ?>
+                                                    <label for="support_content" id="support_content_label"
+                                                           data-error="Message is too long">Message&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                                                <?php endif; ?>
+                                            </div>
+                                            <div class="row"></div>
+                                            <div class="row">
+                                                <button id="ticket_button" disabled
+                                                        class="waves-effect waves-light btn right g-recaptcha disabled"
+                                                        data-sitekey="6Lf1d0EUAAAAAHlf_-pGuqjxWwBfy-UVkdJt-xLf"
+                                                        data-callback="submitTicket">Submit
+                                                </button>
                                             </div>
                                         </form>
                                     </div>
@@ -1234,22 +1324,16 @@ if (!(isset($_SESSION['user_id']) && !empty($_SESSION['user_id'])))
 </body>
 <?php
 
-if (!empty($_SESSION['transfer_user_error']))
-    unset($_SESSION['transfer_user_error']);
+unset($_SESSION['transfer_user_error']);
+unset($_SESSION['transfer_amount_error']);
+unset($_SESSION['transfer_amount_input']);
+unset($_SESSION['transfer_user_input']);
+unset($_SESSION['account_management_success']);
+unset($_SESSION['input_code']);
 
-if (!empty($_SESSION['transfer_amount_error']))
-    unset($_SESSION['transfer_amount_error']);
+/*Ticket stuff*/
+unset($_SESSION['ticket_input_subject']);
+unset($_SESSION['ticket_input_content']);
 
-if (!empty($_SESSION['transfer_amount_input']))
-    unset($_SESSION['transfer_amount_input']);
-
-if (!empty($_SESSION['transfer_user_input']))
-    unset($_SESSION['transfer_user_input']);
-
-if (!empty($_SESSION['account_management_success']))
-    unset($_SESSION['account_management_success']);
-
-if (!empty($_SESSION['input_code']))
-    unset($_SESSION['input_code']);
 
 ?>

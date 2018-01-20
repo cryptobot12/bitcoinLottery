@@ -11,14 +11,30 @@ $(function () {
     var regex = /\W/;
     var submitButton = $("#updateEmailCodeButton");
 
-    codeInput.on('keyup click blur input change', function () {
+    var delayEmailCode = (function () {
+        var timer = 0;
+        return function (callback, ms) {
+            clearTimeout(timer);
+            timer = setTimeout(callback, ms);
+        };
+    })();
 
-        if (codeInput.val().length === 4 && !regex.test(codeInput.val())) {
-            submitButton.removeClass('disabled');
-        }
-        else {
-            submitButton.addClass('disabled');
-        }
+
+    codeInput.on('keyup input', function () {
+        codeInput.removeClass('valid');
+        codeInput.removeClass('invalid');
+        submitButton.addClass('disabled');
+        submitButton.prop("disabled", true);
+
+        delayEmailCode(function () {
+            if (codeInput.val().length === 4 && !regex.test(codeInput.val())) {
+                submitButton.removeClass('disabled');
+                submitButton.prop("disabled", false);
+            }
+            else {
+                codeInput.addClass('invalid');
+            }
+        }, 1500);
 
 
     });
@@ -477,5 +493,93 @@ $(function () {
 
         }, 2000);
     })
+
+});
+
+function toggleTicketButton(enabled) {
+
+    var ticketButton = $("#ticket_button");
+
+    if (enabled) {
+        ticketButton.removeClass('disabled');
+        ticketButton.prop("disabled", false);
+    }
+    else {
+        ticketButton.addClass('disabled');
+        ticketButton.prop("disabled", true);
+    }
+}
+/* Listener for ticket */
+$(function () {
+
+    var delayTicket = (function () {
+        var timer = 0;
+        return function (callback, ms) {
+            clearTimeout(timer);
+            timer = setTimeout(callback, ms);
+        };
+    })();
+
+    var ticket_content_input = $("#support_content");
+    var ticket_content_label = $("#support_content_label");
+
+    var ticket_subject_input = $("#support_subject");
+    var ticket_subject_label = $("#support_subject_label");
+
+    ticket_content_input.on('keyup input', function () {
+
+        toggleTicketButton(false);
+
+        ticket_content_input.removeClass('invalid');
+        ticket_content_input.removeClass('valid');
+
+        delayTicket(function () {
+
+            if (ticket_content_input.val().length < 50) {
+
+                ticket_content_label.attr('data-error', "Message must have at least 50 characters");
+                ticket_content_input.addClass('invalid');
+
+            } else if (ticket_content_input.val().length > 2000) {
+                ticket_content_label.attr('data-error', "Message is too long");
+                ticket_content_input.addClass('invalid');
+
+            }
+            else {
+                ticket_content_input.addClass('valid');
+            }
+
+            if (ticket_content_input.hasClass('valid') && ticket_subject_input.hasClass('valid')) {
+                toggleTicketButton(true);
+            }
+
+        }, 2000);
+    });
+
+    ticket_subject_input.on('keyup input', function () {
+
+        toggleTicketButton(false);
+
+        ticket_subject_input.removeClass('invalid');
+        ticket_subject_input.removeClass('valid');
+
+        delayTicket(function () {
+
+            if (ticket_subject_input.val().length > 80) {
+                ticket_subject_label.attr('data-error', "Subject is too long");
+                ticket_subject_input.addClass('invalid');
+
+            }
+            else {
+                ticket_subject_input.addClass('valid');
+            }
+
+            if (ticket_subject_input.hasClass('valid') && ticket_content_input.hasClass('valid')) {
+                toggleTicketButton(true);
+            }
+
+        }, 2000);
+    });
+
 
 });

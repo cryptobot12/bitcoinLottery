@@ -74,6 +74,7 @@ if ($new_email == $confirm_email) {
 
             $_SESSION['upd_email'] = true;
             header("Location: ../account.php");
+            die();
         } catch (PDOException $e) {
             echo "Connection failed: " . $e->getMessage();
         }
