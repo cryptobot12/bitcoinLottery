@@ -243,34 +243,24 @@ if (isset($_GET['user']) && !empty($_GET['user']) && (!isset($rowTable['username
             <div class="row centerWrap">
                 <div class="centeredDiv">
                     <?php if ($pageCount > 1): ?>
-                    <ul class="pagination">
-                        <!--                        Go left (pagination) -->
-                        <li class="<?php
-                        if ($page > 1)
-                            echo 'waves-effect';
-                        else
-                            echo 'disabled';
-                        ?>"><a href="<?php
+                        <ul class="pagination">
+                            <!--                        Go left (pagination) -->
+                            <li class="<?php
                             if ($page > 1)
-                                rankLink($page - 1, $raAsc, $gaAsc, $order, $order[0]);
+                                echo 'waves-effect';
                             else
-                                echo '#!';
-                            ?>">
-                                <i class="material-icons">chevron_left</i></a></li>
-                        <!--Pages-->
-                        <?php
-                        if ($pageCount <= 15) {
-                            for ($i = 1; $i <= $pageCount; $i++) : ?>
-                                <li class="<?php if ($page == $i)
-                                    echo 'active';
+                                echo 'disabled';
+                            ?>"><a href="<?php
+                                if ($page > 1)
+                                    rankLink($page - 1, $raAsc, $gaAsc, $order, $order[0]);
                                 else
-                                    echo 'waves-effect'; ?>"><a
-                                            href="<?php rankLink($i, $raAsc, $gaAsc, $order, $order[0]); ?>">
-                                        <?php echo $i; ?></a></li>
-                            <?php endfor;
-                        } else {
-                            if ($page <= 8) {
-                                for ($i = 1; $i <= 14; $i++) :?>
+                                    echo '#!';
+                                ?>">
+                                    <i class="material-icons">chevron_left</i></a></li>
+                            <!--Pages-->
+                            <?php
+                            if ($pageCount <= 15) {
+                                for ($i = 1; $i <= $pageCount; $i++) : ?>
                                     <li class="<?php if ($page == $i)
                                         echo 'active';
                                     else
@@ -278,25 +268,9 @@ if (isset($_GET['user']) && !empty($_GET['user']) && (!isset($rowTable['username
                                                 href="<?php rankLink($i, $raAsc, $gaAsc, $order, $order[0]); ?>">
                                             <?php echo $i; ?></a></li>
                                 <?php endfor;
-                                echo '<li>...</li>'; ?>
-                                <li class="<?php if ($page == $pageCount)
-                                    echo 'active';
-                                else
-                                    echo 'waves-effect'; ?>"><a
-                                            href="<?php rankLink($i, $raAsc, $gaAsc, $order, $order[0]); ?>">
-                                        <?php echo $pageCount; ?></a></li>
-                                <?php
-                            } else { ?>
-                                <li class="<?php if ($page == 1)
-                                    echo 'active';
-                                else
-                                    echo 'waves-effect'; ?>"><a
-                                            href="<?php rankLink($i, $raAsc, $gaAsc, $order, $order[0]); ?>">
-                                        <?php echo 1; ?></a></li>
-                                <?php
-                                echo '<li>...</li>';
-                                if ($pageCount - $page > 7) {
-                                    for ($i = $page - 6; $i <= $page + 6; $i++) :?>
+                            } else {
+                                if ($page <= 8) {
+                                    for ($i = 1; $i <= 14; $i++) :?>
                                         <li class="<?php if ($page == $i)
                                             echo 'active';
                                         else
@@ -312,33 +286,59 @@ if (isset($_GET['user']) && !empty($_GET['user']) && (!isset($rowTable['username
                                                 href="<?php rankLink($i, $raAsc, $gaAsc, $order, $order[0]); ?>">
                                             <?php echo $pageCount; ?></a></li>
                                     <?php
-                                } else {
-                                    for ($i = $pageCount - 13; $i <= $pageCount; $i++) :?>
-                                        <li class="<?php if ($page == $i)
+                                } else { ?>
+                                    <li class="<?php if ($page == 1)
+                                        echo 'active';
+                                    else
+                                        echo 'waves-effect'; ?>"><a
+                                                href="<?php rankLink($i, $raAsc, $gaAsc, $order, $order[0]); ?>">
+                                            <?php echo 1; ?></a></li>
+                                    <?php
+                                    echo '<li>...</li>';
+                                    if ($pageCount - $page > 7) {
+                                        for ($i = $page - 6; $i <= $page + 6; $i++) :?>
+                                            <li class="<?php if ($page == $i)
+                                                echo 'active';
+                                            else
+                                                echo 'waves-effect'; ?>"><a
+                                                        href="<?php rankLink($i, $raAsc, $gaAsc, $order, $order[0]); ?>">
+                                                    <?php echo $i; ?></a></li>
+                                        <?php endfor;
+                                        echo '<li>...</li>'; ?>
+                                        <li class="<?php if ($page == $pageCount)
                                             echo 'active';
                                         else
                                             echo 'waves-effect'; ?>"><a
                                                     href="<?php rankLink($i, $raAsc, $gaAsc, $order, $order[0]); ?>">
-                                                <?php echo $i; ?></a></li>
-                                    <?php endfor;
+                                                <?php echo $pageCount; ?></a></li>
+                                        <?php
+                                    } else {
+                                        for ($i = $pageCount - 13; $i <= $pageCount; $i++) :?>
+                                            <li class="<?php if ($page == $i)
+                                                echo 'active';
+                                            else
+                                                echo 'waves-effect'; ?>"><a
+                                                        href="<?php rankLink($i, $raAsc, $gaAsc, $order, $order[0]); ?>">
+                                                    <?php echo $i; ?></a></li>
+                                        <?php endfor;
+                                    }
                                 }
-                            }
 
-                        } ?>
-                        <!--                        Go right (pagination) -->
-                        <li class="<?php
-                        if ($page < $pageCount)
-                            echo 'waves-effect';
-                        else
-                            echo 'disabled';
-                        ?>"><a href="<?php
+                            } ?>
+                            <!--                        Go right (pagination) -->
+                            <li class="<?php
                             if ($page < $pageCount)
-                                rankLink($page + 1, $raAsc, $gaAsc, $order, $order[0]);
+                                echo 'waves-effect';
                             else
-                                echo '#!';
-                            ?>">
-                                <i class="material-icons">chevron_right</i></a></li>
-                    </ul>
+                                echo 'disabled';
+                            ?>"><a href="<?php
+                                if ($page < $pageCount)
+                                    rankLink($page + 1, $raAsc, $gaAsc, $order, $order[0]);
+                                else
+                                    echo '#!';
+                                ?>">
+                                    <i class="material-icons">chevron_right</i></a></li>
+                        </ul>
                     <?php endif; ?>
                 </div>
             </div>
@@ -378,3 +378,4 @@ if (isset($_GET['user']) && !empty($_GET['user']) && (!isset($rowTable['username
 </main>
 <?php include "inc/footer.php"; ?>
 </body>
+</html>

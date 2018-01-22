@@ -11,6 +11,7 @@ session_start();
 require __DIR__ . '/vendor/autoload.php';
 
 include "connect.php";
+include "inc/login_checker.php";
 
 ?>
 <!DOCTYPE html>
@@ -40,13 +41,13 @@ include "connect.php";
 <body>
 <!--    Beginning of first row   -->
 <header>
-<?php include 'inc/header.php' ?>
+    <?php include 'inc/header.php' ?>
 </header>
 <main>
     <div class="row">
         <div class="col s4">
             <!--            Jackpot card   -->
-            <div class="card z-depth-5">
+            <div class="card z-depth-5 amber lighten-1">
                 <div class="card-content">
                     <h3 class="center-align" id="jackpot">Jackpot: <span
                                 id="jackpotNumber"><?php include 'inc/show_jackpot_part.php' ?></span> bits</h3>

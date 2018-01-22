@@ -6,11 +6,11 @@
  * Time: 9:01 PM
  */
 session_start();
+$last_url = $_SESSION['url'];
+session_destroy();
 
-if (isset($_SESSION['username']) && !empty($_SESSION['username'])) {
-    unset($_SESSION['username']);
-    unset($_SESSION['numbers_list']);
-    unset($_SESSION['user_id']);
-    echo $_SESSION['url'];
-    header("Location: " . $_SESSION['url']);
-}
+setcookie('selector', '', time() - 86400, "/");
+setcookie('validator', '', time() - 86400, "/");
+
+header("Location: " . $last_url);
+die();

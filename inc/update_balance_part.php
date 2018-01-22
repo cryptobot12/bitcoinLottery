@@ -14,7 +14,7 @@ try {
     $conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 
     $stmt = $conn->prepare('SELECT balance FROM user WHERE username = :username');
-    $stmt->execute(array('username' => $_SESSION['username']));
+    $stmt->execute(array('username' => $username));
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
     echo $row['balance'] / 100;
 }

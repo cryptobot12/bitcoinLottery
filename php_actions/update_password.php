@@ -38,8 +38,8 @@ try {
 
 
         /************************************************************/
-        $_SESSION['password_updated'] = true;
-        header("Location: ../password_updated.php");
+        $_SESSION['account_management_success'] = 2;
+        header("Location: ../account.php");
         die();
 
 

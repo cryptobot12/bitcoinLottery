@@ -189,38 +189,38 @@ try {
 } catch (PDOException $e) {
     echo "Connection failed: " . $e->getMessage();
 } ?>
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>Bitcoin</title>
-        <!--    Jquery -->
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bitcoin</title>
+    <!--    Jquery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
-        <!-- Compiled and minified CSS -->
-        <link rel="stylesheet"
-              href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
-        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-        <!-- Compiled and minified JavaScript -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
-        <script src="js/autobahn.js"></script>
-        <script>
-            $(function () {
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+    <script src="js/autobahn.js"></script>
+    <script>
+        $(function () {
 
-                var searchUser = $("#search_user");
-                searchUser.on('keypress', function (e) {
-                    if (e.which === 13) {
-                        window.location.href = 'user_stats.php?user=' + searchUser.val();
-                    }
-                });
+            var searchUser = $("#search_user");
+            searchUser.on('keypress', function (e) {
+                if (e.which === 13) {
+                    window.location.href = 'user_stats.php?user=' + searchUser.val();
+                }
             });
-        </script>
+        });
+    </script>
 
-        <link href="css/style.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
 
-        <!--Let browser know website is optimized for mobile-->
-        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    </head>
+    <!--Let browser know website is optimized for mobile-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+</head>
 <body>
 <header>
     <?php include 'inc/header.php'; ?>
@@ -339,34 +339,24 @@ try {
             <div class="row centerWrap">
                 <div class="centeredDiv">
                     <?php if ($pageCount > 1): ?>
-                    <ul class="pagination">
-                        <!--                        Go left (pagination) -->
-                        <li class="<?php
-                        if ($page > 1)
-                            echo 'waves-effect';
-                        else
-                            echo 'disabled';
-                        ?>"><a href="<?php
+                        <ul class="pagination">
+                            <!--                        Go left (pagination) -->
+                            <li class="<?php
                             if ($page > 1)
-                                userStatsLink($username, $page - 1, $gaAsc, $beAsc, $prAsc, $jaAsc, $order, $order[0]);
+                                echo 'waves-effect';
                             else
-                                echo '#!';
-                            ?>">
-                                <i class="material-icons">chevron_left</i></a></li>
-                        <!--Pages-->
-                        <?php
-                        if ($pageCount <= 15) {
-                            for ($i = 1; $i <= $pageCount; $i++) : ?>
-                                <li class="<?php if ($page == $i)
-                                    echo 'active';
+                                echo 'disabled';
+                            ?>"><a href="<?php
+                                if ($page > 1)
+                                    userStatsLink($username, $page - 1, $gaAsc, $beAsc, $prAsc, $jaAsc, $order, $order[0]);
                                 else
-                                    echo 'waves-effect'; ?>"><a
-                                            href="<?php userStatsLink($username, $i, $gaAsc, $beAsc, $prAsc, $jaAsc, $order, $order[0]); ?>">
-                                        <?php echo $i; ?></a></li>
-                            <?php endfor;
-                        } else {
-                            if ($page <= 8) {
-                                for ($i = 1; $i <= 14; $i++) :?>
+                                    echo '#!';
+                                ?>">
+                                    <i class="material-icons">chevron_left</i></a></li>
+                            <!--Pages-->
+                            <?php
+                            if ($pageCount <= 15) {
+                                for ($i = 1; $i <= $pageCount; $i++) : ?>
                                     <li class="<?php if ($page == $i)
                                         echo 'active';
                                     else
@@ -374,25 +364,9 @@ try {
                                                 href="<?php userStatsLink($username, $i, $gaAsc, $beAsc, $prAsc, $jaAsc, $order, $order[0]); ?>">
                                             <?php echo $i; ?></a></li>
                                 <?php endfor;
-                                echo '<li>...</li>'; ?>
-                                <li class="<?php if ($page == $pageCount)
-                                    echo 'active';
-                                else
-                                    echo 'waves-effect'; ?>"><a
-                                            href="<?php userStatsLink($username, $i, $gaAsc, $beAsc, $prAsc, $jaAsc, $order, $order[0]); ?>">
-                                        <?php echo $pageCount; ?></a></li>
-                                <?php
-                            } else { ?>
-                                <li class="<?php if ($page == 1)
-                                    echo 'active';
-                                else
-                                    echo 'waves-effect'; ?>"><a
-                                            href="<?php userStatsLink($username, $i, $gaAsc, $beAsc, $prAsc, $jaAsc, $order, $order[0]); ?>">
-                                        <?php echo 1; ?></a></li>
-                                <?php
-                                echo '<li>...</li>';
-                                if ($pageCount - $page > 7) {
-                                    for ($i = $page - 6; $i <= $page + 6; $i++) :?>
+                            } else {
+                                if ($page <= 8) {
+                                    for ($i = 1; $i <= 14; $i++) :?>
                                         <li class="<?php if ($page == $i)
                                             echo 'active';
                                         else
@@ -408,34 +382,60 @@ try {
                                                 href="<?php userStatsLink($username, $i, $gaAsc, $beAsc, $prAsc, $jaAsc, $order, $order[0]); ?>">
                                             <?php echo $pageCount; ?></a></li>
                                     <?php
-                                } else {
-                                    for ($i = $pageCount - 13; $i <= $pageCount; $i++) :?>
-                                        <li class="<?php if ($page == $i)
+                                } else { ?>
+                                    <li class="<?php if ($page == 1)
+                                        echo 'active';
+                                    else
+                                        echo 'waves-effect'; ?>"><a
+                                                href="<?php userStatsLink($username, $i, $gaAsc, $beAsc, $prAsc, $jaAsc, $order, $order[0]); ?>">
+                                            <?php echo 1; ?></a></li>
+                                    <?php
+                                    echo '<li>...</li>';
+                                    if ($pageCount - $page > 7) {
+                                        for ($i = $page - 6; $i <= $page + 6; $i++) :?>
+                                            <li class="<?php if ($page == $i)
+                                                echo 'active';
+                                            else
+                                                echo 'waves-effect'; ?>"><a
+                                                        href="<?php userStatsLink($username, $i, $gaAsc, $beAsc, $prAsc, $jaAsc, $order, $order[0]); ?>">
+                                                    <?php echo $i; ?></a></li>
+                                        <?php endfor;
+                                        echo '<li>...</li>'; ?>
+                                        <li class="<?php if ($page == $pageCount)
                                             echo 'active';
                                         else
                                             echo 'waves-effect'; ?>"><a
                                                     href="<?php userStatsLink($username, $i, $gaAsc, $beAsc, $prAsc, $jaAsc, $order, $order[0]); ?>">
-                                                <?php echo $i; ?></a></li>
-                                    <?php endfor;
+                                                <?php echo $pageCount; ?></a></li>
+                                        <?php
+                                    } else {
+                                        for ($i = $pageCount - 13; $i <= $pageCount; $i++) :?>
+                                            <li class="<?php if ($page == $i)
+                                                echo 'active';
+                                            else
+                                                echo 'waves-effect'; ?>"><a
+                                                        href="<?php userStatsLink($username, $i, $gaAsc, $beAsc, $prAsc, $jaAsc, $order, $order[0]); ?>">
+                                                    <?php echo $i; ?></a></li>
+                                        <?php endfor;
+                                    }
                                 }
-                            }
 
-                        } ?>
-                        <!--                        Go right (pagination) -->
-                        <li class="<?php
-                        if ($page < $pageCount)
-                            echo 'waves-effect';
-                        else
-                            echo 'disabled';
-                        ?>"><a href="<?php
+                            } ?>
+                            <!--                        Go right (pagination) -->
+                            <li class="<?php
                             if ($page < $pageCount)
-                                userStatsLink($username, $page + 1, $gaAsc, $beAsc, $prAsc, $jaAsc, $order, $order[0]);
+                                echo 'waves-effect';
                             else
-                                echo '#!';
-                            ?>">
-                                <i class="material-icons">chevron_right</i></a></li>
-                    </ul>
-    <?php endif; ?>
+                                echo 'disabled';
+                            ?>"><a href="<?php
+                                if ($page < $pageCount)
+                                    userStatsLink($username, $page + 1, $gaAsc, $beAsc, $prAsc, $jaAsc, $order, $order[0]);
+                                else
+                                    echo '#!';
+                                ?>">
+                                    <i class="material-icons">chevron_right</i></a></li>
+                        </ul>
+                    <?php endif; ?>
                 </div>
             </div>
         <?php else: ?>
@@ -448,3 +448,5 @@ try {
     </div>
 </main>
 <?php include 'inc/footer.php'; ?>
+</body>
+</html>
