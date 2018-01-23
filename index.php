@@ -13,6 +13,8 @@ require __DIR__ . '/vendor/autoload.php';
 include "connect.php";
 include "inc/login_checker.php";
 
+$_SESSION['last_url'] = 'index.php';
+
 ?>
 <!DOCTYPE html>
 <html lang="en">

@@ -7,19 +7,22 @@
  */
 
 //Is there a logged in user?
-if ((!empty($_SESSION['user_id']) && !empty($_SESSION['username'])) || (!empty($_COOKIE['selector']) && !empty($_COOKIE['validator']))) {
+if (!empty($_SESSION['auth_token'])) {
+    $auth_token = json_decode($_SESSION['auth_token']);
+
     $logged_in = true;
-} else
-    $logged_in = false;
 
-if ($logged_in) {
-    if (!empty($_SESSION['user_id']) && !empty($_SESSION['username'])) {
-        $username = $_SESSION['username'];
-        $user_id = $_SESSION['user_id'];
-    } elseif (!empty($_COOKIE['selector']) && !empty($_COOKIE['validator'])) {
+    $username = $auth_token->username;
+    $user_id = $auth_token->user_id;
 
-        $selector = $_COOKIE['selector'];
-        $validator = $_COOKIE['validator'];
+} elseif (!empty($_COOKIE['auth_token'])) {
+    $auth_token = json_decode($_COOKIE['auth_token']);
+
+    //If cookie is not expires, assuming it is sent to the server
+    if (strtotime($auth_token->expires) < time()) {
+
+        $selector = $auth_token->selector;
+        $validator = $auth_token->validator;
 
         try {
             $conn = new PDO("mysql:host=$servername;dbname=$dbname", $dbuser, $dbpass);
@@ -42,18 +45,19 @@ if ($logged_in) {
 
                     $user_id = $login_token['user_id'];
 //                    Updating expire time every time this is loaded
-                    $stmt = $conn->prepare('UPDATE auth_token SET expires = (ADDDATE(CURRENT_TIMESTAMP, INTERVAL 7 DAY)) 
+                    $stmt = $conn->prepare('UPDATE auth_token SET expires = (ADDDATE(CURRENT_TIMESTAMP, INTERVAL 7 DAY))
                                                   WHERE user_id = :user_id
                                                   AND user_agent = :user_agent
                                                   AND ip_address = :ip_address');
                     $stmt->execute(array('user_id' => $user_id, 'user_agent' => $user_agent, 'ip_address' => $ip_address));
 
+//                    Getting username
                     $stmt = $conn->prepare('SELECT username FROM user WHERE user_id = :user_id');
                     $stmt->execute(array('user_id' => $user_id));
                     $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
                     $username = $result['username'];
-
+                    $logged_in = true;
                 }
             }
 
@@ -61,4 +65,10 @@ if ($logged_in) {
             echo "Connection failed: " . $e->getMessage();
         }
     }
-}
+} else
+    $logged_in = false;
+
+
+
+
+

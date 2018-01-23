@@ -7,9 +7,13 @@
  */
 session_start();
 
+include "connect.php";
 include "function.php";
+include "inc/login_checker.php";
 
-$username = htmlspecialchars($_GET['user']);
+$_SESSION['last_url'] = 'user_stats.php';
+
+$user_search = htmlspecialchars($_GET['user']);
 
 function userStatsLink($user, $page = 1, $gaAsc = 1, $beAsc = 2, $prAsc = 2, $jaAsc = 2, $arrayOrd, $first)
 {
@@ -58,7 +62,6 @@ if (isset($_GET['ord']) && !empty($_GET['ord'])) {
 $rowPerPage = 25;
 
 try {
-    include "connect.php";
     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $dbuser, $dbpass);
     // set the PDO error mode to exception
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -69,7 +72,7 @@ try {
                                       FROM user AS u
                                       WHERE u.username = :username');
 
-    $stmt->execute(array('username' => $username));
+    $stmt->execute(array('username' => $user_search));
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
     $net_profit = $result['net_profit'];
     $games_played = $result['games_played'];
@@ -93,14 +96,14 @@ try {
                     ORDER BY net_profit DESC) AS r1
                     ON user.user_id = r1.user_id
                     WHERE user.username = :username');
-    $stmt->execute(array('username' => htmlspecialchars($_GET['user'])));
+    $stmt->execute(array('username' => htmlspecialchars($user_search)));
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
     $rank = $row['rank'];
 
     /* Getting page count */
     $stmt = $conn->prepare('SELECT COUNT(game_id) AS pageCount FROM gamexuser WHERE user_id = 
                                      (SELECT user_id FROM user WHERE username = :username)');
-    $stmt->execute(array('username' => $username));
+    $stmt->execute(array('username' => $user_search));
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
     $pageCount = ceil($result['pageCount'] / $rowPerPage);
 
@@ -182,13 +185,14 @@ try {
 
     $stmt = $conn->prepare($statement);
 
-    $stmt->execute(array('username' => $username, 'rows' => $rowPerPage, 'the_offset' => (($page - 1) * $rowPerPage)));
+    $stmt->execute(array('username' => $user_search, 'rows' => $rowPerPage, 'the_offset' => (($page - 1) * $rowPerPage)));
     $rowTable = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
 
 } catch (PDOException $e) {
     echo "Connection failed: " . $e->getMessage();
-} ?>
+}
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -234,15 +238,17 @@ try {
         </div>
     </div>
 </header>
-<main class="<?php if (count($rowTable) == 0) echo 'valign-wrapper'; ?>">
+<main class="valign-wrapper">
     <div class="container">
-        <?php if (!(isset($_GET['user']) && !empty($_GET['user']))): ?>
-            <div class="row">
-                <h3 class="center-align"><i class="medium material-icons vmid">error</i> No user selected.</h3>
+        <?php if (empty($user_search)): ?>
+            <div class="row centerWrap">
+                <div class="centeredDiv">
+                    <span class="h5Span"><i class="material-icons left">error</i>No user selected.</span>
+                </div>
             </div>
         <?php elseif (count($rowTable) > 0): ?>
             <div class="row">
-                <h3><b><?php echo $username; ?></b></h3>
+                <h3><b><?php echo $user_search; ?></b></h3>
                 <h5><b>Rank# </b><?php echo $rank; ?></h5>
                 <h5><b>Net profit: </b><?php echo($net_profit / 100); ?> bits</h5>
                 <h5><b>Games played: </b><?php echo $games_played ?></h5>
@@ -254,10 +260,10 @@ try {
                         <tr>
                             <th><a href="<?php
                                 if ($gaAsc == 2)
-                                    userStatsLink($username, $page, 1, $beAsc, $prAsc, $jaAsc,
+                                    userStatsLink($user_search, $page, 1, $beAsc, $prAsc, $jaAsc,
                                         $order, 1);
                                 else
-                                    userStatsLink($username, $page, 2, $beAsc, $prAsc, $jaAsc,
+                                    userStatsLink($user_search, $page, 2, $beAsc, $prAsc, $jaAsc,
                                         $order, 1); ?>">Game #<i class="tiny material-icons sorter"><?php
                                         if ($gaAsc == 2)
                                             echo 'arrow_drop_down';
@@ -266,10 +272,10 @@ try {
                                         ?></i></a></th>
                             <th><a href="<?php
                                 if ($beAsc == 2)
-                                    userStatsLink($username, $page, $gaAsc, 1, $prAsc, $jaAsc,
+                                    userStatsLink($user_search, $page, $gaAsc, 1, $prAsc, $jaAsc,
                                         $order, 2);
                                 else
-                                    userStatsLink($username, $page, $gaAsc, 2, $prAsc, $jaAsc,
+                                    userStatsLink($user_search, $page, $gaAsc, 2, $prAsc, $jaAsc,
                                         $order, 2); ?>">Bet<i class="tiny material-icons sorter"><?php
                                         if ($beAsc == 2)
                                             echo 'arrow_drop_down';
@@ -278,10 +284,10 @@ try {
                                         ?></i></a></th>
                             <th><a href="<?php
                                 if ($prAsc == 2)
-                                    userStatsLink($username, $page, $gaAsc, $beAsc, 1, $jaAsc,
+                                    userStatsLink($user_search, $page, $gaAsc, $beAsc, 1, $jaAsc,
                                         $order, 3);
                                 else
-                                    userStatsLink($username, $page, $gaAsc, $beAsc, 2, $jaAsc,
+                                    userStatsLink($user_search, $page, $gaAsc, $beAsc, 2, $jaAsc,
                                         $order, 3); ?>">Profit<i class="tiny material-icons sorter"><?php
                                         if ($prAsc == 2)
                                             echo 'arrow_drop_down';
@@ -290,10 +296,10 @@ try {
                                         ?></i></a></th>
                             <th><a href="<?php
                                 if ($jaAsc == 2)
-                                    userStatsLink($username, $page, $gaAsc, $beAsc, $prAsc, 1,
+                                    userStatsLink($user_search, $page, $gaAsc, $beAsc, $prAsc, 1,
                                         $order, 4);
                                 else
-                                    userStatsLink($username, $page, $gaAsc, $beAsc, $prAsc, 2,
+                                    userStatsLink($user_search, $page, $gaAsc, $beAsc, $prAsc, 2,
                                         $order, 4); ?>">Jackpot<i class="tiny material-icons sorter"><?php
                                         if ($jaAsc == 2)
                                             echo 'arrow_drop_down';
@@ -348,7 +354,7 @@ try {
                                 echo 'disabled';
                             ?>"><a href="<?php
                                 if ($page > 1)
-                                    userStatsLink($username, $page - 1, $gaAsc, $beAsc, $prAsc, $jaAsc, $order, $order[0]);
+                                    userStatsLink($user_search, $page - 1, $gaAsc, $beAsc, $prAsc, $jaAsc, $order, $order[0]);
                                 else
                                     echo '#!';
                                 ?>">
@@ -361,7 +367,7 @@ try {
                                         echo 'active';
                                     else
                                         echo 'waves-effect'; ?>"><a
-                                                href="<?php userStatsLink($username, $i, $gaAsc, $beAsc, $prAsc, $jaAsc, $order, $order[0]); ?>">
+                                                href="<?php userStatsLink($user_search, $i, $gaAsc, $beAsc, $prAsc, $jaAsc, $order, $order[0]); ?>">
                                             <?php echo $i; ?></a></li>
                                 <?php endfor;
                             } else {
@@ -371,7 +377,7 @@ try {
                                             echo 'active';
                                         else
                                             echo 'waves-effect'; ?>"><a
-                                                    href="<?php userStatsLink($username, $i, $gaAsc, $beAsc, $prAsc, $jaAsc, $order, $order[0]); ?>">
+                                                    href="<?php userStatsLink($user_search, $i, $gaAsc, $beAsc, $prAsc, $jaAsc, $order, $order[0]); ?>">
                                                 <?php echo $i; ?></a></li>
                                     <?php endfor;
                                     echo '<li>...</li>'; ?>
@@ -379,7 +385,7 @@ try {
                                         echo 'active';
                                     else
                                         echo 'waves-effect'; ?>"><a
-                                                href="<?php userStatsLink($username, $i, $gaAsc, $beAsc, $prAsc, $jaAsc, $order, $order[0]); ?>">
+                                                href="<?php userStatsLink($user_search, $i, $gaAsc, $beAsc, $prAsc, $jaAsc, $order, $order[0]); ?>">
                                             <?php echo $pageCount; ?></a></li>
                                     <?php
                                 } else { ?>
@@ -387,7 +393,7 @@ try {
                                         echo 'active';
                                     else
                                         echo 'waves-effect'; ?>"><a
-                                                href="<?php userStatsLink($username, $i, $gaAsc, $beAsc, $prAsc, $jaAsc, $order, $order[0]); ?>">
+                                                href="<?php userStatsLink($user_search, $i, $gaAsc, $beAsc, $prAsc, $jaAsc, $order, $order[0]); ?>">
                                             <?php echo 1; ?></a></li>
                                     <?php
                                     echo '<li>...</li>';
@@ -397,7 +403,7 @@ try {
                                                 echo 'active';
                                             else
                                                 echo 'waves-effect'; ?>"><a
-                                                        href="<?php userStatsLink($username, $i, $gaAsc, $beAsc, $prAsc, $jaAsc, $order, $order[0]); ?>">
+                                                        href="<?php userStatsLink($user_search, $i, $gaAsc, $beAsc, $prAsc, $jaAsc, $order, $order[0]); ?>">
                                                     <?php echo $i; ?></a></li>
                                         <?php endfor;
                                         echo '<li>...</li>'; ?>
@@ -405,7 +411,7 @@ try {
                                             echo 'active';
                                         else
                                             echo 'waves-effect'; ?>"><a
-                                                    href="<?php userStatsLink($username, $i, $gaAsc, $beAsc, $prAsc, $jaAsc, $order, $order[0]); ?>">
+                                                    href="<?php userStatsLink($user_search, $i, $gaAsc, $beAsc, $prAsc, $jaAsc, $order, $order[0]); ?>">
                                                 <?php echo $pageCount; ?></a></li>
                                         <?php
                                     } else {
@@ -414,7 +420,7 @@ try {
                                                 echo 'active';
                                             else
                                                 echo 'waves-effect'; ?>"><a
-                                                        href="<?php userStatsLink($username, $i, $gaAsc, $beAsc, $prAsc, $jaAsc, $order, $order[0]); ?>">
+                                                        href="<?php userStatsLink($user_search, $i, $gaAsc, $beAsc, $prAsc, $jaAsc, $order, $order[0]); ?>">
                                                     <?php echo $i; ?></a></li>
                                         <?php endfor;
                                     }
@@ -429,7 +435,7 @@ try {
                                 echo 'disabled';
                             ?>"><a href="<?php
                                 if ($page < $pageCount)
-                                    userStatsLink($username, $page + 1, $gaAsc, $beAsc, $prAsc, $jaAsc, $order, $order[0]);
+                                    userStatsLink($user_search, $page + 1, $gaAsc, $beAsc, $prAsc, $jaAsc, $order, $order[0]);
                                 else
                                     echo '#!';
                                 ?>">
@@ -439,10 +445,12 @@ try {
                 </div>
             </div>
         <?php else: ?>
-            <div class="row">
-                <h3 class="center-align"><i class="medium material-icons vmid">error</i> User
-                    '<?php echo htmlspecialchars($_GET['user']); ?>'
-                    does not exist.</h3>
+            <div class="row centerWrap">
+                <div class="centeredDiv">
+                    <span class="h5Span"><i class="material-icons left">error</i>User
+                    '<?php echo htmlspecialchars($user_search); ?>'
+                    does not exist.</span>
+                </div>
             </div>
         <?php endif; ?>
     </div>

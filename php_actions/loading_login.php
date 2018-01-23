@@ -40,18 +40,28 @@ if ($captcha_success->success) {
         // set the PDO error mode to exception
         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-        //echo "Connected successfully";
+
         $stmt = $conn->prepare('SELECT user_id, username, balance, password FROM user WHERE username = :username');
         $stmt->execute(array('username' => $username));
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $user_info = $stmt->fetch(PDO::FETCH_ASSOC);
 
         // If user exists
-        if (!empty($row)) {
+        if (!empty($user_info)) {
 
             // If password is correct
-            if (password_verify($password, $row['password'])) {
+            if (password_verify($password, $user_info['password'])) {
 
-                $selector = bin2hex(random_bytes(6));
+                //Making sure selector is unique
+                do {
+                    $selector = bin2hex(random_bytes(6));
+
+                    $stmt = $conn->prepare('SELECT auth_token_id FROM auth_token 
+                          WHERE selector = :selector');
+                    $stmt->execute(array('selector' => $selector));
+                    $auth_token_result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                } while (!empty($auth_token_result));
+
                 $validator = bin2hex(random_bytes(32));
                 $hashed_validator = hash('sha256', $validator);
                 $user_agent = !empty($_SERVER['HTTP_USER_AGENT']) ? substr($_SERVER['HTTP_USER_AGENT'], 0, 512) : '';
@@ -63,15 +73,15 @@ if ($captcha_success->success) {
                           WHERE user_id = :user_id
                           AND user_agent = :user_agent
                           AND ip_address = :ip_address');
-                    $stmt->execute(array('user_id' => $row['user_id'], 'user_agent' => $user_agent, 'ip_address' => $ip_address));
-                    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+                    $stmt->execute(array('user_id' => $user_info['user_id'], 'user_agent' => $user_agent, 'ip_address' => $ip_address));
+                    $auth_token_result = $stmt->fetch(PDO::FETCH_ASSOC);
 
 //                    If exists
-                    if (!empty($row)) {
+                    if (empty($auth_token_result)) {
                         //Creating auth token
                         $stmt = $conn->prepare('INSERT INTO auth_token(selector, hashed_validator, user_id, user_agent, ip_address, expires)
                     VALUES(:selector, :hashed_validator, :user_id, :user_agent, :ip_address, (ADDDATE(CURRENT_TIMESTAMP, INTERVAL 7 DAY)))');
-                        $stmt->execute(array('selector' => $selector, 'hashed_validator' => $hashed_validator, 'user_id' => $row['user_id'], 'user_agent' => $user_agent, 'ip_address' => $ip_address));
+                        $stmt->execute(array('selector' => $selector, 'hashed_validator' => $hashed_validator, 'user_id' => $user_info['user_id'], 'user_agent' => $user_agent, 'ip_address' => $ip_address));
                     } else {
 //                        Just update expire time and selector and validator
                         $stmt = $conn->prepare('UPDATE auth_token SET selector = :selector, hashed_validator = :hashed_validator,
@@ -79,39 +89,21 @@ if ($captcha_success->success) {
                         WHERE user_id = :user_id
                           AND user_agent = :user_agent
                           AND ip_address = :ip_address');
-                        $stmt->execute(array('selector' => $selector, 'hashed_validator' => $hashed_validator, 'user_id' => $row['user_id'], 'user_agent' => $user_agent, 'ip_address' => $ip_address));
+                        $stmt->execute(array('selector' => $selector, 'hashed_validator' => $hashed_validator, 'user_id' => $user_info['user_id'], 'user_agent' => $user_agent, 'ip_address' => $ip_address));
                     }
 
-                    setcookie('selector', $selector, time() + (86400 * 30), "/");
-                    setcookie('validator', $validator, time() + (86400 * 30), "/");
+                    $expires = time() + (86400 * 365);
+                    $cookie_data = array('selector' => $selector, 'validator' => $validator, 'expires' => $expires);
+                    setcookie('auth_token', json_encode($cookie_data), $cookie_data['expires'], "/");
 
                 } else {
-                    $_SESSION['username'] = $row['username'];
-                    $_SESSION['user_id'] = $row['user_id'];
+                    $_SESSION['auth_token'] = json_encode(array('username' => $user_info['username'], 'user_id' => $user_info['user_id']));
                 }
 
-                //Selecting current game
-                $stmt = $conn->prepare('SELECT game_id FROM game ORDER BY game_id DESC, timedate DESC LIMIT 1');
-                $stmt->execute();
-                $row = $stmt->fetch(PDO::FETCH_ASSOC);
-                $current_game = $row['game_id'];
-
-                //Selecting numbers list
-                $stmt = $conn->prepare('SELECT number_id FROM numberxuser WHERE user_id = (SELECT user_id
-        FROM user WHERE username = :username) AND game_id = :game_id');
-                $stmt->execute(array('username' => $_SESSION['username'], 'game_id' => $current_game));
-                $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-
-                $arrayOfNumbers = array();
-                foreach ($row as $item) {
-                    array_push($arrayOfNumbers, $item['number_id']);
-                }
-
-                $_SESSION["numbers_list"] = $arrayOfNumbers;
-
-
-                header("Location: " . $_SESSION['url']);
+                if (!empty($_SESSION['last_url']))
+                    header("Location: ../" . $_SESSION['last_url']);
+                else
+                    header("Location: ../index.php");
                 die();
             } else {
 

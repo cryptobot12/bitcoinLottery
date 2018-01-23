@@ -8,6 +8,11 @@
  */
 session_start();
 
+include "connect.php";
+include "inc/login_checker.php";
+
+$_SESSION['last_url'] = 'games_history.php';
+
 $rowPerPage = 20;
 
 function gamesHistoryLink($page = 1, $gaAsc = 1, $jaAsc = 1, $nuAsc = 1, $arrayOrd, $first)
@@ -50,7 +55,7 @@ if (isset($_GET['ord']) && !empty($_GET['ord'])) {
 }
 
 try {
-    include "connect.php";
+
     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $dbuser, $dbpass);
     // set the PDO error mode to exception
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);

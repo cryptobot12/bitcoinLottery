@@ -11,119 +11,124 @@ include "function.php";
 include "connect.php";
 include "inc/login_checker.php";
 
+$_SESSION['last_url'] = 'account.php';
+
 $rowPerPage = 7;
 
-try {
-    $conn = new PDO("mysql:host=$servername;dbname=$dbname", $dbuser, $dbpass);
-    // set the PDO error mode to exception
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    $conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+if ($logged_in) {
 
-    //Getting email
-    $stmt = $conn->prepare('SELECT bit_address, email FROM user WHERE user_id = :user_id');
-    $stmt->execute(array('user_id' => $user_id));
-    $result = $stmt->fetch(PDO::FETCH_ASSOC);
-    $email = $result['email'];
-    $bit_address = $result['bit_address'];
+    try {
+        $conn = new PDO("mysql:host=$servername;dbname=$dbname", $dbuser, $dbpass);
+        // set the PDO error mode to exception
+        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 
-    //Selecting code
-    $stmt = $conn->prepare('SELECT code, code_expires FROM user WHERE user_id = :user_id');
-    $stmt->execute(array('user_id' => $user_id));
-    $result = $stmt->fetch(PDO::FETCH_ASSOC);
-    $code_expires = $result['code_expires'];
-    $email_code = $result['code'];
+        //Getting email
+        $stmt = $conn->prepare('SELECT bit_address, email FROM user WHERE user_id = :user_id');
+        $stmt->execute(array('user_id' => $user_id));
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        $email = $result['email'];
+        $bit_address = $result['bit_address'];
 
-    //Selecting current time
-    $stmt = $conn->prepare('SELECT NOW()');
-    $stmt->execute();
-    $result = $stmt->fetch(PDO::FETCH_ASSOC);
-    $current_time = $result['NOW()'];
+        //Selecting code
+        $stmt = $conn->prepare('SELECT code, code_expires FROM user WHERE user_id = :user_id');
+        $stmt->execute(array('user_id' => $user_id));
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        $code_expires = $result['code_expires'];
+        $email_code = $result['code'];
 
-    //Deposits pageCount
-    $stmt = $conn->prepare('SELECT COUNT(hash) AS the_count FROM deposit WHERE user_id = :user_id');
-    $stmt->execute(array('user_id' => $user_id));
-    $result = $stmt->fetch(PDO::FETCH_ASSOC);
-    $depositRowCount = $result['the_count'];
-    $pageCount = ceil($depositRowCount / $rowPerPage);
+        //Selecting current time
+        $stmt = $conn->prepare('SELECT NOW()');
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        $current_time = $result['NOW()'];
 
-    if (!empty($_GET['p'])) {
-        $page = htmlspecialchars($_GET['p']);
-        filterOnlyNumber($page, 1, $pageCount, 1);
-    } else {
-        $page = 1;
-    }
+        //Deposits pageCount
+        $stmt = $conn->prepare('SELECT COUNT(hash) AS the_count FROM deposit WHERE user_id = :user_id');
+        $stmt->execute(array('user_id' => $user_id));
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        $depositRowCount = $result['the_count'];
+        $pageCount = ceil($depositRowCount / $rowPerPage);
 
-    //Withdraws pageCount
-    $stmt = $conn->prepare('SELECT COUNT(hash) AS the_count FROM withdrawal WHERE user_id = :user_id');
-    $stmt->execute(array('user_id' => $user_id));
-    $result = $stmt->fetch(PDO::FETCH_ASSOC);
-    $withdrawRowCount = $result['the_count']; //Number of pages withdraw
-    $pageWithdrawCount = ceil($withdrawRowCount / $rowPerPage); //Number of pages
+        if (!empty($_GET['p'])) {
+            $page = htmlspecialchars($_GET['p']);
+            filterOnlyNumber($page, 1, $pageCount, 1);
+        } else {
+            $page = 1;
+        }
 
-    if (!empty($_GET['pw'])) {
-        $pageWithdraw = htmlspecialchars($_GET['pw']);
-        filterOnlyNumber($pageWithdraw, 1, $pageWithdrawCount, 1);
-    } else {
-        $pageWithdraw = 1;
-    }
+        //Withdraws pageCount
+        $stmt = $conn->prepare('SELECT COUNT(hash) AS the_count FROM withdrawal WHERE user_id = :user_id');
+        $stmt->execute(array('user_id' => $user_id));
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        $withdrawRowCount = $result['the_count']; //Number of pages withdraw
+        $pageWithdrawCount = ceil($withdrawRowCount / $rowPerPage); //Number of pages
 
-    //Transfers pageCount
-    $stmt = $conn->prepare('SELECT COUNT(transfer_id) AS the_count FROM transfer WHERE user_id = :user_id');
-    $stmt->execute(array('user_id' => $user_id));
-    $result = $stmt->fetch(PDO::FETCH_ASSOC);
-    $transferRowCount = $result['the_count']; //Number of pages transfer
-    $pageTransferCount = ceil($transferRowCount / $rowPerPage); //Number of pages
+        if (!empty($_GET['pw'])) {
+            $pageWithdraw = htmlspecialchars($_GET['pw']);
+            filterOnlyNumber($pageWithdraw, 1, $pageWithdrawCount, 1);
+        } else {
+            $pageWithdraw = 1;
+        }
 
-    if (!empty($_GET['pt'])) {
-        $pageTransfer = htmlspecialchars($_GET['pt']);
-        filterOnlyNumber($pageTransfer, 1, $pageTransferCount, 1);
-    } else {
-        $pageTransfer = 1;
-    }
+        //Transfers pageCount
+        $stmt = $conn->prepare('SELECT COUNT(transfer_id) AS the_count FROM transfer WHERE user_id = :user_id');
+        $stmt->execute(array('user_id' => $user_id));
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        $transferRowCount = $result['the_count']; //Number of pages transfer
+        $pageTransferCount = ceil($transferRowCount / $rowPerPage); //Number of pages
 
-    //Selecting deposits
-    $stmt = $conn->prepare('SELECT hash, amount, DATE_FORMAT(deposit_date, "%M %D, %Y") AS deposit_date FROM deposit WHERE user_id = :user_id
+        if (!empty($_GET['pt'])) {
+            $pageTransfer = htmlspecialchars($_GET['pt']);
+            filterOnlyNumber($pageTransfer, 1, $pageTransferCount, 1);
+        } else {
+            $pageTransfer = 1;
+        }
+
+        //Selecting deposits
+        $stmt = $conn->prepare('SELECT hash, amount, DATE_FORMAT(deposit_date, "%M %D, %Y") AS deposit_date FROM deposit WHERE user_id = :user_id
                                       ORDER BY deposit_date DESC LIMIT :rows OFFSET :the_offset');
-    $stmt->execute(array('user_id' => $user_id, 'rows' => $rowPerPage, 'the_offset' => (($page - 1) * $rowPerPage)));
-    $rowTableDeposits = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $stmt->execute(array('user_id' => $user_id, 'rows' => $rowPerPage, 'the_offset' => (($page - 1) * $rowPerPage)));
+        $rowTableDeposits = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    //Selecting withdrawals
-    $stmt = $conn->prepare('SELECT hash, amount, DATE_FORMAT(request_date, "%M %D, %Y") AS request_date,
+        //Selecting withdrawals
+        $stmt = $conn->prepare('SELECT hash, amount, DATE_FORMAT(request_date, "%M %D, %Y") AS request_date,
  DATE_FORMAT(completed_on, "%M %D, %Y") AS completed_on FROM withdrawal WHERE user_id = :user_id
                                       ORDER BY request_date DESC LIMIT :rows OFFSET :the_offset');
-    $stmt->execute(array('user_id' => $user_id, 'rows' => $rowPerPage, 'the_offset' => (($pageWithdraw - 1) * $rowPerPage)));
-    $rowTableWithdraws = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $stmt->execute(array('user_id' => $user_id, 'rows' => $rowPerPage, 'the_offset' => (($pageWithdraw - 1) * $rowPerPage)));
+        $rowTableWithdraws = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    //Selecting transfers
-    $stmt = $conn->prepare('SELECT u.username, hash, amount, DATE_FORMAT(request_date, "%M %D, %Y") AS request_date,
+        //Selecting transfers
+        $stmt = $conn->prepare('SELECT u.username, hash, amount, DATE_FORMAT(request_date, "%M %D, %Y") AS request_date,
  DATE_FORMAT(completed_on, "%M %D, %Y") AS completed_on FROM transfer AS t 
   INNER JOIN user AS u
   ON t.to_user = u.user_id
   WHERE t.user_id = :user_id
                                       ORDER BY request_date DESC LIMIT :rows OFFSET :the_offset');
-    $stmt->execute(array('user_id' => $user_id, 'rows' => $rowPerPage, 'the_offset' => (($pageTransfer - 1) * $rowPerPage)));
-    $rowTableTransfers = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $stmt->execute(array('user_id' => $user_id, 'rows' => $rowPerPage, 'the_offset' => (($pageTransfer - 1) * $rowPerPage)));
+        $rowTableTransfers = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-} catch (PDOException $e) {
-    echo "Connection failed: " . $e->getMessage();
+    } catch (PDOException $e) {
+        echo "Connection failed: " . $e->getMessage();
+    }
+
+    /* Ticket form*/
+    $ticket_content_error = (!empty($_SESSION['ticket_content_error']) ? $_SESSION['ticket_content_error'] : 0);
+
+
+    $ticket_subject_error = (!empty($_SESSION['ticket_subject_error']) ? $_SESSION['ticket_subject_error'] : 0);
+
+    $is_ticket_subject_invalid = !empty($_SESSION['ticket_subject_error']) ? 'invalid' : 'valid';
+
+    if ($ticket_subject_error == 1)
+        $ticket_subject_data_error = 'Subject is too long';
+    else
+        $ticket_subject_data_error = '';
+
+    unset($_SESSION['ticket_subject_error']);
+    unset($_SESSION['ticket_content_error']);
 }
-
-$email = hide_mail($email);
-/* Ticket form*/
-$ticket_content_error = (!empty($_SESSION['ticket_content_error']) ? $_SESSION['ticket_content_error'] : 0);
-
-
-$ticket_subject_error = (!empty($_SESSION['ticket_subject_error']) ? $_SESSION['ticket_subject_error'] : 0);
-
-$is_ticket_subject_invalid = !empty($_SESSION['ticket_subject_error']) ? 'invalid' : '';
-
-if ($ticket_subject_error == 1)
-    $ticket_subject_data_error = 'Subject is too long';
-else
-    $ticket_subject_data_error = '';
-
-unset($_SESSION['ticket_subject_error']);
-unset($_SESSION['ticket_content_error']); ?>
+?>
     <!DOCTYPE html>
     <html lang="en">
     <head>
@@ -164,12 +169,10 @@ unset($_SESSION['ticket_content_error']); ?>
     <header>
         <?php include "inc/header.php" ?>
     </header>
-    <main class="<?php
-    if (!(isset($_SESSION['user_id']) && !empty($_SESSION['user_id'])))
-        echo 'valign-wrapper'; ?>">
+    <main class="valign-wrapper">
         <div class="container">
-            <?php if (isset($_SESSION['user_id']) && !empty($_SESSION['user_id'])): ?>
-                <div class="row top-buffer-30">
+            <?php if ($logged_in): ?>
+                <div class="row">
                     <div class="col l10 offset-l1 m10 offset-m1 s12">
                         <?php if (!empty($_SESSION['account_management_success'])) : ?>
                             <div class="row centerWrap">
@@ -308,7 +311,8 @@ unset($_SESSION['ticket_content_error']); ?>
                                                                 Email</label>
                                                         </div>
                                                         <div class="col s12">
-                                                            <blockquote class="blockquote-green w900">A code was sent to your current
+                                                            <blockquote class="blockquote-green w900">A code was sent to
+                                                                your current
                                                                 email.
                                                                 Type the code to
                                                                 update your email.
@@ -1314,6 +1318,7 @@ unset($_SESSION['ticket_content_error']); ?>
                                                     <?php endif; ?>
                                                 </div>
                                                 <div class="row"></div>
+                                                <div class="row"></div>
                                                 <div class="row">
                                                     <button id="ticket_button" disabled
                                                             class="waves-effect waves-light btn right g-recaptcha disabled"
@@ -1330,7 +1335,11 @@ unset($_SESSION['ticket_content_error']); ?>
                     </div>
                 </div>
             <?php else: ?>
-                <h3 class="center-align"><i class="medium material-icons vmid">error</i> You must be logged in.</h3>
+                <div class="centerWrap">
+                    <div class="centeredDiv">
+                        <span class="h5Span"><i class="material-icons left">error</i>You must be logged in to access this page.</span>
+                    </div>
+                </div>
             <?php endif; ?>
         </div>
     </main>

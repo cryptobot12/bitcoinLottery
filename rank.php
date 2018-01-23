@@ -11,6 +11,9 @@ $rowPerPage = 25;
 
 include "connect.php";
 include "function.php";
+include "inc/login_checker.php";
+
+$_SESSION['last_url'] = 'rank.php';
 
 function rankLink($page = 1, $raAsc = 1, $gaAsc = 1, $arrayOrd, $first)
 {

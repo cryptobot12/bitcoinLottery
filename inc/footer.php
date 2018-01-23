@@ -5,7 +5,6 @@
  * Date: 11/22/17
  * Time: 1:12 PM
  */
-$_SESSION['url'] = "{$_SERVER['REQUEST_URI']}";
 ?>
 <footer class="page-footer grey lighten-4">
     <div class="container">

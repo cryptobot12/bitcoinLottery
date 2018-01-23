@@ -8,8 +8,10 @@
 session_start();
 
 include "connect.php";
-
 include "function.php";
+include "inc/login_checker.php";
+
+$_SESSION['last_url'] = 'game_info.php';
 
 function gameInfoLink($game, $page = 1, $n = 2, $f = 2, $ff = 2, $fi = 1, $se = 2, $th = 3)
 {
@@ -219,7 +221,7 @@ try {
         </div>
     </div>
 </header>
-<main class="<?php if ($current_game == $game_id) echo 'valign-wrapper'; ?>">
+<main class="valign-wrapper">
     <div class="container">
         <?php if ($current_game != $game_id) : ?>
             <div class="row">
@@ -450,9 +452,10 @@ try {
                 </div>
             </div>
         <?php else : ?>
-            <div class="row">
-                <h3 class="center-align"><i class="medium material-icons vmid">error</i>&nbsp;This game is currently
-                    being played.</h3>
+            <div class="row centerWrap">
+                <div class="centeredDiv">
+                    <span class="h5Span"><i class="material-icons left">error</i>This game is currently being played</span>
+                </div>
             </div>
         <?php endif; ?>
     </div>
