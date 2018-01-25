@@ -51,23 +51,24 @@ if ($captcha_success->success) {
             // If password is correct
             if (password_verify($password, $user_info['password'])) {
 
-                //Making sure selector is unique
-                do {
-                    $selector = bin2hex(random_bytes(6));
-
-                    $stmt = $conn->prepare('SELECT auth_token_id FROM auth_token 
-                          WHERE selector = :selector');
-                    $stmt->execute(array('selector' => $selector));
-                    $auth_token_result = $stmt->fetch(PDO::FETCH_ASSOC);
-
-                } while (!empty($auth_token_result));
-
-                $validator = bin2hex(random_bytes(32));
-                $hashed_validator = hash('sha256', $validator);
-                $user_agent = !empty($_SERVER['HTTP_USER_AGENT']) ? substr($_SERVER['HTTP_USER_AGENT'], 0, 512) : '';
-                $ip_address = $_SERVER['REMOTE_ADDR'];
-
                 if ($remember_me) {
+
+                    //Making sure selector is unique
+                    do {
+                        $selector = bin2hex(random_bytes(6));
+
+                        $stmt = $conn->prepare('SELECT auth_token_id FROM auth_token 
+                          WHERE selector = :selector');
+                        $stmt->execute(array('selector' => $selector));
+                        $auth_token_result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                    } while (!empty($auth_token_result));
+
+                    $validator = bin2hex(random_bytes(32));
+                    $hashed_validator = hash('sha256', $validator);
+                    $user_agent = !empty($_SERVER['HTTP_USER_AGENT']) ? substr($_SERVER['HTTP_USER_AGENT'], 0, 512) : '';
+                    $ip_address = $_SERVER['REMOTE_ADDR'];
+
                     //Remember me
                     $stmt = $conn->prepare('SELECT auth_token_id FROM auth_token 
                           WHERE user_id = :user_id

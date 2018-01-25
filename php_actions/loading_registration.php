@@ -15,6 +15,7 @@ $username = strtolower($_POST['username']);
 $password = $_POST['password'];
 $confirm_password = $_POST['confirm_password'];
 $email = strtolower($_POST['email']);
+
 $bit_address = rand_string(15);
 /* Implement bitcoin stuff here
 
@@ -118,8 +119,7 @@ if ($captcha_success->success) {
                 $_SESSION['password_length_error'] = true;
             }
 
-        }
-        else {
+        } else {
             $not_empty_password = false;
             $_SESSION['password_empty'] = true;
         }
@@ -127,17 +127,42 @@ if ($captcha_success->success) {
         if (empty($user_exists_row) && empty($email_exists_row) && $password_equals && $valid_username && $password_length_valid
             && $valid_email && $not_empty_username && $not_empty_email && $not_empty_password) {
 
+            $hashed_password = password_hash($password, PASSWORD_ARGON2I);
+            echo $password;
+            echo $hashed_password;
+            var_dump($hashed_password);
+
             //CREATE NEW USER
-//            $stmt = $conn->prepare('INSERT INTO user(username, password, email, bit_address, balance, deposits, withdrawals,
-//            net_profit, games_played, registration_date, enabled, code, code_expires, new_email) VALUES (:username, :password, :email, :bit_address,
-//            0, 0, 0, 0, 0, CURRENT_TIMESTAMP, FALSE, NULL, NULL, NULL)');
-//
-//            $stmt->execute(array('username' => $username, 'password' => $password, 'email' => $email,
-//                'bit_address' => $bit_address));
-//
-//            $stmt = $conn->prepare('UPDATE stats SET total_users = total_users + 1');
-//            $stmt->execute();
-            echo "New record created successfully";
+            $stmt = $conn->prepare('INSERT INTO user(username, password, email, bit_address, balance, deposits, withdrawals,
+            net_profit, games_played, registration_date, enabled) VALUES (:username, :password, :email, :bit_address,
+            0, 0, 0, 0, 0, CURRENT_TIMESTAMP, FALSE)');
+
+            $stmt->execute(array('username' => $username, 'password' => $hashed_password, 'email' => $email,
+                'bit_address' => $bit_address));
+
+            //Adding to stats
+            $stmt = $conn->prepare('UPDATE stats SET total_users = total_users + 1');
+            $stmt->execute();
+
+            //Getting user_id for new user
+            $stmt = $conn->prepare('SELECT user_id FROM user WHERE username = :username');
+            $stmt->execute(array('username' => $username));
+            $user_id = $stmt->fetch(PDO::FETCH_ASSOC)['user_id'];
+            $hashed_user_id = hash('sha256', $user_id);
+
+            //CREATE CONFIRMATION CODE
+            $confirmation_code = bin2hex(random_bytes(32));
+            $stmt = $conn->prepare('INSERT INTO email_confirmation(user_id, hashed_user_id, code, creation_date, expires)
+            VALUES (:user_id, :hashed_user_id, :code, CURRENT_TIMESTAMP, ADDDATE(CURRENT_TIMESTAMP, INTERVAL 3 HOUR))');
+            $stmt->execute(array('user_id' => $user_id, 'hashed_user_id' => $hashed_user_id, 'code' => $confirmation_code));
+
+            //Let's login the new user
+            $_SESSION['auth_token'] = json_encode(array('username' => $username, 'user_id' => $user_id));
+
+            header("Location: ../account.php");
+            die();
+
+
         } else {
 
             $_SESSION['input_username'] = $username;
@@ -152,6 +177,8 @@ if ($captcha_success->success) {
 
     } catch (PDOException $e) {
         echo "Connection failed: " . $e->getMessage();
+    } catch (Exception $e) {
+        echo $e->getMessage();
     }
 
 } else {
