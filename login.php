@@ -85,10 +85,12 @@ if (!$logged_in) {
                                     </div>
                             <?php endif; ?>
                             <div class="input-field col m10 offset-m1 s12">
+                                <i class="material-icons prefix">account_circle</i>
                                 <input id="username" type="text" name="username">
                                 <label for="username">Username</label>
                             </div>
-                            <div class="input-field col col m10 offset-m1 s12">
+                            <div class="input-field col m10 offset-m1 s12">
+                                <i class="material-icons prefix">lock</i>
                                 <input id="password" type="password" name="password">
                                 <label for="password">Password</label>
                             </div>

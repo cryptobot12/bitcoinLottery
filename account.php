@@ -230,6 +230,7 @@ if ($logged_in) {
                                                                 Email</label>
                                                         </div>
                                                         <div class="input-field col s12">
+                                                            <i class="material-icons prefix">mail_outline</i>
                                                             <input name="new-email" id="new-email" type="email"
                                                                    class="<?php
                                                                    if (!empty($_SESSION['invalid_email']) || !empty($_SESSION['email_taken'])) {
@@ -265,6 +266,7 @@ if ($logged_in) {
                                                                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
                                                         </div>
                                                         <div class="input-field col s12">
+                                                            <i class="material-icons prefix">mail</i>
                                                             <input name="confirm-email" id="confirm-email" type="email"
                                                                    class="<?php
                                                                    if (!empty($_SESSION['unmatch'])) {
@@ -393,6 +395,7 @@ if ($logged_in) {
                                                         password in order to protect your account.
                                                     </blockquote>
                                                     <div class="input-field col s12">
+                                                        <i class="material-icons prefix">lock_outline</i>
                                                         <input name="current_password" id="current_password"
                                                                type="password"
                                                                class="<?php
@@ -431,6 +434,7 @@ if ($logged_in) {
                                                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
                                                     </div>
                                                     <div class="input-field col s12">
+                                                        <i class="material-icons prefix">lock</i>
                                                         <input name="new_password" id="new_password" type="password"
                                                                class="<?php
 
@@ -473,6 +477,7 @@ if ($logged_in) {
                                                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
                                                     </div>
                                                     <div class="input-field col s12">
+                                                        <i class="material-icons prefix">enhanced_encryption</i>
                                                         <input name="confirm_new_password" id="confirm_new_password"
                                                                type="password" class="<?php
 
@@ -518,7 +523,7 @@ if ($logged_in) {
                                 if (!empty($_GET['p']))
                                     echo "active";
 
-                                ?>"><i class="material-icons">monetization_on</i>Deposit
+                                ?>"><i class="material-icons">account_balance</i>Deposit
                                 </div>
                                 <div class="collapsible-body">
                                     <div class="row">
@@ -531,6 +536,7 @@ if ($logged_in) {
                                             </div>
                                             <div class="row">
                                                 <div class="input-field">
+                                                    <i class="material-icons prefix">account_balance_wallet</i>
                                                     <input id="deposit_address" type="text"
                                                            value="<?php echo $bit_address; ?>" readonly>
                                                     <label id="deposit_address_label" for="deposit_address">Deposit
@@ -704,7 +710,7 @@ if ($logged_in) {
                                     echo "active";
                                 }
 
-                                ?>"><i class="material-icons">local_atm</i>Withdraw
+                                ?>"><i class="material-icons">file_download</i>Withdraw
                                 </div>
                                 <div class="collapsible-body">
                                     <div class="row">
@@ -724,6 +730,7 @@ if ($logged_in) {
                                                     </div>
                                                 <?php endif; ?>
                                                 <div class="input-field col l8 m7 s6">
+                                                    <i class="material-icons prefix">account_balance_wallet</i>
                                                     <input class="<?php
 
                                                     if (!empty($_SESSION['withdraw_address_error'])) {
@@ -746,7 +753,7 @@ if ($logged_in) {
                                                         unset($_SESSION['withdraw_address_error']);
                                                     }
 
-                                                    ?>" id="withdraw_address_label">Address&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                    ?>" id="withdraw_address_label">Wallet Address&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -761,6 +768,7 @@ if ($logged_in) {
                                                         &nbsp;&nbsp;</label>
                                                 </div>
                                                 <div class="input-field col l4 m5 s6">
+                                                    <i class="material-icons prefix">bubble_chart</i>
                                                     <input type="number" id="withdraw_amount" name="withdraw_amount"
                                                            class="<?php
 
@@ -990,6 +998,7 @@ if ($logged_in) {
                                                         mining fee will be added to the transaction.
                                                     </blockquote>
                                                     <div class="input-field col l8 m7 s6">
+                                                        <i class="material-icons prefix">account_circle</i>
                                                         <input type="text" id="transfer_user" name="transfer_user"
                                                                class="<?php
 
@@ -1033,6 +1042,7 @@ if ($logged_in) {
                                                             &nbsp;&nbsp;</label>
                                                     </div>
                                                     <div class="input-field col l4 m5 s6">
+                                                        <i class="material-icons prefix">bubble_chart</i>
                                                         <input type="number" id="transfer_amount" name="transfer_amount"
                                                                class="<?php
 
@@ -1272,6 +1282,7 @@ if ($logged_in) {
                                                 </blockquote>
                                                 <br>
                                                 <div class="input-field col s12">
+                                                    <i class="material-icons prefix">short_text</i>
                                                     <input type="text" id="support_subject"
                                                            class="<?php echo $is_ticket_subject_invalid; ?>"
                                                            name="support_subject"
@@ -1287,6 +1298,7 @@ if ($logged_in) {
                                                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
                                                 </div>
                                                 <div class="input-field col s12">
+                                                    <i class="material-icons prefix">textsms</i>
                                                     <?php //If there is an error
                                                     //Add invalid class
                                                     if ($ticket_content_error != 0): ?>

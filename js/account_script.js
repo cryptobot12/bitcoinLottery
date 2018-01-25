@@ -46,10 +46,6 @@ function verifyEmailUniqueness() {
     var newEmail = $("#new-email");
     var labelNewEmail = $("#newEmailLabel");
     var confirmEmail = $("#confirm-email");
-    var updateEmailButton = $("#updateEmailButton");
-    var labelConfirmEmail = $("#confirmEmailLabel");
-
-    var conEmailVal = confirmEmail.val();
     var newEmailVal = newEmail.val();
 
 

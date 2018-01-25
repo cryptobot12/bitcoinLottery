@@ -9,11 +9,12 @@
 session_start();
 
 include "../connect.php";
+include "../inc/login_checker.php";
 
 $username = strtolower($_POST['username']);
 
 //For transfer
-if (!empty($_SESSION['username'])) {
+if ($logged_in) {
 
     if ($username != $_SESSION['username']) {
         try {
