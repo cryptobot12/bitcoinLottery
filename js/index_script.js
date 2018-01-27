@@ -1,3 +1,10 @@
+$(function () {
+
+    $('.modal').modal();
+
+});
+
+
 /* Modal initializer*/
 $(document).ready(function(){
 
@@ -11,6 +18,47 @@ $(document).ready(function(){
     });
 
 });
+
+//Resize chat input
+$(document).ready(function() {
+    var chat_send = $("#chat-send");
+    var jackpot_card = $("#jackpot_card");
+    var input_chat = $("#input-chat");
+
+    var jackpot_card_width = jackpot_card.width();
+    var chat_send_margin = chat_send.css("marginLeft");
+    var chat_send_pl = chat_send.css("paddingLeft");
+    var chat_send_pr = chat_send.css("paddingRight");
+
+    var new_width = parseFloat(jackpot_card_width) - parseFloat(chat_send_margin) -
+        parseFloat(chat_send_pl) - parseFloat(chat_send_pr) - 5;
+
+    input_chat.width(new_width);
+
+    // var chat_space = $("#chat-space");
+    // var chat_input_inline = $("#chat-input-line");
+    //
+    // chat_input_inline.css("marginTop", parseFloat(chat_space.height()) - parseFloat(chat_input_inline.height()));
+
+});
+
+$(window).resize(function() {
+    var chat_send = $("#chat-send");
+    var jackpot_card = $("#jackpot_card");
+    var input_chat = $("#input-chat");
+
+    var jackpot_card_width = jackpot_card.width();
+    var chat_send_width = chat_send.width();
+    var chat_send_margin = chat_send.css("marginLeft");
+    var chat_send_pl = chat_send.css("paddingLeft");
+    var chat_send_pr = chat_send.css("paddingRight");
+
+    var new_width = parseFloat(jackpot_card_width) - parseFloat(chat_send_margin) -
+        parseFloat(chat_send_pl) - parseFloat(chat_send_pr) - 5;
+
+    input_chat.width(new_width);
+});
+
 
 /* Array of numbers validator */
 function isArrayOfNumbersValid(array) {
@@ -191,3 +239,4 @@ $(function () {
     endRandom.on('keyup', function () {validateRandom()});
     numberOfNumbers.on('keyup', function () {validateRandom()});
 });
+

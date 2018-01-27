@@ -30,7 +30,7 @@
                 <li><a class="dropdown-button" href="#" data-activates="statsDropdown">
                         <i class="material-icons left">trending_up</i>Stats<i
                             class="material-icons right">arrow_drop_down</i></a></li>
-                <li class="no-link-nav">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>
+                <li class="no-link-nav hide-on-med-and-down">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>
                 <?php if  (!empty($username)): ?>
                     <li class="no-link-nav"><i class="material-icons left">account_balance_wallet</i>
                         Balance: <span id="balanceNumber"><?php include 'update_balance_part.php'; ?></span> bits</li>

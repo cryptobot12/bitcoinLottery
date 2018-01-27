@@ -11,11 +11,11 @@ session_start();
  */
 
 include "../connect.php";
-$username = $_SESSION['username'];
+include "../inc/login_checker.php";
 
 $betNumber = json_decode(htmlspecialchars($_POST['numbers']));
 
-if (isset($_SESSION['username'])) {
+if ($logged_in) {
 //Number verification
     function legalArray($array)
     {
@@ -57,13 +57,6 @@ if (isset($_SESSION['username'])) {
             $plays = count($betNumber);
 
             if ($balance >= (5000 * $plays)) {
-
-                //Selecting user id
-                $stmt = $conn->prepare('SELECT user_id FROM user
-                                                WHERE username = :username');
-                $stmt->execute(array('username' => $username));
-                $row = $stmt->fetch(PDO::FETCH_ASSOC);
-                $user_id = $row['user_id'];
 
                 //Selecting current game
                 $stmt = $conn->prepare('SELECT game_id, amount FROM game ORDER BY timedate DESC, game_id DESC LIMIT 1');
@@ -148,4 +141,6 @@ if (isset($_SESSION['username'])) {
         echo "Illegal numbers...";
     }
 
+} else {
+    echo "You need to login first.";
 }

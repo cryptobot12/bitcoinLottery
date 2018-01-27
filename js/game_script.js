@@ -245,15 +245,25 @@ function updateBalanceAndNumbers() {
             numbersGlobal = [];
             $.each(response['numbers'], function (index, value) {
                 numbersGlobal.push(parseInt(value));
-                numbersList.append('<div class="chip">' + value + '</div>');
+                numbersList.append('<div class="chip small-chip">' + value + '</div>');
             });
 
-            if (response['count'] > 1)
-                $("#count").html("&nbsp;&nbsp;&nbsp;&nbsp;" + response['count'] + " numbers");
-            else if (response['count'] === 1)
-                $("#count").html("&nbsp;&nbsp;&nbsp;&nbsp;" + response['count'] + " number");
-            else
-                $("#count").html("&nbsp;&nbsp;&nbsp;&nbsp;No numbers");
+            var numbers_card = $("#numbers_card");
+
+            if (response['count'] > 1) {
+                $("#count").html("<b>My " + response['count'] + " numbers</b>");
+                numbers_card.removeClass('scale-out');
+                numbers_card.addClass('scale-in');
+            }
+            else if (response['count'] === 1) {
+                $("#count").html("<b>My number</b>");
+                numbers_card.removeClass('scale-out');
+                numbers_card.addClass('scale-in');
+            }
+            else {
+                numbers_card.removeClass('scale-in');
+                numbers_card.addClass('scale-out');
+            }
 
         }, type: 'GET'
     });
@@ -267,22 +277,29 @@ function bet(arrayOfNumbers) {
     var jsonSend = JSON.stringify(arrayOfNumbers);
     $.ajax({
         url: "php_ajax/play.php", success: function (result) {
+
             var response = JSON.parse(result);
             $("#balanceNumber").html(response['balance']);
             var numbersList = $("#numbersList");
             numbersList.empty();
 
-            if (response['count'] > 1)
-                $("#count").html("&nbsp;&nbsp;&nbsp;&nbsp;" + response['count'] + " numbers");
-            else if (response['count'] === 1)
-                $("#count").html("&nbsp;&nbsp;&nbsp;&nbsp;" + response['count'] + " number");
-            else
-                $("#count").html("&nbsp;&nbsp;&nbsp;&nbsp;No numbers");
+            var numbers_card = $("#numbers_card");
+
+            if (response['count'] > 1) {
+                $("#count").html("<b>My " + response['count'] + " numbers</b>");
+                numbers_card.removeClass('scale-out');
+                numbers_card.addClass('scale-in');
+            }
+            else if (response['count'] === 1) {
+                $("#count").html("<b>My number</b>");
+                numbers_card.removeClass('scale-out');
+                numbers_card.addClass('scale-in');
+            }
 
             numbersGlobal = [];
             $.each(response['numbers'], function (index, value) {
                 numbersGlobal.push(parseInt(value));
-                numbersList.append('<div class="chip">' + value + '</div>');
+                numbersList.append('<div class="chip small-chip">' + value + '</div>');
             });
 
 

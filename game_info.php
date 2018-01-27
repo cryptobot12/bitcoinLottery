@@ -183,7 +183,6 @@ try {
     <!-- Compiled and minified JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
     <script src="js/autobahn.js"></script>
-    <script src="js/core.js"></script>
     <script src="js/game_info_script.js"></script>
     <script>
         var currentGame = <?php echo $game_id; ?>;

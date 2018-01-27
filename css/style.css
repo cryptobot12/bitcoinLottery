@@ -24,9 +24,16 @@ nav ul a {
 }
 
 .chip {
-    background-color: #ffe807;
+    background-color: #ffeb3b;
     color: black;
     margin-bottom: 0;
+}
+
+.small-chip {
+    font-size: 0.625em;
+    padding: 0.5em;
+    line-height: 0.563em;
+    height: 1.55em;
 }
 
 .win {
@@ -219,4 +226,25 @@ ul.browser-default li {
 
 .black-text {
     color: black !important;
+}
+
+#chat-space {
+    height: 56vh;
+}
+
+.input-chat {
+    display: inline-block;
+}
+
+#chat-send {
+    text-align: center;
+    display: inline-block;
+    width: 2.2em;
+    vertical-align: middle;
+    padding-left: 0.75em;
+    margin-left: 0.75em;
+}
+
+#chat-input-line {
+    vertical-align: bottom;
 }
