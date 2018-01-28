@@ -3,19 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="10750175-c39d-40d2-8ef4-4cd797eab4f9" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/css/style.css" afterPath="$PROJECT_DIR$/css/style.css" />
-      <change beforePath="$PROJECT_DIR$/game_info.php" afterPath="$PROJECT_DIR$/game_info.php" />
-      <change beforePath="$PROJECT_DIR$/inc/count_numbers_part.php" afterPath="$PROJECT_DIR$/inc/count_numbers_part.php" />
-      <change beforePath="$PROJECT_DIR$/inc/header.php" afterPath="$PROJECT_DIR$/inc/header.php" />
-      <change beforePath="$PROJECT_DIR$/inc/numbers_list_part.php" afterPath="$PROJECT_DIR$/inc/numbers_list_part.php" />
-      <change beforePath="$PROJECT_DIR$/inc/update_balance_part.php" afterPath="$PROJECT_DIR$/inc/update_balance_part.php" />
-      <change beforePath="$PROJECT_DIR$/index.php" afterPath="$PROJECT_DIR$/index.php" />
-      <change beforePath="$PROJECT_DIR$/js/core.js" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/js/game_info_script.js" afterPath="$PROJECT_DIR$/js/game_info_script.js" />
-      <change beforePath="$PROJECT_DIR$/js/game_script.js" afterPath="$PROJECT_DIR$/js/game_script.js" />
       <change beforePath="$PROJECT_DIR$/js/index_script.js" afterPath="$PROJECT_DIR$/js/index_script.js" />
-      <change beforePath="$PROJECT_DIR$/php_ajax/balance_numbers_ajax.php" afterPath="$PROJECT_DIR$/php_ajax/balance_numbers_ajax.php" />
-      <change beforePath="$PROJECT_DIR$/php_ajax/play.php" afterPath="$PROJECT_DIR$/php_ajax/play.php" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -68,11 +56,22 @@
       <file leaf-file-name="index.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/index.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="165">
-              <caret line="220" column="36" lean-forward="false" selection-start-line="220" selection-start-column="36" selection-end-line="220" selection-end-column="36" />
+            <state relative-caret-position="505">
+              <caret line="227" column="58" lean-forward="true" selection-start-line="227" selection-start-column="58" selection-end-line="227" selection-end-column="58" />
               <folding>
-                <element signature="n#div#0;n#div#0;n#div#1;n#div#0;n#main#0;n#body#0;n#html#0;n#!!top" expanded="false" />
-                <element signature="n#div#1;n#main#0;n#body#0;n#html#0;n#!!top" expanded="false" />
+                <element signature="n#style#0;n#p#0;n#div#0;n#div#0;n#div#0;n#div#0;n#main#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+                <element signature="e#9533#9539#0#HTML" expanded="true" />
+                <element signature="e#9539#9545#0#HTML" expanded="true" />
+                <element signature="e#9545#9551#0#HTML" expanded="true" />
+                <element signature="e#9551#9557#0#HTML" expanded="true" />
+                <element signature="e#9690#9696#0#HTML" expanded="true" />
+                <element signature="e#9696#9702#0#HTML" expanded="true" />
+                <element signature="e#19503#19509#0#HTML" expanded="true" />
+                <element signature="e#19509#19515#0#HTML" expanded="true" />
+                <element signature="e#19515#19521#0#HTML" expanded="true" />
+                <element signature="e#19521#19527#0#HTML" expanded="true" />
+                <element signature="e#19660#19666#0#HTML" expanded="true" />
+                <element signature="e#19666#19672#0#HTML" expanded="true" />
                 <marker date="1517045761100" expanded="true" signature="632:701" ph="SELECT game_... game" />
                 <marker date="1517045761100" expanded="true" signature="885:1042" ph="SELECT COUNT... numberxuser" />
                 <marker date="1517045761100" expanded="true" signature="959:1018" ph="SELECT user_... user" />
@@ -86,18 +85,16 @@
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="459">
               <caret line="32" column="39" lean-forward="false" selection-start-line="32" selection-start-column="39" selection-end-line="32" selection-end-column="39" />
-              <folding>
-                <element signature="e#1643#1649#0#HTML" expanded="true" />
-              </folding>
+              <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="index_script.js" pinned="false" current-in-tab="false">
+      <file leaf-file-name="index_script.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/js/index_script.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="425">
-              <caret line="40" column="116" lean-forward="true" selection-start-line="37" selection-start-column="7" selection-end-line="40" selection-end-column="116" />
+            <state relative-caret-position="726">
+              <caret line="244" column="38" lean-forward="true" selection-start-line="244" selection-start-column="38" selection-end-line="244" selection-end-column="38" />
               <folding />
             </state>
           </provider>
@@ -106,8 +103,8 @@
       <file leaf-file-name="game_script.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/js/game_script.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="862">
-              <caret line="295" column="45" lean-forward="false" selection-start-line="295" selection-start-column="45" selection-end-line="295" selection-end-column="45" />
+            <state relative-caret-position="-22">
+              <caret line="225" column="13" lean-forward="true" selection-start-line="225" selection-start-column="13" selection-end-line="225" selection-end-column="13" />
               <folding />
             </state>
           </provider>
@@ -137,7 +134,7 @@
       <file leaf-file-name="game_info.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/game_info.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="862">
+            <state relative-caret-position="3128">
               <caret line="184" column="42" lean-forward="false" selection-start-line="184" selection-start-column="42" selection-end-line="184" selection-end-column="42" />
               <folding>
                 <marker date="1516934485955" expanded="true" signature="1688:1765" ph="SELECT game_... game" />
@@ -154,10 +151,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="style.css" pinned="false" current-in-tab="true">
+      <file leaf-file-name="style.css" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/css/style.css">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="471">
+            <state relative-caret-position="3910">
               <caret line="230" column="13" lean-forward="false" selection-start-line="230" selection-start-column="13" selection-end-line="230" selection-end-column="13" />
               <folding />
             </state>
@@ -167,7 +164,7 @@
       <file leaf-file-name="login_checker.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/inc/login_checker.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="374">
+            <state relative-caret-position="527">
               <caret line="36" column="70" lean-forward="false" selection-start-line="36" selection-start-column="70" selection-end-line="36" selection-end-column="70" />
               <folding>
                 <marker date="1517043745347" expanded="true" signature="958:1085" ph="SELECT user_... auth_token" />
@@ -311,11 +308,11 @@
         <option value="$PROJECT_DIR$/js/game_info_script.js" />
         <option value="$PROJECT_DIR$/inc/count_numbers_part.php" />
         <option value="$PROJECT_DIR$/js/game_script.js" />
-        <option value="$PROJECT_DIR$/js/index_script.js" />
         <option value="$PROJECT_DIR$/inc/header.php" />
         <option value="$PROJECT_DIR$/inc/login_checker.php" />
         <option value="$PROJECT_DIR$/index.php" />
         <option value="$PROJECT_DIR$/css/style.css" />
+        <option value="$PROJECT_DIR$/js/index_script.js" />
       </list>
     </option>
   </component>
@@ -370,7 +367,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scratches" />
       <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
@@ -417,6 +413,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -519,7 +516,9 @@
       <workItem from="1516873186937" duration="61000" />
       <workItem from="1516907136842" duration="16802000" />
       <workItem from="1516949387243" duration="8158000" />
-      <workItem from="1516993493576" duration="10037000" />
+      <workItem from="1516993493576" duration="10089000" />
+      <workItem from="1517084184501" duration="32000" />
+      <workItem from="1517166831956" duration="506000" />
     </task>
     <task id="LOCAL-00001" summary="* Added some style&#10;* Added numbers count&#10;* Can't bet without having numbers on text area">
       <created>1510434723137</created>
@@ -766,17 +765,24 @@
       <option name="project" value="LOCAL" />
       <updated>1516914590524</updated>
     </task>
-    <option name="localTasksCounter" value="36" />
+    <task id="LOCAL-00036" summary="- Index page now is more responsive.">
+      <created>1517046123071</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1517046123071</updated>
+    </task>
+    <option name="localTasksCounter" value="37" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="462092000" />
+    <option name="totallyTimeSpent" value="462682000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.069270834" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18802084" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="11" side_tool="true" content_ui="tabs" />
@@ -829,7 +835,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="* Added footer&#10;* 1 Player case handled.&#10;* Fixed game links bug (AJAX)." />
     <MESSAGE value="* Changed balance icon.&#10;* Page for non logged users is now different.&#10;* Footer links added.&#10;* Footer now sticks to the bottom.&#10;* Tables are now responsive.&#10;* Game info added.&#10;* Search game feature added.&#10;* Long pagination fixed.&#10;* Highlighting winner row for game info." />
     <MESSAGE value="* Dropdown for stats added.&#10;* Highlight for winner row on hover is a different color now." />
     <MESSAGE value="* Footer and header are now in separate files." />
@@ -854,7 +859,8 @@
     <MESSAGE value="- Fixed login bugs" />
     <MESSAGE value="- Added icons for forms' inputs&#10;- Register JavaScript validation finished&#10;- Register PHP validation finished" />
     <MESSAGE value="- Registration finished" />
-    <option name="LAST_COMMIT_MESSAGE" value="- Registration finished" />
+    <MESSAGE value="- Index page now is more responsive." />
+    <option name="LAST_COMMIT_MESSAGE" value="- Index page now is more responsive." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1088,6 +1094,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="357">
           <caret line="21" column="50" lean-forward="true" selection-start-line="21" selection-start-column="50" selection-end-line="21" selection-end-column="50" />
+          <folding>
+            <marker date="1516915762793" expanded="true" signature="436:487" ph="SELECT balan... user" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1102,38 +1111,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="578">
           <caret line="34" column="32" lean-forward="false" selection-start-line="34" selection-start-column="32" selection-end-line="35" selection-end-column="59" />
-          <folding>
-            <marker date="1516216182658" expanded="true" signature="451:528" ph="SELECT game_... game" />
-            <marker date="1516216182658" expanded="true" signature="716:809" ph="SELECT COUNT... numberxuser" />
-            <marker date="1516216182658" expanded="true" signature="1050:1167" ph="INSERT INTO game... " />
-            <marker date="1516216182658" expanded="true" signature="1281:1329" ph="UPDATE stats... " />
-            <marker date="1516216182658" expanded="true" signature="1424:2488" ph="SELECT nxf.n... number_id" />
-            <marker date="1516216182658" expanded="true" signature="1491:1743" ph="SELECT numbe... numberxuser" />
-            <marker date="1516216182658" expanded="true" signature="1844:2257" ph="SELECT frequ... number_id" />
-            <marker date="1516216182658" expanded="true" signature="1932:2184" ph="SELECT numbe... numberxuser" />
-            <marker date="1516216182658" expanded="true" signature="2733:2921" ph="SELECT COUNT... numberxuser" />
-            <marker date="1516216182658" expanded="true" signature="3201:3269" ph="SELECT COUNT... numberxuser" />
-            <marker date="1516216182658" expanded="true" signature="3617:3686" ph="SELECT game_... game" />
-            <marker date="1516216182658" expanded="true" signature="3836:3892" ph="UPDATE game... " />
-            <marker date="1516216182658" expanded="true" signature="4306:4335" ph="SELECT max_j... stats" />
-            <marker date="1516216182658" expanded="true" signature="4546:4585" ph="UPDATE stats... " />
-            <marker date="1516216182658" expanded="true" signature="4690:4745" ph="UPDATE stats... " />
-            <marker date="1516216182658" expanded="true" signature="4892:5141" ph="UPDATE user... " />
-            <marker date="1516216182658" expanded="true" signature="5023:5140" ph="SELECT user_... numberxuser" />
-            <marker date="1516216182658" expanded="true" signature="5362:5493" ph="UPDATE game... " />
-            <marker date="1516216182658" expanded="true" signature="5673:5855" ph="SELECT DISTI... numberxuser" />
-            <marker date="1516216182658" expanded="true" signature="6109:6185" ph="INSERT INTO gamexuser... " />
-            <marker date="1516216182658" expanded="true" signature="6354:6535" ph="SELECT DISTI... numberxuser" />
-            <marker date="1516216182658" expanded="true" signature="6840:6909" ph="DELETE FROM gamexuser... " />
-            <marker date="1516216182658" expanded="true" signature="7076:7152" ph="INSERT INTO gamexuser... " />
-            <marker date="1516216182658" expanded="true" signature="7339:7413" ph="SELECT COUNT... gamexuser" />
-            <marker date="1516216182658" expanded="true" signature="7646:7701" ph="UPDATE stats... " />
-            <marker date="1516216182658" expanded="true" signature="7903:7980" ph="SELECT game_... game" />
-            <marker date="1516216182658" expanded="true" signature="8224:8292" ph="SELECT COUNT... numberxuser" />
-            <marker date="1516216182658" expanded="true" signature="8496:8727" ph="SELECT game_... game" />
-            <marker date="1516216182658" expanded="true" signature="9182:10081" ph="SELECT u.use... user" />
-            <marker date="1516216182658" expanded="true" signature="10604:11310" ph="SELECT u.use... user" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1141,9 +1118,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <marker date="1516216182651" expanded="true" signature="500:877" ph="SELECT user.... user" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1194,35 +1168,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/js/game_script.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="862">
-          <caret line="295" column="45" lean-forward="false" selection-start-line="295" selection-start-column="45" selection-end-line="295" selection-end-column="45" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/js/index_script.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="425">
-          <caret line="40" column="116" lean-forward="true" selection-start-line="37" selection-start-column="7" selection-end-line="40" selection-end-column="116" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/inc/header.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="459">
           <caret line="32" column="39" lean-forward="false" selection-start-line="32" selection-start-column="39" selection-end-line="32" selection-end-column="39" />
-          <folding>
-            <element signature="e#1643#1649#0#HTML" expanded="true" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/inc/login_checker.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="374">
+        <state relative-caret-position="527">
           <caret line="36" column="70" lean-forward="false" selection-start-line="36" selection-start-column="70" selection-end-line="36" selection-end-column="70" />
           <folding>
             <marker date="1517043745347" expanded="true" signature="958:1085" ph="SELECT user_... auth_token" />
@@ -1232,23 +1188,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/index.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="165">
-          <caret line="220" column="36" lean-forward="false" selection-start-line="220" selection-start-column="36" selection-end-line="220" selection-end-column="36" />
-          <folding>
-            <element signature="n#div#0;n#div#0;n#div#1;n#div#0;n#main#0;n#body#0;n#html#0;n#!!top" expanded="false" />
-            <element signature="n#div#1;n#main#0;n#body#0;n#html#0;n#!!top" expanded="false" />
-            <marker date="1517045761100" expanded="true" signature="632:701" ph="SELECT game_... game" />
-            <marker date="1517045761100" expanded="true" signature="885:1042" ph="SELECT COUNT... numberxuser" />
-            <marker date="1517045761100" expanded="true" signature="959:1018" ph="SELECT user_... user" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/game_info.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="862">
+        <state relative-caret-position="3128">
           <caret line="184" column="42" lean-forward="false" selection-start-line="184" selection-start-column="42" selection-end-line="184" selection-end-column="42" />
           <folding>
             <marker date="1516934485955" expanded="true" signature="1688:1765" ph="SELECT game_... game" />
@@ -1266,8 +1208,49 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/css/style.css">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="471">
+        <state relative-caret-position="3910">
           <caret line="230" column="13" lean-forward="false" selection-start-line="230" selection-start-column="13" selection-end-line="230" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/js/game_script.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-22">
+          <caret line="225" column="13" lean-forward="true" selection-start-line="225" selection-start-column="13" selection-end-line="225" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/index.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="505">
+          <caret line="227" column="58" lean-forward="true" selection-start-line="227" selection-start-column="58" selection-end-line="227" selection-end-column="58" />
+          <folding>
+            <element signature="n#style#0;n#p#0;n#div#0;n#div#0;n#div#0;n#div#0;n#main#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+            <element signature="e#9533#9539#0#HTML" expanded="true" />
+            <element signature="e#9539#9545#0#HTML" expanded="true" />
+            <element signature="e#9545#9551#0#HTML" expanded="true" />
+            <element signature="e#9551#9557#0#HTML" expanded="true" />
+            <element signature="e#9690#9696#0#HTML" expanded="true" />
+            <element signature="e#9696#9702#0#HTML" expanded="true" />
+            <element signature="e#19503#19509#0#HTML" expanded="true" />
+            <element signature="e#19509#19515#0#HTML" expanded="true" />
+            <element signature="e#19515#19521#0#HTML" expanded="true" />
+            <element signature="e#19521#19527#0#HTML" expanded="true" />
+            <element signature="e#19660#19666#0#HTML" expanded="true" />
+            <element signature="e#19666#19672#0#HTML" expanded="true" />
+            <marker date="1517045761100" expanded="true" signature="632:701" ph="SELECT game_... game" />
+            <marker date="1517045761100" expanded="true" signature="885:1042" ph="SELECT COUNT... numberxuser" />
+            <marker date="1517045761100" expanded="true" signature="959:1018" ph="SELECT user_... user" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/js/index_script.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="726">
+          <caret line="244" column="38" lean-forward="true" selection-start-line="244" selection-start-column="38" selection-end-line="244" selection-end-column="38" />
           <folding />
         </state>
       </provider>
