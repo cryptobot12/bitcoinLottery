@@ -306,3 +306,9 @@ $(function () {
 
 });
 
+$(function () {
+
+    var chat_input = $("#input-chat");
+    var chat_send = $("#chat-send");
+});
+
