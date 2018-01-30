@@ -7,40 +7,27 @@
  */
 
 namespace MyApp;
+
 use Ratchet\ConnectionInterface;
 use Ratchet\Wamp\WampServerInterface;
 
-class Pusher implements WampServerInterface {
+class Pusher implements WampServerInterface
+{
 
     protected $subscribedTopics = array();
 
-    public function onSubscribe(ConnectionInterface $conn, $topic) {
-
+    public function onSubscribe(ConnectionInterface $conn, $topic)
+    {
+        echo "SUBSCRIBED TO " . $topic;
         $this->subscribedTopics[$topic->getId()] = $topic;
-    }
-    public function onUnSubscribe(ConnectionInterface $conn, $topic) {
-    }
-    public function onOpen(ConnectionInterface $conn) {
-
-        //$conn->event('all', 'Hello master');
-    }
-    public function onClose(ConnectionInterface $conn) {
-    }
-    public function onCall(ConnectionInterface $conn, $id, $topic, array $params) {
-        // In this application if clients send data it's because the user hacked around in console
-        $conn->callError($id, $topic, 'You are not allowed to make calls')->close();
-    }
-    public function onPublish(ConnectionInterface $conn, $topic, $event, array $exclude, array $eligible) {
-        // In this application if clients send data it's because the user hacked around in console
-        $conn->close();
-    }
-    public function onError(ConnectionInterface $conn, \Exception $e) {
     }
 
     /**
      * @param string JSON'ified string we'll receive from ZeroMQ
      */
-    public function onBlogEntry($entry) {
+    public function onBlogEntry($entry)
+    {
+        echo "Someone publishes shit";
         $entryData = json_decode($entry, true);
 
         // If the lookup topic object isn't set there is no one to publish to
@@ -52,5 +39,34 @@ class Pusher implements WampServerInterface {
 
         // re-send the data to all the clients subscribed to that category
         $topic->broadcast($entryData);
+    }
+
+    public function onUnSubscribe(ConnectionInterface $conn, $topic)
+    {
+    }
+
+    public function onOpen(ConnectionInterface $conn)
+    {
+        echo "1 guy connected";
+    }
+
+    public function onClose(ConnectionInterface $conn)
+    {
+    }
+
+    public function onCall(ConnectionInterface $conn, $id, $topic, array $params)
+    {
+        // In this application if clients send data it's because the user hacked around in console
+        $conn->callError($id, $topic, 'You are not allowed to make calls')->close();
+    }
+
+    public function onPublish(ConnectionInterface $conn, $topic, $event, array $exclude, array $eligible)
+    {
+        // In this application if clients send data it's because the user hacked around in console
+        $conn->close();
+    }
+
+    public function onError(ConnectionInterface $conn, \Exception $e)
+    {
     }
 }

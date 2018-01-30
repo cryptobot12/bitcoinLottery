@@ -28,9 +28,6 @@ try {
         $expires = $result['expires'];
         $current_time = $result['CURRENT_TIMESTAMP'];
 
-        var_dump($current_time);
-        var_dump($expires);
-
         if (strtotime($current_time) < strtotime($expires)) {
             $stmt = $conn->prepare('UPDATE user SET enabled = TRUE WHERE user_id = :user_id');
             $stmt->execute(array('user_id' => $user_id));

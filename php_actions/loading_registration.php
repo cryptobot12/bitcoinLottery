@@ -127,10 +127,7 @@ if ($captcha_success->success) {
         if (empty($user_exists_row) && empty($email_exists_row) && $password_equals && $valid_username && $password_length_valid
             && $valid_email && $not_empty_username && $not_empty_email && $not_empty_password) {
 
-            $hashed_password = password_hash($password, PASSWORD_ARGON2I);
-            echo $password;
-            echo $hashed_password;
-            var_dump($hashed_password);
+            $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
             //CREATE NEW USER
             $stmt = $conn->prepare('INSERT INTO user(username, password, email, bit_address, balance, deposits, withdrawals,

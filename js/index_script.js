@@ -6,7 +6,7 @@ $(function () {
 
 
 /* Modal initializer*/
-$(document).ready(function(){
+$(document).ready(function () {
 
     $("#expand").collapsible({
         onOpen: function (el) {
@@ -20,7 +20,7 @@ $(document).ready(function(){
 });
 
 //Resize chat input
-$(document).ready(function() {
+$(document).ready(function () {
     var chat_send = $("#chat-send");
     var jackpot_card = $("#jackpot_card");
     var input_chat = $("#input-chat");
@@ -42,7 +42,7 @@ $(document).ready(function() {
 
 });
 
-$(window).resize(function() {
+$(window).resize(function () {
     var chat_send = $("#chat-send");
     var jackpot_card = $("#jackpot_card");
     var input_chat = $("#input-chat");
@@ -93,28 +93,27 @@ $(function () {
         var array = numbersArea.val().match(/[^\d\s]/g);
 
 
-            if (array !== null) {
+        if (array !== null) {
+            numbersArea.removeClass("valid");
+            numbersArea.addClass("invalid");
+            playButton.addClass("disabled");
+        }
+        else {
+
+            array = numbersArea.val().match(/\d+/g);
+
+            if (isArrayOfNumbersValid(array)) {
+                numbersArea.removeClass("invalid");
+                numbersArea.addClass("valid");
+                playButton.removeClass("disabled");
+            }
+            else {
                 numbersArea.removeClass("valid");
                 numbersArea.addClass("invalid");
                 playButton.addClass("disabled");
             }
-            else {
 
-                array = numbersArea.val().match(/\d+/g);
-
-                if (isArrayOfNumbersValid(array)) {
-                    numbersArea.removeClass("invalid");
-                    numbersArea.addClass("valid");
-                    playButton.removeClass("disabled");
-                }
-                else {
-                    numbersArea.removeClass("valid");
-                    numbersArea.addClass("invalid");
-                    playButton.addClass("disabled");
-                }
-
-            }
-
+        }
 
 
     });
@@ -126,7 +125,7 @@ function validateSequence() {
     var startSequence = $("#startSequence");
     var endSequence = $("#endSequence");
     var playButton = $("#checkButtonSequence");
-    
+
     var startNumber = parseInt(startSequence.val());
     var endNumber = parseInt(endSequence.val());
 
@@ -166,8 +165,12 @@ $(function () {
     var startSequence = $("#startSequence");
     var endSequence = $("#endSequence");
 
-    startSequence.on('keyup', function() { validateSequence() });
-    endSequence.on('keyup', function() { validateSequence() });
+    startSequence.on('keyup', function () {
+        validateSequence()
+    });
+    endSequence.on('keyup', function () {
+        validateSequence()
+    });
 
 });
 
@@ -186,11 +189,9 @@ function validateRandom() {
     var verifyEnd = endRandom.val();
     var verifyNumbers = numberOfNumbers.val();
 
-    if (verifyStart !== "" && verifyEnd !== "" && verifyNumbers !== "")
-    {
+    if (verifyStart !== "" && verifyEnd !== "" && verifyNumbers !== "") {
         if ((start <= end) && ((end - start + 1) >= numbersON) && (start > 0) && (end > 0) &&
-            (end <= 50000) && (start <= 50000) && (numbersON <= 200) && (numbersON > 0))
-        {
+            (end <= 50000) && (start <= 50000) && (numbersON <= 200) && (numbersON > 0)) {
             startRandom.removeClass('invalid');
             endRandom.removeClass('invalid');
             numberOfNumbers.removeClass('invalid');
@@ -201,8 +202,7 @@ function validateRandom() {
 
             randomButton.removeClass('disabled');
         }
-        else
-        {
+        else {
             startRandom.removeClass('valid');
             endRandom.removeClass('valid');
             numberOfNumbers.removeClass('valid');
@@ -231,12 +231,78 @@ function validateRandom() {
 
 /* Random Input validator listeners */
 $(function () {
-   var startRandom = $("#start");
-   var endRandom = $("#end");
-   var numberOfNumbers = $("#numberOfNumbers");
+    var startRandom = $("#start");
+    var endRandom = $("#end");
+    var numberOfNumbers = $("#numberOfNumbers");
 
-   startRandom.on('keyup', function () { validateRandom()});
-    endRandom.on('keyup', function () {validateRandom()});
-    numberOfNumbers.on('keyup', function () {validateRandom()});
+    startRandom.on('keyup', function () {
+        validateRandom()
+    });
+    endRandom.on('keyup', function () {
+        validateRandom()
+    });
+    numberOfNumbers.on('keyup', function () {
+        validateRandom()
+    });
+});
+
+function send_message() {
+
+    var chat_input = $("#input-chat");
+    var message = chat_input.val();
+
+    var chat_send_button = $("#chat-send");
+
+    chat_send_button.addClass('disabled');
+    chat_send_button.prop('disabled', true);
+
+    $.ajax({
+        url: 'php_ajax/send_message.php',
+        success: function (result) {
+            if (result === 'tmm') {
+                var chat_list = $("#chat-messages");
+
+                var to_append = "<li class='red-text'>You have been sending too many messages. Please wait before using the chat again.</li>";
+                chat_list.append(to_append);
+
+                chat_list.animate({ scrollTop: chat_list.height() }, 0);
+            }
+            chat_send_button.removeClass('disabled');
+            chat_send_button.prop('disabled', false);
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            chat_send_button.removeClass('disabled');
+            chat_send_button.prop('disabled', false);
+        },
+        data: {message: message},
+        method: "POST"
+    });
+
+    chat_input.val(null);
+    chat_input.focus();
+}
+
+//Chat
+$(function () {
+
+    var chat_input = $("#input-chat");
+    var chat_send_button = $("#chat-send");
+
+    chat_input.keydown(function (e) {
+        if (e.keyCode === 13) {
+            if (chat_input.val().length > 0) {
+                send_message();
+            }
+
+        }
+    });
+
+    chat_send_button.on('click', function () {
+
+        if (chat_input.val().length > 0) {
+            send_message();
+        }
+    });
+
 });
 

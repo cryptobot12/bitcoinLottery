@@ -8,7 +8,6 @@ session_start();
  *
  *
  */
-require __DIR__ . '/vendor/autoload.php';
 
 include "connect.php";
 include "inc/login_checker.php";
@@ -224,8 +223,10 @@ if ($logged_in) {
                     </ul>
                 </div>
                 <div id="chat-input-line" class="row">
-                    <input placeholder="Enter your message here" id="input-chat" class="input-chat" type="text"><a
-                            class="btn" id="chat-send"><i class="material-icons">send</i></a>
+                    <input placeholder="Enter your message here" id="input-chat" class="input-chat" type="text"
+                           maxlength="180">
+                    <button
+                            class="btn" id="chat-send"><i class="material-icons">send</i></button>
                 </div>
             </div>
             <div class="row hide-on-med-and-up">

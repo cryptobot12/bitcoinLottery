@@ -172,15 +172,15 @@ var conn = new ab.Session('ws://localhost:8080',
     function () {
         conn.subscribe('all', function (topic, data) {
 
-            var jackpotNumber = document.getElementById('jackpotNumber');
 
-            if (data.reload === 0) {
-                jackpotNumber.innerHTML = data.jackpot;
-                console.log('Jackpot updated: ' + data.jackpot);
+            if (data.option === 1) {
+                var jackpotNumber = document.getElementById('jackpotNumber');
+                jackpotNumber.innerHTML = 155000;
             }
 
 
-            if (data.reload === 1) {
+            if (data.option === 2) {
+
                 $("#jackpotNumber").html(data.jackpot);
                 $("#gameNumberLast").html(data.last_game_number);
                 $("#gameLink").attr("href", "game_info.php?game_id=" + data.last_game_number);
@@ -224,7 +224,21 @@ var conn = new ab.Session('ws://localhost:8080',
 
                 updateBalanceAndNumbers();
             }
-            //console.log(data);
+
+            if (data.option === 3) {
+                var chat_list = $("#chat-messages");
+                var time = new Date();
+                var hour = time.getHours();
+                var minute = time.getMinutes();
+                if (minute < 10) {
+                    minute = "0" + minute;
+                }
+
+                var to_append = "<li><b>" + data.user + "(" + hour + ":" + minute + "): </b>" + data.chat_message + "</li>";
+                chat_list.append(to_append);
+
+                chat_list.animate({ scrollTop: chat_list.height() }, 0);
+            }
         });
     },
     function () {

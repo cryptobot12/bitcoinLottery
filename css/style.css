@@ -232,6 +232,13 @@ ul.browser-default li {
     height: 56vh;
 }
 
+#chat-messages {
+    overflow-y: scroll;
+    height: 56vh;
+    word-wrap: break-word;
+    overflow-x: hidden;
+}
+
 .input-chat {
     display: inline-block;
 }
