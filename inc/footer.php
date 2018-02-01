@@ -16,6 +16,7 @@
             <div class="col l4 offset-l2 s12">
                 <h5 class="black-text">Useful Links</h5>
                 <ul>
+                    <li><a class="black-text text-lighten-3" href="help.php">Help</a></li>
                     <li><a class="black-text text-lighten-3" href="rank.php">Ranking</a></li>
                     <li><a class="black-text text-lighten-3" href="stats.php">Server Stats</a></li>
                     <li><a class="black-text text-lighten-3" href="game_info.php">Game Info</a></li>

@@ -26,6 +26,7 @@
         <div class="nav-wrapper blue darken-3">
             <a href="index.php" class="brand-logo left">BitcoinPVP</a>
             <ul id="nav-mobile" class="right .hide-on-small-only nav-letters">
+                <li class=""><a href="help.php"><i class="material-icons left">help</i>Help</a></li>
                 <li class=""><a href="rank.php"><i class="material-icons left">assistant_photo</i>Ranking</a></li>
                 <li><a class="dropdown-button" href="#" data-activates="statsDropdown">
                         <i class="material-icons left">trending_up</i>Stats<i

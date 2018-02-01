@@ -40,8 +40,12 @@ nav ul a {
     background-color: #f6fff7;
 }
 
+.close {
+    background-color: #fff9e6 !important;
+}
+
 .lose {
-    background-color: #ffe3df;
+    background-color: #ffeee9;
 }
 
 .win-text {
@@ -171,7 +175,11 @@ table.highlight tbody tr.win:hover {
 }
 
 table.highlight tbody tr.lose:hover {
-    background-color: #f59892 !important;
+     background-color: #ffb4aa !important;
+ }
+
+table.highlight tbody tr.close:hover {
+    background-color: #ffe7c1 !important;
 }
 
 #numberSelected {
@@ -254,4 +262,12 @@ ul.browser-default li {
 
 #chat-input-line {
     vertical-align: bottom;
+}
+
+.legend {
+    display: inline-block;
+    height: 1em;
+    width: 1em;
+    margin-left: 4em;
+    margin-right: 0.5em;
 }
