@@ -66,36 +66,19 @@ if ($captcha_success->success) {
 
                     $validator = bin2hex(random_bytes(32));
                     $hashed_validator = hash('sha256', $validator);
-                    $user_agent = !empty($_SERVER['HTTP_USER_AGENT']) ? substr($_SERVER['HTTP_USER_AGENT'], 0, 512) : '';
+                    $user_agent = !empty($_SERVER['HTTP_USER_AGENT']) ? substr($_SERVER['HTTP_USER_AGENT'], 0, 8192) : '';
                     $ip_address = $_SERVER['REMOTE_ADDR'];
 
-                    //Remember me
-                    $stmt = $conn->prepare('SELECT auth_token_id FROM auth_token 
-                          WHERE user_id = :user_id
-                          AND user_agent = :user_agent
-                          AND ip_address = :ip_address');
-                    $stmt->execute(array('user_id' => $user_info['user_id'], 'user_agent' => $user_agent, 'ip_address' => $ip_address));
-                    $auth_token_result = $stmt->fetch(PDO::FETCH_ASSOC);
 
-//                    If exists
-                    if (empty($auth_token_result)) {
-                        //Creating auth token
-                        $stmt = $conn->prepare('INSERT INTO auth_token(selector, hashed_validator, user_id, user_agent, ip_address, expires)
-                    VALUES(:selector, :hashed_validator, :user_id, :user_agent, :ip_address, (ADDDATE(CURRENT_TIMESTAMP, INTERVAL 7 DAY)))');
-                        $stmt->execute(array('selector' => $selector, 'hashed_validator' => $hashed_validator, 'user_id' => $user_info['user_id'], 'user_agent' => $user_agent, 'ip_address' => $ip_address));
-                    } else {
-//                        Just update expire time and selector and validator
-                        $stmt = $conn->prepare('UPDATE auth_token SET selector = :selector, hashed_validator = :hashed_validator,
-                        expires = (ADDDATE(CURRENT_TIMESTAMP, INTERVAL 7 DAY))
-                        WHERE user_id = :user_id
-                          AND user_agent = :user_agent
-                          AND ip_address = :ip_address');
-                        $stmt->execute(array('selector' => $selector, 'hashed_validator' => $hashed_validator, 'user_id' => $user_info['user_id'], 'user_agent' => $user_agent, 'ip_address' => $ip_address));
-                    }
+                    //Creating auth token
+                    $stmt = $conn->prepare('INSERT INTO auth_token(selector, hashed_validator, user_id, user_agent, ip_address, expires)
+                    VALUES(:selector, :hashed_validator, :user_id, :user_agent, :ip_address, (ADDDATE(CURRENT_TIMESTAMP, INTERVAL 30 DAY)))');
+                    $stmt->execute(array('selector' => $selector, 'hashed_validator' => $hashed_validator, 'user_id' => $user_info['user_id'], 'user_agent' => $user_agent, 'ip_address' => $ip_address));
 
-                    $expires = time() + (86400 * 365);
+                    //Expires in 30 days
+                    $expires = time() + (86400 * 30);
                     $cookie_data = array('selector' => $selector, 'validator' => $validator, 'expires' => $expires);
-                    setcookie('auth_token', json_encode($cookie_data), $cookie_data['expires'], "/");
+                    setcookie('auth_token', json_encode($cookie_data), $expires, "/");
 
                 } else {
                     $_SESSION['auth_token'] = json_encode(array('username' => $user_info['username'], 'user_id' => $user_info['user_id']));

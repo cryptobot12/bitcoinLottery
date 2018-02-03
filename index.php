@@ -24,7 +24,7 @@ if ($logged_in) {
 
 
         //Selecting current game
-        $stmt = $conn->prepare('SELECT game_id FROM game ORDER BY game_id DESC, timedate DESC LIMIT 1');
+        $stmt = $conn->prepare('SELECT game_id FROM game ORDER BY game_id DESC, game_date DESC LIMIT 1');
         $stmt->execute();
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         $current_game = $row['game_id'];
@@ -51,6 +51,112 @@ if ($logged_in) {
     }
 }
 
+try {
+    $conn = new PDO("mysql:host=$servername;dbname=$dbname", $dbuser, $dbpass);
+    // set the PDO error mode to exception
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+
+    // Selecting game history
+    $stmt = $conn->prepare('SELECT game_id, date_format(game_date, \'%h:%i %p\') AS time, winner_number, amount, number_of_players FROM game
+                                      ORDER BY game_id DESC, game_date DESC LIMIT 20');
+    $stmt->execute();
+    $game_history_table = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    //Getting last game information
+    $stmt = $conn->prepare('SELECT game_id, amount, winner_number, number_of_players FROM game ORDER BY game_id DESC LIMIT 1, 1');
+    $stmt->execute();
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    $last_game = $row['game_id'];
+    $last_jackpot = $row['amount'] / 100;
+    $last_winner_number = $row['winner_number'];
+    $last_number_of_players = $row['number_of_players'];
+
+
+    //Getting profit for winners
+    $stmt = $conn->prepare('SELECT COUNT(win) AS number_of_w FROM gamexuser 
+                                     WHERE game_id = :game_id
+                                     AND win = 1');
+    $stmt->execute(array('game_id' => $last_game));
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    $profit_winners = $jackpot * 100 / $row['number_of_w'];
+
+    //Selecting winners
+    $stmt = $conn->prepare('SELECT u.username, gu.win, gu.bet, gu.profit 
+     FROM user AS u 
+     INNER JOIN gamexuser AS gu
+     ON u.user_id = gu.user_id
+     WHERE gu.game_id = :game_id
+     AND gu.win = 1');
+
+    $stmt->execute(array('game_id' => $last_game));
+
+    $winners_row = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $n_of_winners = count($winners_row);
+
+//    echo '<p><a id="gameLink" href="game_info.php?game_id=' . $last_game . '" target="_blank">Game #<span id="gameNumberLast">' . $last_game . '</span></a></p>';
+//    echo '<div><b>Winner number: </b><div class="chip"><span id="winnerNumberLast">' . $winner_number . '</span></div></div>';
+//    echo '<p><b>Jackpot: </b><span id="jackpotLast">' . $jackpot . '</span> bits</p>';
+//    echo '<table id="lastGameTable" class="bordered">
+//            <thead>
+//            <tr>
+//              <th>User</th>
+//              <th>Bet</th>
+//              <th>Profit</th>
+//            </tr>
+//            </thead>
+//            <tbody>';
+//
+//    foreach ($row as $item){
+//
+//        echo '<tr class="win"><td>' .
+//            $item['username'] . '</td><td>' .
+//            ($item['bet'] / 100) . ' bits</td><td>';
+//
+//        if ($item['profit'] > 0)
+//            echo '<span class="win-text">+';
+//        elseif ($item['profit'] == 0)
+//            echo '<span class="neutral-text">';
+//        else
+//            echo '<span class="lose-text">';
+//        echo    ($item['profit'] / 100) . ' bits</span></td></tr>';
+//    }
+
+    //Selecting losers
+    $stmt = $conn->prepare('SELECT u.username, COUNT(number_id) * 50 AS profit
+                                    FROM user as u
+                                    INNER JOIN gamexuser AS gu
+                                    ON u.user_id = gu.user_id
+                                    INNER JOIN numberxuser AS nu
+                                    ON u.user_id = nu.user_id
+                                    AND nu.user_id = gu.user_id
+                                    AND nu.game_id = gu.game_id
+                                    WHERE gu.win = 0
+                                    AND gu.game_id = :game_id
+                                    ORDER BY profit DESC
+                                    LIMIT :the_limit');
+
+    $stmt->execute(array('game_id' => $last_game, 'the_limit' => (15 - $n_of_winners)));
+    $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    if (!empty($row)) {
+
+        foreach ($row as $item) {
+
+            if ($item['username'] <> null)
+                echo '<tr class="lose"><td>' .
+                    $item['username'] . '</td><td>' .
+                    $item['profit'] . ' bits</td><td><span class="lose-text">-' .
+                    ($item['profit']) .
+                    ' bits</span></td></tr>';
+        }
+    }
+
+    echo '</tbody></table>';
+
+} catch (PDOException $e) {
+    echo "Connection failed: " . $e->getMessage();
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -254,7 +360,17 @@ if ($logged_in) {
                             </tr>
                             </thead>
                             <tbody>
-                            <?php include 'inc/games_history_part.php'; ?>
+                            <?php foreach ($game_history_table as $item): ?>
+                                <tr>
+                                    <td>
+                                        <a href="game_info.php?game_id=<?php echo $item["game_id"] ?>"
+                                           target="_blank"><?php echo $item["game_id"] ?></a>
+                                    </td>
+                                    <td><?php echo $item['amount'] / 100; ?> bits</td>
+                                    <td><div class='chip'><?php echo $item['winner_number']; ?></div></td>
+                                    <td><?php echo $item['time']; ?></td>
+                                </tr>
+                            <?php endforeach; ?>
                             </tbody>
                         </table>
                     </div>
@@ -425,7 +541,18 @@ if ($logged_in) {
                             </tr>
                             </thead>
                             <tbody>
-                            <?php include 'inc/games_history_part.php'; ?>
+                            <?php foreach ($game_history_table as $item): ?>
+                                <tr>
+                                    <td>
+                                        <a href="game_info.php?game_id=<?php echo $item["game_id"] ?>"
+                                           target="_blank"><?php echo $item["game_id"] ?></a>
+                                    </td>
+                                    <td><?php echo $item['amount'] / 100; ?> bits</td>
+                                    <td><div class='chip'><?php echo $item['winner_number']; ?></div></td>
+                                    <td><?php echo $item['time']; ?></td>
+                                </tr>
+
+                            <?php endforeach; ?>
                             </tbody>
                         </table>
                     </div>

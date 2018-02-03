@@ -10,7 +10,7 @@ session_start();
 include "../connect.php";
 
 $hashed_user_id = $_GET['sel'];
-$code = $_GET['val'];
+$validator = $_GET['val'];
 
 try {
     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $dbuser, $dbpass);
@@ -19,8 +19,8 @@ try {
     $conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 
     $stmt = $conn->prepare('SELECT user_id, expires, CURRENT_TIMESTAMP FROM email_confirmation WHERE hashed_user_id = :hashed_user_id
-    AND code = :code');
-    $stmt->execute(array('hashed_user_id' => $hashed_user_id, 'code' => $code));
+    AND validator = :code');
+    $stmt->execute(array('hashed_user_id' => $hashed_user_id, 'code' => $validator));
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!empty($result)) {
@@ -33,8 +33,8 @@ try {
             $stmt->execute(array('user_id' => $user_id));
 
             $stmt = $conn->prepare('UPDATE email_confirmation SET expires = CURRENT_TIMESTAMP WHERE hashed_user_id = :hashed_user_id
-    AND code = :code');
-            $stmt->execute(array('hashed_user_id' => $hashed_user_id, 'code' => $code));
+    AND validator = :code');
+            $stmt->execute(array('hashed_user_id' => $hashed_user_id, 'code' => $validator));
 
             header("Location: ../account.php");
             die();

@@ -18,7 +18,7 @@ if (!empty($_SESSION['auth_token'])) {
 } elseif (!empty($_COOKIE['auth_token'])) {
     $auth_token = json_decode($_COOKIE['auth_token']);
 
-    //If cookie is not expires, assuming it is sent to the server
+    //If cookie is not expired, assuming it is sent to the server
     if (strtotime($auth_token->expires) < time()) {
 
         $selector = $auth_token->selector;
@@ -30,26 +30,23 @@ if (!empty($_SESSION['auth_token'])) {
             $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 
-            $stmt = $conn->prepare('SELECT user_id, hashed_validator, user_agent, ip_address, expires, CURRENT_TIMESTAMP FROM auth_token WHERE selector = :selector');
+            $stmt = $conn->prepare('SELECT selector, user_id, hashed_validator, expires, CURRENT_TIMESTAMP FROM auth_token WHERE selector = :selector');
             $stmt->execute(array('selector' => $selector));
             $login_token = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            $user_agent = substr($_SERVER['HTTP_USER_AGENT'], 0, 512);
+            $user_agent = substr($_SERVER['HTTP_USER_AGENT'], 0, 8192);
             $ip_address = $_SERVER['REMOTE_ADDR'];
 
             if (!empty($login_token)) {
                 if (hash_equals(hash('sha256', $validator), $login_token['hashed_validator'])
-                    && $user_agent == $login_token['user_agent']
-                    && $ip_address == $login_token['ip_address']
                     && strtotime($login_token['CURRENT_TIMESTAMP']) < strtotime($login_token['expires'])) {
 
                     $user_id = $login_token['user_id'];
 //                    Updating expire time every time this is loaded
-                    $stmt = $conn->prepare('UPDATE auth_token SET expires = (ADDDATE(CURRENT_TIMESTAMP, INTERVAL 7 DAY))
-                                                  WHERE user_id = :user_id
-                                                  AND user_agent = :user_agent
-                                                  AND ip_address = :ip_address');
-                    $stmt->execute(array('user_id' => $user_id, 'user_agent' => $user_agent, 'ip_address' => $ip_address));
+                    $stmt = $conn->prepare('UPDATE auth_token SET user_agent = :user_agent,
+                                                  ip_address = :ip_address
+                                                  WHERE selector = :selector');
+                    $stmt->execute(array('user_agent' => $user_agent, 'ip_address' => $ip_address, 'selector' => $selector));
 
 //                    Getting username
                     $stmt = $conn->prepare('SELECT username FROM user WHERE user_id = :user_id');
@@ -59,6 +56,8 @@ if (!empty($_SESSION['auth_token'])) {
                     $username = $result['username'];
                     $logged_in = true;
                 }
+            } else {
+                $logged_in = false;
             }
 
         } catch (PDOException $e) {

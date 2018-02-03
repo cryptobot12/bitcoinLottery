@@ -112,7 +112,7 @@ if ($captcha_success->success) {
                 $_SESSION['password_not_match'] = true;
             }
 
-            if (strlen($password) >= 8 && strlen($password) <= 4096) {
+            if (strlen($password) >= 8 && strlen($password) <= 72) {
                 $password_length_valid = true;
             } else {
                 $password_length_valid = false;
@@ -130,9 +130,9 @@ if ($captcha_success->success) {
             $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
             //CREATE NEW USER
-            $stmt = $conn->prepare('INSERT INTO user(username, password, email, bit_address, balance, deposits, withdrawals,
+            $stmt = $conn->prepare('INSERT INTO user(username, password, email, bit_address, balance, 
             net_profit, games_played, registration_date, enabled) VALUES (:username, :password, :email, :bit_address,
-            0, 0, 0, 0, 0, CURRENT_TIMESTAMP, FALSE)');
+            0, 0, 0, CURRENT_TIMESTAMP, FALSE)');
 
             $stmt->execute(array('username' => $username, 'password' => $hashed_password, 'email' => $email,
                 'bit_address' => $bit_address));
@@ -149,9 +149,9 @@ if ($captcha_success->success) {
 
             //CREATE CONFIRMATION CODE
             $confirmation_code = bin2hex(random_bytes(32));
-            $stmt = $conn->prepare('INSERT INTO email_confirmation(user_id, hashed_user_id, code, creation_date, expires)
-            VALUES (:user_id, :hashed_user_id, :code, CURRENT_TIMESTAMP, ADDDATE(CURRENT_TIMESTAMP, INTERVAL 3 HOUR))');
-            $stmt->execute(array('user_id' => $user_id, 'hashed_user_id' => $hashed_user_id, 'code' => $confirmation_code));
+            $stmt = $conn->prepare('INSERT INTO email_confirmation(user_id, hashed_user_id, validator, expires)
+            VALUES (:user_id, :hashed_user_id, :validator, ADDDATE(CURRENT_TIMESTAMP, INTERVAL 3 HOUR))');
+            $stmt->execute(array('user_id' => $user_id, 'hashed_user_id' => $hashed_user_id, 'validator' => $confirmation_code));
 
             //Let's login the new user
             $_SESSION['auth_token'] = json_encode(array('username' => $username, 'user_id' => $user_id));

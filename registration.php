@@ -115,7 +115,7 @@ if ($user_already_exists || $email_already_exists || $passwords_not_match || $in
                                             if ($passwords_not_match)
                                                 echo "<li>Passwords do not match</li>";
                                             if ($password_length_invalid)
-                                                echo "<li>Password must be at least 8 characters long</li>";
+                                                echo "<li>Password must be between 8 and 72 characters long.</li>";
 
                                             //Email
                                             if ($empty_email)
@@ -137,18 +137,22 @@ if ($user_already_exists || $email_already_exists || $passwords_not_match || $in
                             </div>
                             <div class="input-field col m10 offset-m1 s12">
                                 <i class="material-icons prefix">lock_outline</i>
-                                <input id="password" type="password" name="password" value="<?php echo $input_password; ?>"
-                                placeholder="At least 8 characters long">
+                                <input id="password" type="password" name="password"
+                                       value="<?php echo $input_password; ?>"
+                                       placeholder="At least 8 characters long">
                                 <label id="password_label" for="password" data-error="" data-success="">Password</label>
                             </div>
                             <div class="input-field col m10 offset-m1 s12">
                                 <i class="material-icons prefix">lock</i>
-                                <input id="confirm_password" type="password" name="confirm_password" value="<?php echo $input_confirm_password; ?>">
-                                <label id="confirm_password_label" for="confirm_password" data-error="" data-success="">Confirm Password</label>
+                                <input id="confirm_password" type="password" name="confirm_password"
+                                       value="<?php echo $input_confirm_password; ?>">
+                                <label id="confirm_password_label" for="confirm_password" data-error="" data-success="">Confirm
+                                    Password</label>
                             </div>
                             <div class="input-field col m10 offset-m1 s12">
                                 <i class="material-icons prefix">email</i>
-                                <input id="email" type="text" name="email" placeholder="Make sure it is correct." value="<?php echo $input_email; ?>">
+                                <input id="email" type="text" name="email" placeholder="Make sure it is correct."
+                                       value="<?php echo $input_email; ?>">
                                 <label id="email_label" for="email" data-error="" data-success="">Email </label>
                             </div>
                             <div class="row">
