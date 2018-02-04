@@ -13,7 +13,7 @@ try {
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 
-    $stmt = $conn->prepare('SELECT game_id, amount FROM game ORDER BY timedate DESC, game_id DESC LIMIT 1');
+    $stmt = $conn->prepare('SELECT game_id, amount FROM game ORDER BY game_date DESC, game_id DESC LIMIT 1');
     $stmt->execute();
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
     $current_game = $row['game_id'];
@@ -23,7 +23,7 @@ try {
 
     $stmt->execute(array('game_id' => $current_game));
 
-    $jackpot = ($stmt->fetchColumn() * 4500 + $bonus) / 100;
+    $jackpot = ($stmt->fetchColumn() * 9500 + $bonus) / 100;
 
     echo $jackpot;
 }

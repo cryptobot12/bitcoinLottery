@@ -34,7 +34,7 @@
                 <li class="no-link-nav hide-on-med-and-down">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>
                 <?php if  (!empty($username)): ?>
                     <li class="no-link-nav"><i class="material-icons left">account_balance_wallet</i>
-                        Balance: <span id="balanceNumber"><?php include 'balance.php'; ?></span> bits</li>
+                        Balance: <span id="my_balance"><?php include 'balance.php'; ?></span> bits</li>
                     <li><a class="dropdown-button" href="#" data-activates="profileDropdown">
                             <?php echo $username; ?><i
                                 class="material-icons right">arrow_drop_down</i></a>
