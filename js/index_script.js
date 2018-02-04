@@ -4,21 +4,6 @@ $(function () {
 
 });
 
-
-/* Modal initializer*/
-$(document).ready(function () {
-
-    $("#expand").collapsible({
-        onOpen: function (el) {
-            $("#expand-icon").html("expand_more");
-        },
-        onClose: function (el) {
-            $("#expand-icon").html("expand_less");
-        }
-    });
-
-});
-
 //Resize chat input
 $(document).ready(function () {
     var chat_send = $("#chat-send");
@@ -80,6 +65,7 @@ function isArrayOfNumbersValid(array) {
 }
 
 /* Text Area Input validator listener + function*/
+//Med
 $(function () {
 
     var numbers_textarea_input = $("#numbers_textarea_med");
@@ -121,12 +107,54 @@ $(function () {
     });
 });
 
-/* Function validator sequence */
-function validateSequence() {
+$(function () {
 
-    var startSequence = $("#startSequence");
-    var endSequence = $("#endSequence");
-    var playButton = $("#checkButtonSequence");
+    var numbers_textarea_input = $("#numbers_textarea_small");
+    var textarea_button = $("#textarea_button_small");
+    numbers_textarea_input.on('keyup', function () {
+
+        if (numbers_textarea_input.val().length !== 0) {
+            var array = numbers_textarea_input.val().match(/[^\d\s]/g);
+
+            if (array !== null) {
+                numbers_textarea_input.removeClass("valid");
+                numbers_textarea_input.addClass("invalid");
+                textarea_button.addClass("disabled");
+            }
+            else {
+
+                array = numbers_textarea_input.val().match(/\d+/g);
+
+                if (isArrayOfNumbersValid(array)) {
+                    numbers_textarea_input.removeClass("invalid");
+                    numbers_textarea_input.addClass("valid");
+                    textarea_button.removeClass("disabled");
+                }
+                else {
+                    numbers_textarea_input.removeClass("valid");
+                    numbers_textarea_input.addClass("invalid");
+                    textarea_button.addClass("disabled");
+                }
+
+            }
+        }
+        else {
+            //Just disable button
+            numbers_textarea_input.removeClass("valid");
+            numbers_textarea_input.removeClass("invalid");
+            textarea_button.addClass("disabled");
+        }
+
+    });
+});
+
+
+/* Function validator sequence */
+function validate_sequence_med() {
+
+    var startSequence = $("#start_sequence_med");
+    var endSequence = $("#end_sequence_med");
+    var playButton = $("#sequence_button_med");
 
     var startNumber = parseInt(startSequence.val());
     var endNumber = parseInt(endSequence.val());
@@ -136,7 +164,47 @@ function validateSequence() {
 
     if (verifyStart !== "" && verifyEnd !== "") {
         if (startNumber < 1 || startNumber > 50000 || (startNumber > endNumber) ||
-            ((endNumber - startNumber) > 200) || ((endNumber - startNumber) < 0) ||
+            ((endNumber - startNumber) > 24) || ((endNumber - startNumber) < 0) ||
+            endNumber < 1 || endNumber > 50000) {
+            startSequence.removeClass("valid");
+            endSequence.removeClass("valid");
+            startSequence.addClass("invalid");
+            endSequence.addClass("invalid");
+            playButton.addClass("disabled");
+        }
+        else {
+            startSequence.removeClass("invalid");
+            endSequence.removeClass("invalid");
+            startSequence.addClass("valid");
+            endSequence.addClass("valid");
+            playButton.removeClass("disabled");
+        }
+    }
+    else {
+        startSequence.removeClass("valid");
+        endSequence.removeClass("valid");
+        startSequence.addClass("invalid");
+        endSequence.addClass("invalid");
+        playButton.addClass("disabled");
+    }
+}
+
+/* Function validator sequence */
+function validate_sequence_small() {
+
+    var startSequence = $("#start_sequence_med");
+    var endSequence = $("#end_sequence_med");
+    var playButton = $("#sequence_button_small");
+
+    var startNumber = parseInt(startSequence.val());
+    var endNumber = parseInt(endSequence.val());
+
+    var verifyStart = startSequence.val();
+    var verifyEnd = endSequence.val();
+
+    if (verifyStart !== "" && verifyEnd !== "") {
+        if (startNumber < 1 || startNumber > 50000 || (startNumber > endNumber) ||
+            ((endNumber - startNumber) > 24) || ((endNumber - startNumber) < 0) ||
             endNumber < 1 || endNumber > 50000) {
             startSequence.removeClass("valid");
             endSequence.removeClass("valid");
@@ -162,26 +230,42 @@ function validateSequence() {
 }
 
 /* Sequence Input validator listeners */
+//Med
 $(function () {
 
-    var startSequence = $("#startSequence");
-    var endSequence = $("#endSequence");
+    var startSequence = $("#start_sequence_med");
+    var endSequence = $("#end_sequence_med");
 
-    startSequence.on('keyup', function () {
-        validateSequence()
+    startSequence.on('keyup input', function () {
+        validate_sequence_med()
     });
-    endSequence.on('keyup', function () {
-        validateSequence()
+    endSequence.on('keyup input', function () {
+        validate_sequence_med()
+    });
+
+});
+
+// Small
+$(function () {
+
+    var startSequence = $("#start_sequence_small");
+    var endSequence = $("#end_sequence_small");
+
+    startSequence.on('keyup input', function () {
+        validate_sequence_small()
+    });
+    endSequence.on('keyup input', function () {
+        validate_sequence_small()
     });
 
 });
 
 /* Random Input Validator Function */
-function validateRandom() {
-    var startRandom = $("#start");
-    var endRandom = $("#end");
-    var numberOfNumbers = $("#numberOfNumbers");
-    var randomButton = $("#checkButtonRandom");
+function validate_random_med() {
+    var startRandom = $("#start_random_med");
+    var endRandom = $("#end_random_med");
+    var numberOfNumbers = $("#how_many_numbers_med");
+    var randomButton = $("#random_button_med");
 
     var start = parseInt(startRandom.val());
     var end = parseInt(endRandom.val());
@@ -193,7 +277,61 @@ function validateRandom() {
 
     if (verifyStart !== "" && verifyEnd !== "" && verifyNumbers !== "") {
         if ((start <= end) && ((end - start + 1) >= numbersON) && (start > 0) && (end > 0) &&
-            (end <= 50000) && (start <= 50000) && (numbersON <= 200) && (numbersON > 0)) {
+            (end <= 50000) && (start <= 50000) && (numbersON <= 25) && (numbersON > 0)) {
+            startRandom.removeClass('invalid');
+            endRandom.removeClass('invalid');
+            numberOfNumbers.removeClass('invalid');
+
+            startRandom.addClass('valid');
+            endRandom.addClass('valid');
+            numberOfNumbers.addClass('valid');
+
+            randomButton.removeClass('disabled');
+        }
+        else {
+            startRandom.removeClass('valid');
+            endRandom.removeClass('valid');
+            numberOfNumbers.removeClass('valid');
+
+            startRandom.addClass('invalid');
+            endRandom.addClass('invalid');
+            numberOfNumbers.addClass('invalid');
+
+            randomButton.addClass('disabled');
+        }
+    }
+    else {
+        startRandom.removeClass('valid');
+        endRandom.removeClass('valid');
+        numberOfNumbers.removeClass('valid');
+
+        startRandom.addClass('invalid');
+        endRandom.addClass('invalid');
+        numberOfNumbers.addClass('invalid');
+
+        randomButton.addClass('disabled');
+    }
+
+
+}
+
+function validate_random_small() {
+    var startRandom = $("#start_random_small");
+    var endRandom = $("#end_random_small");
+    var numberOfNumbers = $("#how_many_numbers_small");
+    var randomButton = $("#random_button_small");
+
+    var start = parseInt(startRandom.val());
+    var end = parseInt(endRandom.val());
+    var numbersON = parseInt(numberOfNumbers.val());
+
+    var verifyStart = startRandom.val();
+    var verifyEnd = endRandom.val();
+    var verifyNumbers = numberOfNumbers.val();
+
+    if (verifyStart !== "" && verifyEnd !== "" && verifyNumbers !== "") {
+        if ((start <= end) && ((end - start + 1) >= numbersON) && (start > 0) && (end > 0) &&
+            (end <= 50000) && (start <= 50000) && (numbersON <= 25) && (numbersON > 0)) {
             startRandom.removeClass('invalid');
             endRandom.removeClass('invalid');
             numberOfNumbers.removeClass('invalid');
@@ -232,19 +370,37 @@ function validateRandom() {
 }
 
 /* Random Input validator listeners */
+//Med
 $(function () {
-    var startRandom = $("#start");
-    var endRandom = $("#end");
-    var numberOfNumbers = $("#numberOfNumbers");
+    var startRandom = $("#start_random_med");
+    var endRandom = $("#end_random_med");
+    var numberOfNumbers = $("#how_many_numbers_med");
 
-    startRandom.on('keyup', function () {
-        validateRandom()
+    startRandom.on('keyup input', function () {
+        validate_random_med()
     });
-    endRandom.on('keyup', function () {
-        validateRandom()
+    endRandom.on('keyup input', function () {
+        validate_random_med()
     });
-    numberOfNumbers.on('keyup', function () {
-        validateRandom()
+    numberOfNumbers.on('keyup input', function () {
+        validate_random_med()
+    });
+});
+
+//Small
+$(function () {
+    var startRandom = $("#start_random_small");
+    var endRandom = $("#end_random_small");
+    var numberOfNumbers = $("#how_many_numbers_small");
+
+    startRandom.on('keyup input', function () {
+        validate_random_small()
+    });
+    endRandom.on('keyup input', function () {
+        validate_random_small()
+    });
+    numberOfNumbers.on('keyup input', function () {
+        validate_random_small()
     });
 });
 
@@ -338,7 +494,7 @@ function converToArrayOfInt(array) {
 }
 
 /* Adding numbers to confirmation list*/
-function addNumbersToConfirm(array) {
+function add_numbers_to_confirm_med(array) {
 
     var numbersList = $("#confirmation_numbers_med");
     numbersList.empty();
@@ -359,6 +515,39 @@ function addNumbersToConfirm(array) {
     var balance = parseInt($("#my_balance").html());
     var insufficientText = $("#insufficient_balance_med");
     var playButton = $("#play_button_med");
+
+    if ((count * 100) > balance) {
+        insufficientText.removeClass("hidden");
+        playButton.hide();
+    }
+    else {
+        insufficientText.addClass("hidden");
+        playButton.show();
+    }
+
+}
+
+function add_numbers_to_confirm_small(array) {
+
+    var numbersList = $("#confirmation_numbers_small");
+    numbersList.empty();
+    var toAppend = '';
+    var countConfirm = $("#count_numbers_confirm_small");
+    var count = array.length;
+
+    if (count === 1)
+        countConfirm.html("&nbsp;&nbsp;&nbsp;&nbsp;" + count + " number selected (" + (count * 100) + " bits)");
+    else
+        countConfirm.html("&nbsp;&nbsp;&nbsp;&nbsp;" + count + " numbers selected (" + (count * 100) + " bits)");
+
+    $.each(array, function (index, value) {
+        toAppend = '<div class="chip">' + value + '</div>';
+        numbersList.append(toAppend);
+    });
+
+    var balance = parseInt($("#my_balance").html());
+    var insufficientText = $("#insufficient_balance_small");
+    var playButton = $("#play_button_small");
 
     if ((count * 100) > balance) {
         insufficientText.removeClass("hidden");
@@ -416,20 +605,33 @@ $(function () {
 
     var arrayOfNumbers = new Array(0);
 
-    /* Text area listener */
+    /* Text area listener med*/
     $("#textarea_button_med").on('click', function () {
 
         arrayOfNumbers = [];
         var numbersArea = $("#numbers_textarea_med").val();
         arrayOfNumbers = numbersArea.match(/\d+/g);
         arrayOfNumbers = filterArrayOfNumbers(arrayOfNumbers);
-        addNumbersToConfirm(arrayOfNumbers);
+        add_numbers_to_confirm_med(arrayOfNumbers);
 
         $('#confirm_numbers_modal_med').modal('open');
 
     });
 
-    /* Random listener */
+    /* Text area listener small*/
+    $("#textarea_button_small").on('click', function () {
+
+        arrayOfNumbers = [];
+        var numbersArea = $("#numbers_textarea_small").val();
+        arrayOfNumbers = numbersArea.match(/\d+/g);
+        arrayOfNumbers = filterArrayOfNumbers(arrayOfNumbers);
+        add_numbers_to_confirm_small(arrayOfNumbers);
+
+        $('#confirm_numbers_modal_small').modal('open');
+
+    });
+
+    /* Random listener med*/
     $("#random_button_med").on('click', function () {
         arrayOfNumbers = [];
 
@@ -440,12 +642,26 @@ $(function () {
         arrayOfNumbers = arrayOfNumbers = generateArray(startNumber, endNumber, numbers);
         arrayOfNumbers = filterArrayOfNumbers(arrayOfNumbers);
 
-
-        addNumbersToConfirm(arrayOfNumbers);
+        add_numbers_to_confirm_med(arrayOfNumbers);
         $('#confirm_numbers_modal_med').modal('open');
     });
 
-    /* Sequence listener */
+    /* Random listener */
+    $("#random_button_small").on('click', function () {
+        arrayOfNumbers = [];
+
+        var startNumber = parseInt($("#start_random_small").val());
+        var endNumber = parseInt($("#end_random_small").val());
+        var numbers = parseInt($("#how_many_numbers_small").val());
+
+        arrayOfNumbers = arrayOfNumbers = generateArray(startNumber, endNumber, numbers);
+        arrayOfNumbers = filterArrayOfNumbers(arrayOfNumbers);
+
+        add_numbers_to_confirm_small(arrayOfNumbers);
+        $('#confirm_numbers_modal_small').modal('open');
+    });
+
+    /* Sequence listener med */
     $("#sequence_button_med").on('click', function () {
         arrayOfNumbers = [];
 
@@ -457,13 +673,36 @@ $(function () {
         }
 
         arrayOfNumbers = filterArrayOfNumbers(arrayOfNumbers);
-        addNumbersToConfirm(arrayOfNumbers);
+        add_numbers_to_confirm_med(arrayOfNumbers);
 
         $('#confirm_numbers_modal_med').modal('open');
     });
 
+    /* Sequence listener small */
+    $("#sequence_button_small").on('click', function () {
+        arrayOfNumbers = [];
+
+        var startNumber = parseInt($("#start_sequence_small").val());
+        var endNumber = parseInt($("#end_sequence_small").val());
+
+        for (var i = startNumber; i <= endNumber; i++) {
+            arrayOfNumbers.push(i);
+        }
+
+        arrayOfNumbers = filterArrayOfNumbers(arrayOfNumbers);
+        add_numbers_to_confirm_small(arrayOfNumbers);
+
+        $('#confirm_numbers_modal_small').modal('open');
+    });
+
     /* Betting */
     $("#play_button_med").on('click', function () {
+        arrayOfNumbers = converToArrayOfInt(arrayOfNumbers);
+        bet(arrayOfNumbers);
+    });
+
+    /* Betting */
+    $("#play_button_small").on('click', function () {
         arrayOfNumbers = converToArrayOfInt(arrayOfNumbers);
         bet(arrayOfNumbers);
     });
@@ -477,20 +716,20 @@ var conn = new ab.Session('ws://localhost:8080',
 
 
             if (data.option === 1) {
-                var jackpotNumber = $("#jackpotNumber");
+                var jackpotNumber = $("#jackpot_number");
                 jackpotNumber.html(data.jackpot);
             }
 
 
             if (data.option === 2) {
 
-                $("#jackpotNumber").html(data.jackpot);
-                $("#gameNumberLast").html(data.last_game_number);
-                $("#gameLink").attr("href", "game_info.php?game_id=" + data.last_game_number);
-                $("#winnerNumberLast").html(data.last_winner_number);
-                $("#jackpotLast").html(data.last_jackpot);
+                $("#jackpot_number").html(data.jackpot);
+                $("#last_game_number_med").html(data.last_game_number);
+                $("#game_link_med").attr("href", "game_info.php?game_id=" + data.last_game_number);
+                $("#last_winner_number_med").html(data.last_winner_number);
+                $("#last_jackpot_med").html(data.last_jackpot);
 
-                var lastGameTable = $("#lastGameTable").find("tbody");
+                var lastGameTable = $("#last_game_table_med").find("tbody");
                 lastGameTable.empty();
 
                 $.each(data.winners, function (index, value) {
@@ -515,11 +754,17 @@ var conn = new ab.Session('ws://localhost:8080',
                         value['profit'] + ' bits</td><td><span class="lose-text">-' + value['profit'] + ' bits</span></td></tr>');
                 });
 
-                var gameHistoryTable = $("#gameHistoryTable").find("tbody");
-                gameHistoryTable.empty();
+                var gameHistoryTableMed = $("#game_history_table_large").find("tbody");
+                gameHistoryTableMed.empty();
+                var gameHistoryTableSmall = $("#game_history_table_small").find("tbody");
+                gameHistoryTableSmall.empty();
 
                 $.each(data.games, function (index, value) {
-                    gameHistoryTable.append('<tr><td><a href="game_info.php?game_id=' + value['game_id'] + '" target="_blank">' + value['game_id'] + '</a></td><td>' +
+                    gameHistoryTableMed.append('<tr><td><a href="game_info.php?game_id=' + value['game_id'] + '" target="_blank">' + value['game_id'] + '</a></td><td>' +
+                        value['amount'] + ' bits</td><td><div class="chip">' + value['winner_number'] + '</div></td><td>' +
+                        value['timedate'] + '</td></tr>');
+
+                    gameHistoryTableSmall.append('<tr><td><a href="game_info.php?game_id=' + value['game_id'] + '" target="_blank">' + value['game_id'] + '</a></td><td>' +
                         value['amount'] + ' bits</td><td><div class="chip">' + value['winner_number'] + '</div></td><td>' +
                         value['timedate'] + '</td></tr>');
 
@@ -555,31 +800,49 @@ function updateBalanceAndNumbers() {
     $.ajax({
         url: "php_ajax/balance_numbers_ajax.php", success: function (result) {
             var response = JSON.parse(result);
-            $("#balanceNumber").html(response['balance']);
-            var numbersList = $("#numbersList");
-            numbersList.empty();
+            $("#my_balance").html(response['balance']);
+            var numbers_list_small = $("#numbers_list_small");
+            var numbers_list_med = $("#numbers_list_med");
+
+            numbers_list_small.empty();
+            numbers_list_med.empty();
 
             numbersGlobal = [];
+
             $.each(response['numbers'], function (index, value) {
                 numbersGlobal.push(parseInt(value));
-                numbersList.append('<div class="chip small-chip">' + value + '</div>');
+                numbers_list_small.append('<div class="chip small-chip">' + value + '</div>');
             });
 
-            var numbers_card = $("#numbers_card");
+            $.each(response['numbers'], function (index, value) {
+                numbersGlobal.push(parseInt(value));
+                numbers_list_med.append('<div class="chip small-chip">' + value + '</div>');
+            });
+
+            var numbers_card_small = $("#numbers_card_small");
+            var numbers_card_medium = $("#numbers_card_med");
 
             if (response['count'] > 1) {
-                $("#count").html("<b>My " + response['count'] + " numbers</b>");
-                numbers_card.removeClass('scale-out');
-                numbers_card.addClass('scale-in');
+                $("#count_numbers_med").html("<b>My " + response['count'] + " numbers</b>");
+                $("#count_numbers_small").html("<b>My " + response['count'] + " numbers</b>");
+                numbers_card_small.removeClass('scale-out');
+                numbers_card_small.addClass('scale-in');
+                numbers_card_medium.removeClass('scale-out');
+                numbers_card_medium.addClass('scale-in');
             }
             else if (response['count'] === 1) {
-                $("#count").html("<b>My number</b>");
-                numbers_card.removeClass('scale-out');
-                numbers_card.addClass('scale-in');
+                $("#count_numbers_small").html("<b>My number</b>");
+                $("#count_numbers_med").html("<b>My number</b>");
+                numbers_card_small.removeClass('scale-out');
+                numbers_card_small.addClass('scale-in');
+                numbers_card_medium.removeClass('scale-out');
+                numbers_card_medium.addClass('scale-in');
             }
             else {
-                numbers_card.removeClass('scale-in');
-                numbers_card.addClass('scale-out');
+                numbers_card_small.removeClass('scale-in');
+                numbers_card_small.addClass('scale-out');
+                numbers_card_medium.removeClass('scale-out');
+                numbers_card_medium.addClass('scale-in');
             }
 
         }, type: 'GET'
@@ -599,26 +862,36 @@ function bet(arrayOfNumbers) {
             var response = JSON.parse(result);
 
             $("#my_balance").html(response['balance']);
-            var numbersList = $("#numbersList");
-            numbersList.empty();
+            var numbers_list_med = $("#numbers_list_med");
+            var numbers_list_small = $("#numbers_list_small");
+            numbers_list_med.empty();
 
-            var numbers_card = $("#numbers_card");
+            var numbers_card_med= $("#numbers_card_med");
+            var numbers_card_small = $("#numbers_card_small");
 
             if (response['count'] > 1) {
-                $("#count").html("<b>My " + response['count'] + " numbers</b>");
-                numbers_card.removeClass('scale-out');
-                numbers_card.addClass('scale-in');
+                $("#count_numbers_med").html("<b>My " + reponse['count'] + " numbers</b>");
+                $("#count_numbers_small").html("<b>My " + reponse['count'] + " numbers</b>");
+
+                numbers_card_med.removeClass('scale-out');
+                numbers_card_med.addClass('scale-in');
+
+                numbers_card_small.removeClass('scale-out');
+                numbers_card_small.addClass('scale-in');
             }
             else if (response['count'] === 1) {
-                $("#count").html("<b>My number</b>");
-                numbers_card.removeClass('scale-out');
-                numbers_card.addClass('scale-in');
+                $("#count_numbers_med").html("<b>My number</b>");
+                $("#count_numbers_small").html("<b>My number</b>");
+
+                numbers_card_med.removeClass('scale-out');
+                numbers_card_med.addClass('scale-in');
             }
 
             numbersGlobal = [];
             $.each(response['numbers'], function (index, value) {
                 numbersGlobal.push(parseInt(value));
-                numbersList.append('<div class="chip small-chip">' + value + '</div>');
+                numbers_list_med.append('<div class="chip small-chip">' + value + '</div>');
+                numbers_list_small.append('<div class="chip small-chip">' + value + '</div>');
             });
 
 

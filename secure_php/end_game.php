@@ -16,7 +16,7 @@ try {
     $conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 
     //Selecting current game
-    $stmt = $conn->prepare('SELECT game_id, amount FROM game ORDER BY game_id DESC, timedate DESC LIMIT 1');
+    $stmt = $conn->prepare('SELECT game_id, amount FROM game ORDER BY game_id DESC, game_date DESC LIMIT 1');
     $stmt->execute();
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
     $current_game = $row['game_id'];
@@ -27,18 +27,23 @@ try {
     $stmt = $conn->prepare('SELECT COUNT(DISTINCT user_id) AS number_of_players FROM numberxuser WHERE game_id = :game_id');
     $stmt->execute(array('game_id' => $current_game));
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
-    $playersInThisGame = $row['number_of_players'];
+    $players_in_current_game = $row['number_of_players'];
 
-    if ($playersInThisGame > 1) {
+    if ($players_in_current_game > 1) {
 
         //New game
-        $stmt = $conn->prepare('INSERT INTO game(timedate, winner_number, amount) VALUES 
+        $stmt = $conn->prepare('INSERT INTO game(game_date, winner_number, amount) VALUES 
                                   (current_timestamp, 0, 0)');
         $stmt->execute();
 
         //Increase number of games (history stats)
         $stmt = $conn->prepare('UPDATE stats SET games_played = games_played + 1');
         $stmt->execute();
+
+        //Update number of players
+        $stmt = $conn->prepare('UPDATE game SET number_of_players = :number_of_players
+                                          WHERE game_id = :game_id');
+        $stmt->execute(array('number_of_players' => $players_in_current_game, 'game_id' => $current_game));
 
         //Getting winner number
         $stmt = $conn->prepare('SELECT nxf.number_id
@@ -71,20 +76,20 @@ try {
         //Calculating jackpot and how much each receives
         $stmt = $conn->prepare('SELECT COUNT(*) AS jackpot FROM numberxuser WHERE game_id = :game_id');
         $stmt->execute(array('game_id' => $current_game));
-        $jackpot = $stmt->fetchColumn() * 4500 + $bonus;
+        $jackpot = $stmt->fetchColumn() * 9500 + $bonus;
 
         $each_receives = floor($jackpot / $number_of_winners);
         $bonus = $jackpot - ($each_receives * $number_of_winners); //Bonus is added to next game
 
         //Updating new game bonus
-        $stmt = $conn->prepare('SELECT game_id FROM game ORDER BY game_id DESC, timedate DESC LIMIT 1');
+        $stmt = $conn->prepare('SELECT game_id FROM game ORDER BY game_id DESC, game_date DESC LIMIT 1');
         $stmt->execute();
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         $the_new_game = $row['game_id'];
         $stmt = $conn->prepare('UPDATE game SET amount = :bonus WHERE game_id = :game_id');
         $stmt->execute(array('bonus' => $bonus, 'game_id' => $the_new_game));
 
-        /****************** Here you should add what to do with the 10% of the money not taken by the users *********/
+        /****************** Here you should add what to do with the 5% of the money not taken by the users *********/
 
 
         /************************************************************************************************************/
@@ -111,7 +116,7 @@ try {
         $stmt->execute(array('profit' => $each_receives, 'net_profit' => $each_receives, 'winner_number' => $winner_number, 'game_id' => $current_game));
 
         //Saving game history
-        $stmt = $conn->prepare('UPDATE game SET timedate = current_timestamp, winner_number = :winner_number,
+        $stmt = $conn->prepare('UPDATE game SET game_date = current_timestamp, winner_number = :winner_number,
             amount = :amount WHERE game_id = :game_id');
         $stmt->execute(array('winner_number' => $winner_number, 'amount' => $jackpot, 'game_id' => $current_game));
 
@@ -146,21 +151,11 @@ try {
             $stmt->execute(array('game_id' => $current_game, 'user_id' => $item['user_id']));
         }
 
-        //Selecting number of plays (history)
-        $stmt = $conn->prepare('SELECT COUNT(game_id) AS row_count FROM gamexuser WHERE game_id = :game_id');
-        $stmt->execute(array('game_id' => $current_game));
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        $rowCount = $result['row_count'];
-
-        //Updating number of plays (history)
-        $stmt = $conn->prepare('UPDATE stats SET total_plays = total_plays + :new_plays');
-        $stmt->execute(array('new_plays' => $rowCount));
-
         $jackpot_last = $jackpot / 100;
         //After new game
 
         //Selecting actually current game
-        $stmt = $conn->prepare('SELECT game_id, amount FROM game ORDER BY game_id DESC, timedate DESC LIMIT 1');
+        $stmt = $conn->prepare('SELECT game_id, amount FROM game ORDER BY game_id DESC, game_date DESC LIMIT 1');
         $stmt->execute();
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         $actually_current_game = $result['game_id'];
@@ -169,16 +164,17 @@ try {
         //Selecting jackpot from new game
         $stmt = $conn->prepare('SELECT COUNT(*) AS jackpot FROM numberxuser WHERE game_id = :game_id');
         $stmt->execute(array('game_id' => $actually_current_game));
-        $jackpot = ($stmt->fetchColumn() * 4500 + $bonus) / 100;
+        $jackpot = ($stmt->fetchColumn() * 9500 + $bonus) / 100;
 
         //Selecting games history
-        $stmt = $conn->prepare('SELECT game_id, date_format(timedate, \'%h:%i %p\') AS time, winner_number, amount FROM game
+        $stmt = $conn->prepare('SELECT game_id, date_format(game_date, \'%h:%i %p\') AS time, winner_number, amount FROM game
                                       WHERE amount > 0
-                                      ORDER BY game_id DESC, timedate DESC LIMIT 20');
+                                      ORDER BY game_id DESC, game_date DESC LIMIT 20');
         $stmt->execute();
 
         $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $arrayOfGames = array();
+
         foreach ($row as $item){
             $rowArray = array('game_id' => $item['game_id'], 'timedate' => $item['time'],
                 'winner_number' => $item['winner_number'], 'amount' => ($item['amount'] / 100));
@@ -186,22 +182,14 @@ try {
         }
 
         //Selecting winners
-        $stmt = $conn->prepare('SELECT u.username, COUNT(nu.number_id) * 5000 AS bet,
-                                        (:profit_winners - COUNT(nu.number_id) * 5000 ) AS profit
-                                        FROM user as u
-                                        INNER JOIN gamexuser AS gu
-                                        ON u.user_id = gu.user_id
-                                        INNER JOIN numberxuser AS nu
-                                        ON u.user_id = nu.user_id
-                                        AND nu.user_id = gu.user_id
-                                        AND nu.game_id = gu.game_id
-                                        WHERE gu.win = 1
-                                        AND gu.game_id = :game_id
-                                        GROUP BY u.username
-                                        ORDER BY bet DESC
-                                        LIMIT 8');
+        $stmt = $conn->prepare('SELECT u.username, gu.win, gu.bet, gu.profit 
+     FROM user AS u 
+     INNER JOIN gamexuser AS gu
+     ON u.user_id = gu.user_id
+     WHERE gu.game_id = :game_id
+     AND gu.win = 1');
 
-        $stmt->execute(array('game_id' => $current_game, 'profit_winners' => $each_receives));
+        $stmt->execute(array('game_id' => $current_game));
         $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $n_of_wrow = count($row);
 
@@ -213,21 +201,15 @@ try {
         }
 
         //Selecting losers
-        $stmt = $conn->prepare('SELECT u.username, COUNT(number_id) * 50 AS profit
-                                    FROM user as u
-                                    INNER JOIN gamexuser AS gu
-                                    ON u.user_id = gu.user_id
-                                    INNER JOIN numberxuser AS nu
-                                    ON u.user_id = nu.user_id
-                                    AND nu.user_id = gu.user_id
-                                    AND nu.game_id = gu.game_id
-                                    WHERE gu.win = 0
-                                    AND gu.game_id = :game_id
-                                    ORDER BY profit DESC
-                                    LIMIT :the_limit');
+        $stmt = $conn->prepare('SELECT u.username, gu.win, gu.bet, gu.profit 
+     FROM user AS u 
+     INNER JOIN gamexuser AS gu
+     ON u.user_id = gu.user_id
+     WHERE gu.game_id = :game_id
+     AND gu.win = 0');
 
 
-        $stmt->execute(array('game_id' => $current_game, 'the_limit' => 15 - $n_of_wrow));
+        $stmt->execute(array('game_id' => $current_game));
         $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         $arrayOfLosers = array();

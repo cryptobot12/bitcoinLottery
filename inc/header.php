@@ -5,6 +5,21 @@
  * Date: 11/22/17
  * Time: 1:10 PM
  */
+if ($logged_in) {
+    try {
+        $conn = new PDO("mysql:host=$servername;dbname=$dbname", $dbuser, $dbpass);
+        // set the PDO error mode to exception
+        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+
+        $stmt = $conn->prepare('SELECT balance FROM user WHERE user_id = :user_id');
+        $stmt->execute(array('user_id' => $user_id));
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $balance = $row['balance'] / 100;
+    } catch (PDOException $e) {
+        echo "Connection failed: " . $e->getMessage();
+    }
+}
 
  ?>
     <!-- Profile Structure -->
@@ -34,7 +49,7 @@
                 <li class="no-link-nav hide-on-med-and-down">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>
                 <?php if  (!empty($username)): ?>
                     <li class="no-link-nav"><i class="material-icons left">account_balance_wallet</i>
-                        Balance: <span id="my_balance"><?php include 'balance.php'; ?></span> bits</li>
+                        Balance: <span id="my_balance"><?php echo $balance; ?></span> bits</li>
                     <li><a class="dropdown-button" href="#" data-activates="profileDropdown">
                             <?php echo $username; ?><i
                                 class="material-icons right">arrow_drop_down</i></a>
