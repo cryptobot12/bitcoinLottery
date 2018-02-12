@@ -21,7 +21,7 @@ try {
     $conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 
     //Getting current game
-    $stmt = $conn->prepare('SELECT game_id, amount FROM game ORDER BY game_date DESC, game_id DESC LIMIT 1');
+    $stmt = $conn->prepare('SELECT game_id, amount FROM game ORDER BY game_id DESC LIMIT 1');
     $stmt->execute();
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
     $current_game = $row['game_id'];
