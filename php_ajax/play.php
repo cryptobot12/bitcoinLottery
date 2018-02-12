@@ -61,17 +61,18 @@ if ($logged_in) {
 
             if ($balance >= (10000 * $plays)) {
                 //Selecting current game
-                $stmt = $conn->prepare('SELECT game_id, amount FROM game ORDER BY game_date DESC, game_id DESC LIMIT 1');
+                $stmt = $conn->prepare('SELECT game_id, amount FROM game ORDER BY game_id DESC LIMIT 1');
                 $stmt->execute();
                 $row = $stmt->fetch(PDO::FETCH_ASSOC);
                 $current_game = $row['game_id'];
                 $bonus = $row['amount'];
 
-                //Have you round this game before?
-                $stmt = $conn->prepare('SELECT number_id FROM numberxuser WHERE user_id = :user_id LIMIT 1');
-                $stmt->execute(array('user_id' => $user_id));
+                //Have you played this round before?
+                $stmt = $conn->prepare('SELECT number_id FROM numberxuser WHERE user_id = :user_id 
+                AND game_id = :game_id LIMIT 1');
+                $stmt->execute(array('user_id' => $user_id, 'game_id' => $current_game));
                 $row = $stmt->fetch(PDO::FETCH_ASSOC);
-                $havePlayed = (count($row) == 1);
+                $havePlayed = !empty($row);
 
                 //Inserting numbers
                 $stmt = $conn->prepare('INSERT INTO numberxuser(game_id, number_id, user_id) 

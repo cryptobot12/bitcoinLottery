@@ -414,6 +414,7 @@ function send_message() {
     chat_send_button.addClass('disabled');
     chat_send_button.prop('disabled', true);
 
+
     $.ajax({
         url: 'php_ajax/send_message.php',
         success: function (result) {
@@ -865,13 +866,14 @@ function bet(arrayOfNumbers) {
             var numbers_list_med = $("#numbers_list_med");
             var numbers_list_small = $("#numbers_list_small");
             numbers_list_med.empty();
+            numbers_list_small.empty();
 
             var numbers_card_med= $("#numbers_card_med");
             var numbers_card_small = $("#numbers_card_small");
 
             if (response['count'] > 1) {
-                $("#count_numbers_med").html("<b>My " + reponse['count'] + " numbers</b>");
-                $("#count_numbers_small").html("<b>My " + reponse['count'] + " numbers</b>");
+                $("#count_numbers_med").html("<b>My " + response['count'] + " numbers</b>");
+                $("#count_numbers_small").html("<b>My " + response['count'] + " numbers</b>");
 
                 numbers_card_med.removeClass('scale-out');
                 numbers_card_med.addClass('scale-in');

@@ -27,7 +27,6 @@ class Pusher implements WampServerInterface
      */
     public function onBlogEntry($entry)
     {
-        echo "Someone publishes shit";
         $entryData = json_decode($entry, true);
 
         // If the lookup topic object isn't set there is no one to publish to
@@ -47,7 +46,6 @@ class Pusher implements WampServerInterface
 
     public function onOpen(ConnectionInterface $conn)
     {
-        echo "1 guy connected";
     }
 
     public function onClose(ConnectionInterface $conn)

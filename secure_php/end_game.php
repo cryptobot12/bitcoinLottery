@@ -225,7 +225,7 @@ try {
         }
 
         //Broadcasting
-        $entryData = array('category' => 'all','reload' => 1, 'jackpot' => $jackpot, 'games' => $arrayOfGames,
+        $entryData = array('category' => 'all','option' => 2, 'jackpot' => $jackpot, 'games' => $arrayOfGames,
             'last_game_number' => $current_game, 'last_winner_number' => $winner_number, 'last_jackpot' => $jackpot_last,
             'winners' => $arrayOfWinners, 'losers' =>$arrayOfLosers);
 

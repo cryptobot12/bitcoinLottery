@@ -67,19 +67,19 @@ try {
     $conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 
     //Selecting current game
-    $stmt = $conn->prepare('SELECT game_id, amount FROM game ORDER BY game_id DESC, timedate DESC LIMIT 1');
+    $stmt = $conn->prepare('SELECT game_id, amount FROM game ORDER BY game_id DESC, game_date DESC LIMIT 1');
     $stmt->execute();
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
     $current_game = $row['game_id'];
 
     //Selecting min game
-    $stmt = $conn->prepare('SELECT game_id, amount FROM game ORDER BY game_id ASC, timedate ASC LIMIT 1');
+    $stmt = $conn->prepare('SELECT game_id, amount FROM game ORDER BY game_id ASC, game_date ASC LIMIT 1');
     $stmt->execute();
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
     $min_game = $row['game_id'];
 
     //Selecting last game
-    $stmt = $conn->prepare('SELECT game_id, amount FROM game ORDER BY game_id DESC, timedate DESC LIMIT 1 OFFSET 1');
+    $stmt = $conn->prepare('SELECT game_id, amount FROM game ORDER BY game_id DESC, game_date DESC LIMIT 1 OFFSET 1');
     $stmt->execute();
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
     $last_game = $row['game_id'];
@@ -137,13 +137,13 @@ try {
                                     ORDER BY ' . $lastPart . ' LIMIT 20 OFFSET :offs';
 
         //Selecting game information
-        $stmt = $conn->prepare('SELECT amount, winner_number, date_format(timedate, \'%M %D, %Y %h:%i %p\') AS time FROM game 
+        $stmt = $conn->prepare('SELECT amount, winner_number, date_format(game_date, \'%M %D, %Y %h:%i %p\') AS time FROM game 
                                      WHERE game_id = :game_id');
         $stmt->execute(array('game_id' => $game_id));
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         $amount = $row['amount'];
         $winner_number = $row['winner_number'];
-        $timedate = $row['time'];
+        $game_date = $row['time'];
 
         $stmt = $conn->prepare('SELECT COUNT(DISTINCT number_id) AS count FROM numberxuser WHERE game_id = :game_id');
         $stmt->execute(array('game_id' => $game_id));
@@ -225,7 +225,7 @@ try {
         <?php if ($current_game != $game_id) : ?>
             <div class="row">
                 <h3><b>Game #<?php echo $game_id ?></b></h3>
-                <h5><?php echo $timedate; ?></h5>
+                <h5><?php echo $game_date; ?></h5>
                 <h5><b>Jackpot: </b><?php echo($amount / 100); ?> bits</h5>
                 <div>
                     <b class="h5Span">Winner number: </b>
