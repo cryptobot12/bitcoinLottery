@@ -107,6 +107,9 @@ if ($logged_in) {
                                                 WHERE user_id = :user_id');
                 $stmt->execute(array('user_id' => $user_id, 'plays1' => $plays, 'plays2' => $plays));
 
+//                Updating user's bet'
+
+
                 //Get balance
                 $stmt = $conn->prepare('SELECT balance FROM user WHERE user_id = :user_id');
                 $stmt->execute(array('user_id' => $user_id));

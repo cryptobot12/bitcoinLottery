@@ -530,7 +530,7 @@ try {
                                         <td><?php echo $item['username']; ?></td>
                                         <td><?php echo $item['profit']; ?> bits</td>
                                         <td><span class="lose-text">-<?php echo($item['profit']); ?> bits</span></td>
-                                    </tr>';
+                                    </tr>
                                 <?php endforeach;
                             endif; ?>
                             </tbody>

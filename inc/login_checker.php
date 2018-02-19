@@ -7,6 +7,7 @@
  */
 
 //Is there a logged in user?
+
 if (!empty($_SESSION['auth_token'])) {
     $auth_token = json_decode($_SESSION['auth_token']);
 
@@ -19,7 +20,7 @@ if (!empty($_SESSION['auth_token'])) {
     $auth_token = json_decode($_COOKIE['auth_token']);
 
     //If cookie is not expired, assuming it is sent to the server
-    if (strtotime($auth_token->expires) < time()) {
+    if ($auth_token->expires >= time()) {
 
         $selector = $auth_token->selector;
         $validator = $auth_token->validator;
@@ -66,8 +67,3 @@ if (!empty($_SESSION['auth_token'])) {
     }
 } else
     $logged_in = false;
-
-
-
-
-

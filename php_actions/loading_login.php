@@ -76,7 +76,7 @@ if ($captcha_success->success) {
                     $stmt->execute(array('selector' => $selector, 'hashed_validator' => $hashed_validator, 'user_id' => $user_info['user_id'], 'user_agent' => $user_agent, 'ip_address' => $ip_address));
 
                     //Expires in 30 days
-                    $expires = time() + (86400 * 30);
+                    $expires = strtotime("+30 days");
                     $cookie_data = array('selector' => $selector, 'validator' => $validator, 'expires' => $expires);
                     setcookie('auth_token', json_encode($cookie_data), $expires, "/");
 
