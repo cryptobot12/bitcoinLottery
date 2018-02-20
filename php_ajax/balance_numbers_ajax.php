@@ -25,7 +25,7 @@ if ($logged_in) {
         $balance = $row['balance'] / 100;
 
         //Selecting current game
-        $stmt = $conn->prepare('SELECT game_id FROM game ORDER BY game_id DESC, timedate DESC LIMIT 1');
+        $stmt = $conn->prepare('SELECT game_id FROM game ORDER BY game_id DESC, game_date DESC LIMIT 1');
         $stmt->execute();
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         $current_game = $row['game_id'];

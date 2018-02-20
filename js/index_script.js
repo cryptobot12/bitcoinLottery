@@ -715,6 +715,7 @@ var conn = new ab.Session('ws://localhost:8080',
     function () {
         conn.subscribe('all', function (topic, data) {
 
+            console.log('data.option = ' + data.option);
 
             if (data.option === 1) {
                 var jackpotNumber = $("#jackpot_number");
@@ -733,32 +734,33 @@ var conn = new ab.Session('ws://localhost:8080',
                 var lastGameTable = $("#last_game_table_med").find("tbody");
                 lastGameTable.empty();
 
-                $.each(data.winners, function (index, value) {
+                //Last game
+                $.each(data.players, function (index, value) {
 
                     var toAppend = '';
-                    if (value['profit'] > 0)
-                        toAppend = '<tr class="win"><td>' + value['username'] + '</td><td>' +
-                            value['bet'] + ' bits</td><td><span class="win-text">+' + value['profit'] + ' bits</span></td></tr>';
-                    else if (value['profit'] === 0)
-                        toAppend = '<tr class="win"><td>' + value['username'] + '</td><td>' +
-                            value['bet'] + ' bits</td><td><span class="neutral-text">' + value['profit'] + ' bits</span></td></tr>';
-                    else
-                        toAppend = '<tr class="win"><td>' + value['username'] + '</td><td>' +
+
+                    if (value['win'] === 1) {
+                        if (value['profit'] > 0)
+                            toAppend = '<tr class="win"><td>' + value['username'] + '</td><td>' +
+                                value['bet'] + ' bits</td><td><span class="win-text">+' + value['profit'] + ' bits</span></td></tr>';
+                        else if (value['profit'] === 0)
+                            toAppend = '<tr class="win"><td>' + value['username'] + '</td><td>' +
+                                value['bet'] + ' bits</td><td><span class="neutral-text">' + value['profit'] + ' bits</span></td></tr>';
+                        else
+                            toAppend = '<tr class="win"><td>' + value['username'] + '</td><td>' +
+                                value['bet'] + ' bits</td><td><span class="lose-text">' + value['profit'] + ' bits</span></td></tr>';
+                    } else {
+
+                        toAppend = '<tr class="lose"><td>' + value['username'] + '</td><td>' +
                             value['bet'] + ' bits</td><td><span class="lose-text">' + value['profit'] + ' bits</span></td></tr>';
+                    }
+
 
                     lastGameTable.append(toAppend);
                 });
 
-                $.each(data.losers, function (index, value) {
-
-                    lastGameTable.append('<tr class="lose"><td>' + value['username'] + '</td><td>' +
-                        value['profit'] + ' bits</td><td><span class="lose-text">-' + value['profit'] + ' bits</span></td></tr>');
-                });
-
-                var gameHistoryTableMed = $("#game_history_table_large").find("tbody");
-                gameHistoryTableMed.empty();
-                var gameHistoryTableSmall = $("#game_history_table_small").find("tbody");
-                gameHistoryTableSmall.empty();
+                var gameHistoryTableMed = $("#game_history_table_large");
+                var gameHistoryTableSmall = $("#game_history_table_small");
 
                 $.each(data.games, function (index, value) {
                     gameHistoryTableMed.append('<tr><td><a href="game_info.php?game_id=' + value['game_id'] + '" target="_blank">' + value['game_id'] + '</a></td><td>' +
@@ -786,7 +788,7 @@ var conn = new ab.Session('ws://localhost:8080',
                 var to_append = "<li><b>" + data.user + "(" + hour + ":" + minute + "): </b>" + data.chat_message + "</li>";
                 chat_list.append(to_append);
 
-                chat_list.animate({ scrollTop: chat_list.height() }, 0);
+                chat_list.animate({scrollTop: chat_list.height()}, 0);
             }
         });
     },
@@ -858,8 +860,6 @@ function bet(arrayOfNumbers) {
     var my_numbers = JSON.stringify(arrayOfNumbers);
     $.ajax({
         url: "php_ajax/play.php", success: function (result) {
-
-            console.log(result);
             var response = JSON.parse(result);
 
             $("#my_balance").html(response['balance']);
@@ -868,7 +868,7 @@ function bet(arrayOfNumbers) {
             numbers_list_med.empty();
             numbers_list_small.empty();
 
-            var numbers_card_med= $("#numbers_card_med");
+            var numbers_card_med = $("#numbers_card_med");
             var numbers_card_small = $("#numbers_card_small");
 
             if (response['count'] > 1) {

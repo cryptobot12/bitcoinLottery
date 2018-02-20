@@ -135,9 +135,10 @@ try {
         $stmt = $conn->prepare('UPDATE user AS u
               INNER JOIN gamexuser AS gu ON u.user_id = gu.user_id
               INNER JOIN numberxuser AS nu ON u.user_id = nu.user_id
+              AND gu.game_id = nu.game_id
             SET u.balance = u.balance + :profit, u.net_profit = u.net_profit + :net_profit,
-              gu.profit = :profit2, gu.win = 1
-            WHERE nu.user_id = :winner_number
+              gu.profit = gu.profit + :profit2, gu.win = 1
+            WHERE nu.number_id = :winner_number
             AND gu.game_id = :game_id');
         $stmt->execute(array('profit' => $each_receives, 'net_profit' => $each_receives, 'profit2' => $each_receives,
             'winner_number' => $winner_number, 'game_id' => $current_game));
@@ -174,53 +175,34 @@ try {
             array_push($arrayOfGames, $rowArray);
         }
 
-        //Selecting winners
-        $stmt = $conn->prepare('SELECT u.username, gu.win, gu.bet, gu.profit 
+        //Selecting players
+        $stmt = $conn->prepare('SELECT u.username AS username, gu.win AS win, gu.bet AS bet, gu.profit AS profit
      FROM user AS u 
      INNER JOIN gamexuser AS gu
      ON u.user_id = gu.user_id
      WHERE gu.game_id = :game_id
-     AND gu.win = 1');
+     ORDER BY win DESC, profit DESC, bet DESC, username ASC 
+     LIMIT 20');
+
 
         $stmt->execute(array('game_id' => $current_game));
         $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        $n_of_wrow = count($row);
 
-        $arrayOfWinners = array();
+        $arrayOfPlayers = array();
+
         foreach ($row as $item) {
-            $rowArray = array('username' => $item['username'], 'bet' => ($item['bet'] / 100),
-                'profit' => ($item['profit'] / 100));
-            array_push($arrayOfWinners, $rowArray);
+
+                $rowArray = array('username' => $item['username'], 'win' => $item['win'], 'bet' => ($item['bet'] / 100),
+                    'profit' => ($item['profit']) / 100);
+                array_push($arrayOfPlayers, $rowArray);
+
         }
 
-        //Selecting losers
-        $stmt = $conn->prepare('SELECT u.username, gu.win, gu.bet, gu.profit 
-     FROM user AS u 
-     INNER JOIN gamexuser AS gu
-     ON u.user_id = gu.user_id
-     WHERE gu.game_id = :game_id
-     AND gu.win = 0');
-
-
-        $stmt->execute(array('game_id' => $current_game));
-        $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        $arrayOfLosers = array();
-        if (!empty($row)) {
-
-            foreach ($row as $item) {
-
-                if ($item['username'] <> null) {
-                    $rowArray = array('username' => $item['username'], 'profit' => $item['profit']);
-                    array_push($arrayOfLosers, $rowArray);
-                }
-            }
-        }
 
         //Broadcasting
         $entryData = array('category' => 'all', 'option' => 2, 'jackpot' => $jackpot, 'games' => $arrayOfGames,
             'last_game_number' => $current_game, 'last_winner_number' => $winner_number, 'last_jackpot' => $jackpot_last,
-            'winners' => $arrayOfWinners, 'losers' => $arrayOfLosers);
+            'players' => $arrayOfPlayers);
 
         var_dump($entryData);
 

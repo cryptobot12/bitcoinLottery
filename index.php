@@ -81,28 +81,24 @@ try {
     $last_winner_number = $row['winner_number'];
     $last_number_of_players = $row['number_of_players'];
 
-    //Selecting winners
-    $stmt = $conn->prepare('SELECT u.username, gu.win, gu.bet, gu.profit 
+    //Selecting players from last game
+    $stmt = $conn->prepare('SELECT u.username AS username, gu.win AS win, gu.bet AS bet, gu.profit AS profit
      FROM user AS u 
      INNER JOIN gamexuser AS gu
      ON u.user_id = gu.user_id
      WHERE gu.game_id = :game_id
-     AND gu.win = 1');
+     ORDER BY win DESC, profit desc, bet desc, username ASC 
+     LIMIT 20');
 
     $stmt->execute(array('game_id' => $last_game));
-    $winners_row = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $players_row = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    $n_of_winners = count($winners_row);
-
-    //Selecting losers
-    $stmt = $conn->prepare('SELECT u.username, gu.win, gu.bet, gu.profit 
-     FROM user AS u 
-     INNER JOIN gamexuser AS gu
-     ON u.user_id = gu.user_id
-     WHERE gu.game_id = :game_id
-     AND gu.win = 0');
+    //Select number of winners
+    $stmt = $conn->prepare('SELECT COUNT(win) AS n_o_w
+    FROM gamexuser
+    WHERE game_id = :game_id');
     $stmt->execute(array('game_id' => $last_game));
-    $losers_row = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $n_of_winners = $stmt->fetch(PDO::FETCH_ASSOC)['n_o_w'];
 
 } catch (PDOException $e) {
     echo "Connection failed: " . $e->getMessage();
@@ -507,32 +503,39 @@ try {
                             </thead>
                             <tbody>
                             <?php
-                            foreach ($winners_row as $item) :?>
-
-                                <tr class="win">
-                                    <td><?php echo $item['username']; ?></td>
-                                    <td><?php echo $item['bet'] / 100; ?> bits</td>
-                                    <td>
-                                        <?php if ($item['profit'] > 0) : ?>
-                                            <span class="win-text">+<?php echo $item['profit'] / 100; ?> bits</span>
-                                        <? elseif ($item['profit'] == 0): ?>
-                                            <span class="neutral-text"><?php echo $item['profit'] / 100; ?> bits</span>
-                                        <? else: ?>
-                                            <span class="lose-text"><?php echo $item['profit'] / 100; ?> bits</span>
-                                        <?php endif; ?>
-                                    </td>
-                                </tr>
-                            <?php endforeach; ?>
-                            <?php
-                            if (!empty($losers_row)):
-                                foreach ($losers_row as $item) :?>
+                            foreach ($players_row as $item) :?>
+                                <?php if ($item["win"] == 1): ?>
+                                    <tr class="win">
+                                        <td><?php echo $item['username']; ?></td>
+                                        <td><?php echo $item['bet'] / 100; ?> bits</td>
+                                        <td>
+                                            <?php if ($item['profit'] > 0) : ?>
+                                                <span class="win-text">+<?php echo $item['profit'] / 100; ?> bits</span>
+                                            <?php elseif ($item['profit'] == 0): ?>
+                                                <span class="neutral-text"><?php echo $item['profit'] / 100; ?>
+                                                    bits</span>
+                                            <?php else: ?>
+                                                <span class="lose-text"><?php echo $item['profit'] / 100; ?> bits</span>
+                                            <?php endif; ?>
+                                        </td>
+                                    </tr>
+                                <?php else: ?>
                                     <tr class="lose">
                                         <td><?php echo $item['username']; ?></td>
-                                        <td><?php echo $item['profit']; ?> bits</td>
-                                        <td><span class="lose-text">-<?php echo($item['profit']); ?> bits</span></td>
+                                        <td><?php echo $item['bet'] / 100; ?> bits</td>
+                                        <td>
+                                            <?php if ($item['profit'] > 0) : ?>
+                                                <span class="win-text">+<?php echo $item['profit'] / 100; ?> bits</span>
+                                            <?php elseif ($item['profit'] == 0): ?>
+                                                <span class="neutral-text"><?php echo $item['profit'] / 100; ?>
+                                                    bits</span>
+                                            <?php else: ?>
+                                                <span class="lose-text"><?php echo $item['profit'] / 100; ?> bits</span>
+                                            <?php endif; ?>
+                                        </td>
                                     </tr>
-                                <?php endforeach;
-                            endif; ?>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
                             </tbody>
                         </table>
                     </div>

@@ -89,16 +89,16 @@ if ($logged_in) {
                     $stmt->execute(array('user_id' => $user_id));
 
                     $stmt = $conn->prepare('INSERT INTO gamexuser(game_id, user_id, win, bet, profit) VALUES 
-                    (:game_id, :user_id, :win, :bet * 10000, :profit)');
-                    $stmt->execute(array('game_id' => $current_game, 'user_id' => $user_id, 'win' => 0, 'bet' => $plays,
-                        'profit' => 0));
+                    (:game_id, :user_id, :win, :bet, :profit)');
+                    $stmt->execute(array('game_id' => $current_game, 'user_id' => $user_id, 'win' => 0, 'bet' => 10000 * $plays,
+                        'profit' => -10000 * $plays));
 
                 } else {
-                    $stmt= $conn->prepare('UPDATE gamexuser SET bet = bet + 10000 * :plays WHERE user_id = :user_id
+                    $stmt = $conn->prepare('UPDATE gamexuser SET bet = bet + 10000 * :plays, profit = profit - 10000 * :plays2
+                    WHERE user_id = :user_id
                     AND game_id = :game_id');
-                    $stmt->execute(array('plays' => $plays, 'user_id' => $user_id, 'game_id' => $current_game));
+                    $stmt->execute(array('plays' => $plays, 'plays2' => $plays, 'user_id' => $user_id, 'game_id' => $current_game));
                 }
-
 
 
                 //Updating users balance
