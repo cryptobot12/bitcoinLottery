@@ -6,6 +6,7 @@
     },
     "require": {
         "cboden/ratchet": "0.4.*",
+        "phpmailer/phpmailer": "~6.0",
         "react/zmq": "0.2.*|0.3.*"
     }
 }
