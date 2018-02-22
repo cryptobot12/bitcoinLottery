@@ -38,8 +38,8 @@ if ($logged_in) {
     </ul>
     <!-- Navbar goes here -->
     <nav>
-        <div class="nav-wrapper blue darken-3">
-            <a href="index.php" class="brand-logo left">BitcoinPVP</a>
+        <div class="nav-wrapper black darken-3">
+            <a href="index.php" class="brand-logo left"><img src="img/nav-logo.png" height="64" style="margin-left: 10px"></a>
             <ul id="nav-mobile" class="right .hide-on-small-only nav-letters">
                 <li class=""><a href="help.php"><i class="material-icons left">help</i>Help</a></li>
                 <li class=""><a href="rank.php"><i class="material-icons left">assistant_photo</i>Ranking</a></li>

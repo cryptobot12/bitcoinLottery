@@ -5,10 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="10750175-c39d-40d2-8ef4-4cd797eab4f9" name="Default" comment="">
-      <change beforePath="" afterPath="$PROJECT_DIR$/secure_php/email_test.php" />
-      <change beforePath="$PROJECT_DIR$/.idea/bitcoinLottery.iml" afterPath="$PROJECT_DIR$/.idea/bitcoinLottery.iml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/img/nav-logo.png" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/composer.json" afterPath="$PROJECT_DIR$/composer.json" />
+      <change beforePath="$PROJECT_DIR$/inc/header.php" afterPath="$PROJECT_DIR$/inc/header.php" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -152,7 +151,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="composer.json" pinned="false" current-in-tab="true">
+      <file leaf-file-name="composer.json" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/composer.json">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="204">
@@ -162,13 +161,14 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="header.php" pinned="false" current-in-tab="false">
+      <file leaf-file-name="header.php" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/inc/header.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="255">
-              <caret line="15" column="37" lean-forward="false" selection-start-line="15" selection-start-column="37" selection-end-line="15" selection-end-column="37" />
+            <state relative-caret-position="522">
+              <caret line="47" column="49" lean-forward="false" selection-start-line="47" selection-start-column="49" selection-end-line="47" selection-end-column="49" />
               <folding>
-                <marker date="1517723827038" expanded="true" signature="426:475" ph="SELECT balan... user" />
+                <element signature="n#style#0;n#img#0;n#a#0;n#div#0;n#nav#0;n#!!top" expanded="true" />
+                <marker date="1519259846331" expanded="true" signature="426:475" ph="SELECT balan... user" />
               </folding>
             </state>
           </provider>
@@ -276,7 +276,6 @@
         <option value="$PROJECT_DIR$/inc/numbers_list_part.php" />
         <option value="$PROJECT_DIR$/js/game_script.js" />
         <option value="$PROJECT_DIR$/inc/show_jackpot_part.php" />
-        <option value="$PROJECT_DIR$/inc/header.php" />
         <option value="$PROJECT_DIR$/php_ajax/send_message.php" />
         <option value="$PROJECT_DIR$/game_info.php" />
         <option value="$PROJECT_DIR$/php_actions/loading_login.php" />
@@ -290,6 +289,7 @@
         <option value="$PROJECT_DIR$/js/index_script.js" />
         <option value="$PROJECT_DIR$/secure_php/email_test.php" />
         <option value="$PROJECT_DIR$/composer.json" />
+        <option value="$PROJECT_DIR$/inc/header.php" />
       </list>
     </option>
   </component>
@@ -344,13 +344,18 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
+      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
             <path>
               <item name="bitcoinLottery" type="b2602c69:ProjectViewProjectNode" />
               <item name="bitcoinLottery" type="2a2b976b:PhpTreeStructureProvider$1" />
+            </path>
+            <path>
+              <item name="bitcoinLottery" type="b2602c69:ProjectViewProjectNode" />
+              <item name="bitcoinLottery" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="img" type="2a2b976b:PhpTreeStructureProvider$1" />
             </path>
             <path>
               <item name="bitcoinLottery" type="b2602c69:ProjectViewProjectNode" />
@@ -385,7 +390,7 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scratches" />
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -501,7 +506,8 @@
       <workItem from="1519002480388" duration="12402000" />
       <workItem from="1519081160954" duration="4931000" />
       <workItem from="1519183708952" duration="1290000" />
-      <workItem from="1519252317941" duration="53000" />
+      <workItem from="1519252317941" duration="80000" />
+      <workItem from="1519258118744" duration="2068000" />
     </task>
     <task id="LOCAL-00001" summary="* Added some style&#10;* Added numbers count&#10;* Can't bet without having numbers on text area">
       <created>1510434723137</created>
@@ -776,11 +782,18 @@
       <option name="project" value="LOCAL" />
       <updated>1519011185589</updated>
     </task>
-    <option name="localTasksCounter" value="40" />
+    <task id="LOCAL-00040" summary="- Switch linux.">
+      <created>1519252389676</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1519252389676</updated>
+    </task>
+    <option name="localTasksCounter" value="41" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="540366000" />
+    <option name="totallyTimeSpent" value="542461000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
@@ -839,7 +852,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="* Game info finished." />
     <MESSAGE value="* Added more security&#10;* Updating games played and net profit on play.&#10;* User stats added. (Incomplete)" />
     <MESSAGE value="* User stats sort added.&#10;* User stats search aded." />
     <MESSAGE value="* Ranking added.&#10;* Security against XSS added." />
@@ -864,7 +876,8 @@
     <MESSAGE value="*Switching to linux" />
     <MESSAGE value="*Switching to windows" />
     <MESSAGE value="- Game fixed." />
-    <option name="LAST_COMMIT_MESSAGE" value="- Game fixed." />
+    <MESSAGE value="- Switch linux." />
+    <option name="LAST_COMMIT_MESSAGE" value="- Switch linux." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1066,16 +1079,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/inc/header.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="15" column="37" lean-forward="false" selection-start-line="15" selection-start-column="37" selection-end-line="15" selection-end-column="37" />
-          <folding>
-            <marker date="1517723827038" expanded="true" signature="426:475" ph="SELECT balan... user" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/inc/login_checker.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="126">
@@ -1204,6 +1207,17 @@
         <state relative-caret-position="204">
           <caret line="12" column="0" lean-forward="false" selection-start-line="12" selection-start-column="0" selection-end-line="12" selection-end-column="0" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/inc/header.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="522">
+          <caret line="47" column="49" lean-forward="false" selection-start-line="47" selection-start-column="49" selection-end-line="47" selection-end-column="49" />
+          <folding>
+            <element signature="n#style#0;n#img#0;n#a#0;n#div#0;n#nav#0;n#!!top" expanded="true" />
+            <marker date="1519259846331" expanded="true" signature="426:475" ph="SELECT balan... user" />
+          </folding>
         </state>
       </provider>
     </entry>
