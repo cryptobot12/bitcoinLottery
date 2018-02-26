@@ -1,15 +1,16 @@
-# Stream Component
+# Stream
 
 [![Build Status](https://travis-ci.org/reactphp/stream.svg?branch=master)](https://travis-ci.org/reactphp/stream)
 
 Event-driven readable and writable streams for non-blocking I/O in [ReactPHP](https://reactphp.org/).
 
 In order to make the [EventLoop](https://github.com/reactphp/event-loop)
-easier to use, this component introduces the concept of "streams".
+easier to use, this component introduces the powerful concept of "streams".
+Streams allow you to efficiently process huge amounts of data (such as a multi
+Gigabyte file download) in small chunks without having to store everything in
+memory at once.
 They are very similar to the streams found in PHP itself,
 but have an interface more suited for async, non-blocking I/O.
-Mainly it provides interfaces for readable and writable streams, plus a file
-descriptor based implementation with an in-memory write buffer.
 
 **Table of contents**
 
@@ -1177,10 +1178,10 @@ The recommended way to install this library is [through Composer](https://getcom
 This will install the latest supported version:
 
 ```bash
-$ composer require react/stream:^0.7.4
+$ composer require react/stream:^0.7.7
 ```
 
-More details about version upgrades can be found in the [CHANGELOG](CHANGELOG.md).
+See also the [CHANGELOG](CHANGELOG.md) for details about version upgrades.
 
 This project aims to run on any platform and thus does not require any PHP
 extensions and supports running on legacy PHP 5.3 through current PHP 7+ and HHVM.
@@ -1200,6 +1201,14 @@ To run the test suite, go to the project root and run:
 
 ```bash
 $ php vendor/bin/phpunit
+```
+
+The test suite also contains a number of functional integration tests that rely
+on a stable internet connection.
+If you do not want to run these, they can simply be skipped like this:
+
+```bash
+$ php vendor/bin/phpunit --exclude-group internet
 ```
 
 ## License

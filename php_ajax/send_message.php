@@ -27,9 +27,9 @@ WHERE DATE_FORMAT(CURRENT_TIMESTAMP, '%Y-%m-%d %H:%i') = DATE_FORMAT(sentat, '%Y
         $message_count = $result['message_count'];
 
         if ($message_count <= 5) {
-            $stmt = $conn->prepare('INSERT INTO chat(user_id, message, sentat)
-VALUES (:user_id, :message, CURRENT_TIMESTAMP)');
-            $stmt->execute(array('user_id' => $user_id, 'message' => $chat_message));
+            $stmt = $conn->prepare('INSERT INTO chat(user_id, username, message, sentat)
+VALUES (:user_id, :username, :message, CURRENT_TIMESTAMP)');
+            $stmt->execute(array('user_id' => $user_id,  'username' => $username, 'message' => $chat_message));
 
             //Broadcasting
             $entryData = array('category' => 'all', 'option' => 3, 'user' => $username, 'chat_message' => $chat_message);

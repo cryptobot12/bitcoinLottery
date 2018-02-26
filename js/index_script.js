@@ -6,36 +6,93 @@ $(function () {
 
 //Resize chat input
 $(document).ready(function () {
+
+    //chat
     var chat_send = $("#chat-send");
-    var jackpot_card = $("#jackpot_card");
+    var chat_space = $("#chat-space");
     var input_chat = $("#input-chat");
 
-    var jackpot_card_width = jackpot_card.width();
+    var chat_space_width = chat_space.width();
     var chat_send_margin = chat_send.css("marginLeft");
     var chat_send_pl = chat_send.css("paddingLeft");
     var chat_send_pr = chat_send.css("paddingRight");
 
-    var new_width = parseFloat(jackpot_card_width) - parseFloat(chat_send_margin) -
-        parseFloat(chat_send_pl) - parseFloat(chat_send_pr) - 5;
+    var new_width_for_input = parseFloat(chat_space_width) - parseFloat(chat_send_margin) -
+        parseFloat(chat_send_pl) - parseFloat(chat_send_pr) - window.innerWidth * 0.01;
 
-    input_chat.width(new_width);
+
+    var nav_top = $("#nav-top");
+    var play_med_col = $("#play_med_col");
+
+    var chat_messages = $("#chat-messages");
+    var chat_card_content = $("#chat-card-content");
+    var chat_input_line = $("#chat-input-line");
+
+
+    var new_height_for_chat_messages = window.innerHeight - parseFloat(nav_top.height()) - parseFloat(play_med_col.height()) -
+        parseFloat(chat_card_content.css("paddingTop")) * 2 - parseFloat(chat_input_line.height()) - parseFloat(chat_input_line.css("marginTop")) -
+        parseFloat(chat_input_line.css("marginBottom"));
+
+    if (new_height_for_chat_messages > 180) {
+        chat_messages.height(new_height_for_chat_messages);
+        chat_space.height(new_height_for_chat_messages);
+    } else {
+        chat_messages.height(180);
+        chat_space.height(180);
+    }
+    input_chat.width(new_width_for_input);
 
 });
 
 $(window).resize(function () {
+
+    //chat
     var chat_send = $("#chat-send");
-    var jackpot_card = $("#jackpot_card");
+    var chat_space = $("#chat-space");
     var input_chat = $("#input-chat");
 
-    var jackpot_card_width = jackpot_card.width();
+    var chat_space_width = chat_space.width();
     var chat_send_margin = chat_send.css("marginLeft");
     var chat_send_pl = chat_send.css("paddingLeft");
     var chat_send_pr = chat_send.css("paddingRight");
 
-    var new_width = parseFloat(jackpot_card_width) - parseFloat(chat_send_margin) -
-        parseFloat(chat_send_pl) - parseFloat(chat_send_pr) - 5;
+    var new_width_for_input = parseFloat(chat_space_width) - parseFloat(chat_send_margin) -
+        parseFloat(chat_send_pl) - parseFloat(chat_send_pr) - window.innerWidth * 0.01;
 
-    input_chat.width(new_width);
+
+    var nav_top = $("#nav-top");
+    var play_med_col = $("#play_med_col");
+
+    var chat_messages = $("#chat-messages");
+    var chat_card_content = $("#chat-card-content");
+    var chat_input_line = $("#chat-input-line");
+
+
+    console.log("-----");
+    console.log(window.innerHeight);
+    console.log(parseFloat(nav_top.height()));
+    console.log(parseFloat(play_med_col.height()));
+    console.log(parseFloat(chat_card_content.css("paddingTop")) * 2);
+    console.log(parseFloat(chat_input_line.height()));
+    console.log(parseFloat(chat_input_line.css("marginTop")));
+    console.log(parseFloat(chat_input_line.css("marginBottom")));
+    console.log("------");
+
+    var new_height_for_chat_messages = window.innerHeight - parseFloat(nav_top.height()) - parseFloat(play_med_col.height()) -
+        parseFloat(chat_card_content.css("paddingTop")) * 2 - parseFloat(chat_input_line.height()) * 1.7 - parseFloat(chat_input_line.css("marginTop")) -
+        parseFloat(chat_input_line.css("marginBottom"));
+
+
+    if (new_height_for_chat_messages > 150) {
+        chat_messages.height(new_height_for_chat_messages);
+        chat_space.height(new_height_for_chat_messages);
+        chat_space.position().top = chat_messages.position().top;
+    } else {
+        chat_messages.height(150);
+        chat_space.height(150);
+    }
+
+    input_chat.width(new_width_for_input);
 });
 
 

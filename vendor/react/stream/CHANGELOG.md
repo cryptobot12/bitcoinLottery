@@ -1,5 +1,36 @@
 # Changelog
 
+## 0.7.7 (2018-01-19)
+
+*   Improve test suite by fixing forward compatibility with upcoming EventLoop
+    releases, avoid risky tests and add test group to skip integration tests
+    relying on internet connection and apply appropriate test timeouts.
+    (#128, #131 and #132 by @clue)
+
+## 0.7.6 (2017-12-21)
+
+*   Fix: Work around reading from unbuffered pipe stream in legacy PHP < 5.4.28 and PHP < 5.5.12
+    (#126 by @clue)
+
+*   Improve test suite by simplifying test bootstrapping logic via Composer and
+    test against PHP 7.2
+    (#127 by @clue and #124 by @carusogabriel)
+
+## 0.7.5 (2017-11-20)
+
+*   Fix: Igore excessive `fopen()` mode flags for `WritableResourceStream`
+    (#119 by @clue)
+
+*   Fix: Fix forward compatibility with upcoming EventLoop releases
+    (#121 by @clue)
+
+*   Restructure examples to ease getting started
+    (#123 by @clue)
+
+*   Improve test suite by adding forward compatibility with PHPUnit 6 and
+    ignore Mac OS X test failures for now until Travis tests work again
+    (#122 by @gabriel-caruso and #120 by @clue)
+
 ## 0.7.4 (2017-10-11)
 
 *   Fix: Remove event listeners from `CompositeStream` once closed and

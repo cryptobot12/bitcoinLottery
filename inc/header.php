@@ -37,9 +37,9 @@ if ($logged_in) {
         <li><a href="stats.php"><i class="material-icons left">assessment</i>Server Stats</a></li>
     </ul>
     <!-- Navbar goes here -->
-    <nav>
+    <nav id="nav-top">
         <div class="nav-wrapper black darken-3">
-            <a href="index.php" class="brand-logo left"><img src="img/nav-logo.png" height="64" style="margin-left: 10px"></a>
+            <a href="index.php" class="brand-logo left"><img src="img/nav-logo.png" height="56" ></a>
             <ul id="nav-mobile" class="right .hide-on-small-only nav-letters">
                 <li class=""><a href="help.php"><i class="material-icons left">help</i>Help</a></li>
                 <li class=""><a href="rank.php"><i class="material-icons left">assistant_photo</i>Ranking</a></li>

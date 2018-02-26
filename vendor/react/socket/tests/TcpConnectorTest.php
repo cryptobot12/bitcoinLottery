@@ -25,6 +25,24 @@ class TcpConnectorTest extends TestCase
     }
 
     /** @test */
+    public function connectionToTcpServerShouldAddResourceToLoop()
+    {
+        $loop = $this->getMockBuilder('React\EventLoop\LoopInterface')->getMock();
+        $connector = new TcpConnector($loop);
+
+        $server = new TcpServer(0, $loop);
+
+        $valid = false;
+        $loop->expects($this->once())->method('addWriteStream')->with($this->callback(function ($arg) use (&$valid) {
+            $valid = is_resource($arg);
+            return true;
+        }));
+        $connector->connect($server->getAddress());
+
+        $this->assertTrue($valid);
+    }
+
+    /** @test */
     public function connectionToTcpServerShouldSucceed()
     {
         $loop = Factory::create();
@@ -96,6 +114,28 @@ class TcpConnectorTest extends TestCase
 
         $this->assertNull($connection->getRemoteAddress());
         $this->assertNull($connection->getLocalAddress());
+    }
+
+    /** @test */
+    public function connectionToTcpServerWillCloseWhenOtherSideCloses()
+    {
+        $loop = Factory::create();
+
+        // immediately close connection and server once connection is in
+        $server = new TcpServer(0, $loop);
+        $server->on('connection', function (ConnectionInterface $conn) use ($server) {
+            $conn->close();
+            $server->close();
+        });
+
+        $once = $this->expectCallableOnce();
+        $connector = new TcpConnector($loop);
+        $connector->connect($server->getAddress())->then(function (ConnectionInterface $conn) use ($once) {
+            $conn->write('hello');
+            $conn->on('close', $once);
+        });
+
+        $loop->run();
     }
 
     /** @test */
@@ -175,17 +215,27 @@ class TcpConnectorTest extends TestCase
     }
 
     /** @test */
-    public function connectionWithInvalidContextShouldFailImmediately()
+    public function cancellingConnectionShouldRemoveResourceFromLoopAndCloseResource()
     {
-        $this->markTestIncomplete();
-
         $loop = $this->getMockBuilder('React\EventLoop\LoopInterface')->getMock();
+        $connector = new TcpConnector($loop);
 
-        $connector = new TcpConnector($loop, array('bindto' => 'invalid.invalid:123456'));
-        $connector->connect('127.0.0.1:80')->then(
-            $this->expectCallableNever(),
-            $this->expectCallableOnce()
-        );
+        $server = new TcpServer(0, $loop);
+
+        $loop->expects($this->once())->method('addWriteStream');
+        $promise = $connector->connect($server->getAddress());
+
+        $resource = null;
+        $valid = false;
+        $loop->expects($this->once())->method('removeWriteStream')->with($this->callback(function ($arg) use (&$resource, &$valid) {
+            $resource = $arg;
+            $valid = is_resource($arg);
+            return true;
+        }));
+        $promise->cancel();
+
+        $this->assertTrue($valid);
+        $this->assertFalse(is_resource($resource));
     }
 
     /** @test */

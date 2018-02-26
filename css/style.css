@@ -237,15 +237,24 @@ ul.browser-default li {
 }
 
 #chat-space {
-    height: 56vh;
+    height: 30vh;
 }
 
 #chat-messages {
-    overflow-y: scroll;
-    height: 56vh;
+    overflow-y: hidden;
+    height: 30vh;
     word-wrap: break-word;
     overflow-x: hidden;
 }
+
+#chat-messages:hover {
+    overflow-y: scroll;
+    height: 30vh;
+    word-wrap: break-word;
+    overflow-x: hidden;
+}
+
+
 
 .input-chat {
     display: inline-block;
@@ -271,3 +280,33 @@ ul.browser-default li {
     margin-left: 4em;
     margin-right: 0.5em;
 }
+
+.input-chat {
+    margin-bottom: 0 !important;
+}
+
+#chat-input-line {
+    margin-top: 0.5em;
+}
+
+#main-row {
+    background-color: rgb(252, 252, 252);
+}
+
+#chat-card-content {
+    padding-bottom: 0.65em;
+}
+
+.alt-container {
+    margin: 0 auto;
+    max-width: 1600px;
+    width: 90%;
+}
+@media only screen and (min-width: 601px)
+    .container {
+        width: 85%;
+    }
+    @media only screen and (min-width: 993px)
+        .container {
+            width: 70%;
+        }
