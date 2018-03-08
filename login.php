@@ -69,7 +69,7 @@ if (!$logged_in) {
                         <span class="card-title"><b>Login</b></span>
                         <span>with your BitcoinPVP Account</span>
                         <div class="row"></div>
-                        <form id="login" method="post" action="php_actions/loading_login.php">
+                        <form id="login" method="post" action="actions/loading_login.php">
                             <?php if (!empty($login_error)): ?>
                                     <div class="col m10 offset-m1 s12">
                                         <blockquote class="blockquote-error w900">
@@ -97,6 +97,12 @@ if (!$logged_in) {
                             <div class="col col m10 offset-m1 s12">
                                 <input type="checkbox" id="remember_me" name="remember_me" value="1"/>
                                 <label for="remember_me">Remember me</label>
+                            </div>
+                            <div class="row"></div>
+                            <div class="row">
+                                <div class="col m6 s12 offset-m1">
+                                <a href="forgot_password">Forgot password?</a>
+                                </div>
                             </div>
                             <div class="row">
                                 <div class="input-field col m10 offset-m1 s12">

@@ -49,7 +49,7 @@ function verifyEmailUniqueness() {
     var newEmailVal = newEmail.val();
 
 
-    $.ajax('php_ajax/check_email_uniqueness.php', {
+    $.ajax('ajax/check_email_uniqueness.php', {
         success: function (result) {
             var response = JSON.parse(result);
 
@@ -312,7 +312,7 @@ $(function () {
             var username = transferUserInput.val();
 
             if (username.length > 0) {
-                $.ajax('php_ajax/check_username_uniqueness.php', {
+                $.ajax('ajax/check_username_uniqueness.php', {
                     success: function (result) {
                         var response = JSON.parse(result);
 

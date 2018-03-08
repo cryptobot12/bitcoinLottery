@@ -198,7 +198,7 @@ if ($captcha_success->success) {
         <p>Greetings <span style="color: red;"><b>' . $username .'</b></span>,<br>
             Please click the link below to verify your email address with BitcoinPVP:</p>
 
-        <a href="http://localhost/bitcoinLottery/php_actions/confirm_email.php?sel=' . $hashed_user_id . '&val='. $confirmation_code.'">Click here</a>
+        <a href="http://localhost/bitcoinLottery/actions/confirm_email.php?sel=' . $hashed_user_id . '&val='. $confirmation_code.'">Click here</a>
 
         <p>Verifying your email address ensures an extra layer of security for your account. We know we have the correct info on
             file should you need assistance with your account.</p>

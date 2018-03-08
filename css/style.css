@@ -297,6 +297,10 @@ ul.browser-default li {
     padding-bottom: 0.65em;
 }
 
+.no-marg-bot {
+    margin-bottom: 0;
+}
+
 .alt-container {
     margin: 0 auto;
     max-width: 1600px;
@@ -310,3 +314,5 @@ ul.browser-default li {
         .container {
             width: 70%;
         }
+
+

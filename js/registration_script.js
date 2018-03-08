@@ -180,7 +180,7 @@ function check_email_uniqueness() {
     var email_label_el = $("#email_label");
     var email_val = email_input_el.val();
 
-    $.ajax('php_ajax/check_email_uniqueness.php', {
+    $.ajax('ajax/check_email_uniqueness.php', {
         success: function (result) {
             var response = JSON.parse(result);
 
@@ -212,7 +212,7 @@ function check_username_uniqueness() {
     var username_val = username_input_el.val();
 
 
-    $.ajax('php_ajax/check_username_uniqueness.php', {
+    $.ajax('ajax/check_username_uniqueness.php', {
         success: function (result) {
             var response = JSON.parse(result);
 

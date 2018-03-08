@@ -473,7 +473,7 @@ function send_message() {
 
 
     $.ajax({
-        url: 'php_ajax/send_message.php',
+        url: 'ajax/send_message.php',
         success: function (result) {
             if (result === 'tmm') {
                 var chat_list = $("#chat-messages");
@@ -858,7 +858,7 @@ var conn = new ab.Session('ws://localhost:8080',
 /* Ajax request to update numbers and balance */
 function updateBalanceAndNumbers() {
     $.ajax({
-        url: "php_ajax/balance_numbers_ajax.php", success: function (result) {
+        url: "ajax/balance_numbers_ajax.php", success: function (result) {
             var response = JSON.parse(result);
             $("#my_balance").html(response['balance']);
             var numbers_list_small = $("#numbers_list_small");
@@ -916,7 +916,7 @@ function bet(arrayOfNumbers) {
 
     var my_numbers = JSON.stringify(arrayOfNumbers);
     $.ajax({
-        url: "php_ajax/play.php", success: function (result) {
+        url: "ajax/play.php", success: function (result) {
             var response = JSON.parse(result);
 
             $("#my_balance").html(response['balance']);

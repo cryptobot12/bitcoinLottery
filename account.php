@@ -37,11 +37,11 @@ if ($logged_in) {
             $bit_address = $result['bit_address'];
 
             //Selecting code
-            $stmt = $conn->prepare('SELECT code, code_expires FROM user WHERE user_id = :user_id');
+            $stmt = $conn->prepare('SELECT COUNT(user_id) AS email_update_requests FROM email_update WHERE user_id = :user_id
+            AND CURRENT_TIMESTAMP < expires');
             $stmt->execute(array('user_id' => $user_id));
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
-            $code_expires = $result['code_expires'];
-            $email_code = $result['code'];
+            $email_update_requests = $result['email_update_requests'];
 
             //Selecting current time
             $stmt = $conn->prepare('SELECT NOW()');
@@ -134,6 +134,8 @@ if ($logged_in) {
 //Hiding part of email for security purposes
             $email = hide_mail($email);
 
+            $email_update_captcha_failed = $_SESSION['captcha_failed'];
+
         }
 
     } catch (PDOException $e) {
@@ -141,12 +143,13 @@ if ($logged_in) {
     }
 
 }
-
 ?>
     <!DOCTYPE html>
     <html lang="en">
     <head>
         <meta charset="UTF-8">
+        <!--Let browser know website is optimized for mobile-->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         <title>Bitcoin</title>
         <!-- Jquery -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -166,17 +169,23 @@ if ($logged_in) {
         <link href="css/style.css" rel="stylesheet">
 
         <!-- Recaptcha-->
-        <script src='https://www.google.com/recaptcha/api.js'></script>
-
-        <!--Let browser know website is optimized for mobile-->
-        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <script src='https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit' async defer></script>
 
         <!-- Form submits -->
-        <script>
-            function submitTicket() {
-                $("#ticket_form").submit();
-
+        <script type="text/javascript">
+            var onloadCallback = function () {
+                $(".g-recaptcha").each(function () {
+                    var object = $(this);
+                    grecaptcha.render(object.attr("id"), {
+                        "sitekey": "6Lf1d0EUAAAAAHlf_-pGuqjxWwBfy-UVkdJt-xLf",
+                        "callback": function (token) {
+                            object.parents('form').find(".g-recaptcha-response").val(token);
+                            object.parents('form').submit();
+                        }
+                    });
+                });
             }
+
         </script>
     </head>
     <body>
@@ -220,171 +229,116 @@ if ($logged_in) {
                             <?php endif; ?>
                             <ul class="collapsible popout" data-collapsible="expandable">
                                 <li>
-                                    <div class="collapsible-header <?php if (!empty($_SESSION['upd_email'])) {
+                                    <div class="collapsible-header <?php if ($email_update_requests > 0 || $email_update_captcha_failed) {
                                         echo "active";
-                                        unset($_SESSION['upd_email']);
                                     } ?>"><i class="material-icons">email</i>Update email
                                     </div>
                                     <div class="collapsible-body">
                                         <div class="row">
                                             <div class="col l8 offset-l2 m10 offset-m1 s12">
-                                                <?php if ((empty($email_code)) || (strtotime($current_time) > strtotime($code_expires))): ?>
-                                                    <blockquote class="blockquote-green w900">
-                                                        We use this email account to recover your password and to keep
+                                                <blockquote class="blockquote-green w900">
+                                                    <?php if ($email_update_requests == 0): ?>
+                                                        This email account is used to recover your password and to keep
                                                         you
                                                         updated about changes in your account.
+                                                    <?php else: ?>
+                                                        An email update confirmation link was sent to your current email.
+                                                        Please check your email before sending a new request.
+                                                    <?php endif; ?>
+                                                </blockquote>
+                                                <div class="col s12">
+                                                    <blockquote class="blockquote-error w900">
+                                                        <?php
+                                                        if ($email_update_captcha_failed == 1)
+                                                            echo "reCAPTCHA validation failed";
+                                                        ?>
                                                     </blockquote>
-                                                    <form class=""
-                                                          action="php_actions/update_email_code.php"
-                                                          method="post">
-                                                        <div class="row">
-                                                            <div class="input-field col s12">
-                                                                <input disabled name="old-email" id="old-email"
-                                                                       type="email"
-                                                                       value="<?php echo $email; ?>">
-                                                                <label id="oldEmailLabel" for="old-email"
-                                                                       data-error="Invalid email">Current
-                                                                    Email</label>
-                                                            </div>
-                                                            <div class="input-field col s12">
-                                                                <i class="material-icons prefix">mail_outline</i>
-                                                                <input name="new-email" id="new-email" type="email"
-                                                                       class="<?php
-                                                                       if (!empty($_SESSION['invalid_email']) || !empty($_SESSION['email_taken'])) {
-                                                                           echo 'invalid';
-                                                                       }
-                                                                       ?>" value="<?php
-                                                                if (!empty($_SESSION['new-email'])) {
-                                                                    echo $_SESSION['new-email'];
-                                                                    unset($_SESSION['new-email']);
-                                                                }
-                                                                ?>">
-                                                                <label id="newEmailLabel" for="new-email"
-                                                                       data-error="<?php
-                                                                       if (!empty($_SESSION['email_taken'])) {
-                                                                           echo "Email is already taken";
-                                                                           unset($_SESSION['email_taken']);
-                                                                       }
-
-                                                                       if (!empty($_SESSION['invalid_email'])) {
-                                                                           echo "Invalid email";
-                                                                           unset($_SESSION['invalid_email']);
-                                                                       }
-
-                                                                       ?>" data-success="Email is available">New
-                                                                    Email
-                                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
-                                                            </div>
-                                                            <div class="input-field col s12">
-                                                                <i class="material-icons prefix">mail</i>
-                                                                <input name="confirm-email" id="confirm-email"
-                                                                       type="email"
-                                                                       class="<?php
-                                                                       if (!empty($_SESSION['unmatch'])) {
-                                                                           echo 'invalid';
-                                                                           unset($_SESSION['unmatch']);
-                                                                       }
-                                                                       ?>" value="<?php
-                                                                if (!empty($_SESSION['confirm-email'])) {
-                                                                    echo $_SESSION['confirm-email'];
-                                                                    unset($_SESSION['confirm-email']);
-                                                                }
-
-                                                                ?>">
-                                                                <label id="confirmEmailLabel" for="confirm-email"
-                                                                       data-error="Emails do not match">Confirm New
-                                                                    Email
-                                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
-                                                            </div>
+                                                </div>
+                                                <form id="email_update_form" class=""
+                                                      action="actions/update_email_code.php"
+                                                      method="post">
+                                                    <div class="row">
+                                                        <div class="input-field col s12">
+                                                            <input disabled name="old-email" id="old-email"
+                                                                   type="email"
+                                                                   value="<?php echo $email; ?>">
+                                                            <label id="oldEmailLabel" for="old-email"
+                                                                   data-error="Invalid email">Current
+                                                                Email</label>
                                                         </div>
-                                                        <div class="row">
-                                                            <button type="submit" id="updateEmailButton"
-                                                                    class="waves-effect waves-light btn right disabled">
-                                                                Update
+                                                        <div class="input-field col s12">
+                                                            <i class="material-icons prefix">mail_outline</i>
+                                                            <input name="new-email" id="new-email" type="email"
+                                                                   class="<?php
+                                                                   if (!empty($_SESSION['invalid_email']) || !empty($_SESSION['email_taken'])) {
+                                                                       echo 'invalid';
+                                                                   }
+                                                                   ?>" value="<?php
+                                                            if (!empty($_SESSION['new-email'])) {
+                                                                echo $_SESSION['new-email'];
+                                                                unset($_SESSION['new-email']);
+                                                            }
+                                                            ?>">
+                                                            <label id="newEmailLabel" for="new-email"
+                                                                   data-error="<?php
+                                                                   if (!empty($_SESSION['email_taken'])) {
+                                                                       echo "Email is already taken";
+                                                                       unset($_SESSION['email_taken']);
+                                                                   }
+
+                                                                   if (!empty($_SESSION['invalid_email'])) {
+                                                                       echo "Invalid email";
+                                                                       unset($_SESSION['invalid_email']);
+                                                                   }
+
+                                                                   ?>" data-success="Email is available">New
                                                                 Email
-                                                            </button>
+                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
                                                         </div>
-                                                    </form>
-                                                <?php else: ?>
-                                                    <form class=""
-                                                          action="php_actions/update_email.php"
-                                                          method="post">
-                                                        <div class="row">
-                                                            <div class="input-field col s12">
-                                                                <input disabled name="old-email" id="old-email"
-                                                                       type="email"
-                                                                       value="<?php echo $email; ?>">
-                                                                <label id="oldEmailLabel" for="old-email"
-                                                                       data-error="Invalid email">Current
-                                                                    Email</label>
-                                                            </div>
-                                                            <div class="col s12">
-                                                                <blockquote class="blockquote-green w900">A code was
-                                                                    sent to
-                                                                    your current
-                                                                    email.
-                                                                    Type the code to
-                                                                    update your email.
-                                                                </blockquote>
-                                                                <br>
-                                                            </div>
-                                                            <div class="input-field col s4 offset-s4">
-                                                                <?php if (isset($_SESSION['incorrect_code']) && !empty($_SESSION['incorrect_code']) &&
-                                                                    $_SESSION == true): ?>
-                                                                    <input name="code" id="code" type="text"
-                                                                           class="upperCaseInput invalid"
-                                                                           maxlength="4"
-                                                                           value="<?php echo $_SESSION['input_code']; ?>">
-                                                                    <label id="codeLabel" for="code"
-                                                                           data-error="Incorrect code">CODE
-                                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
-                                                                    <?php unset($_SESSION['incorrect_code']);
-                                                                    ?>
-                                                                <?php else: ?>
-                                                                    <input name="code" id="code" type="text"
-                                                                           class="upperCaseInput"
-                                                                           maxlength="4">
-                                                                    <label id="codeLabel" for="code">CODE
-                                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
-                                                                <?php endif; ?>
-                                                            </div>
+                                                        <div class="input-field col s12">
+                                                            <i class="material-icons prefix">mail</i>
+                                                            <input name="confirm-email" id="confirm-email"
+                                                                   type="email"
+                                                                   class="<?php
+                                                                   if (!empty($_SESSION['unmatch'])) {
+                                                                       echo 'invalid';
+                                                                       unset($_SESSION['unmatch']);
+                                                                   }
+                                                                   ?>" value="<?php
+                                                            if (!empty($_SESSION['confirm-email'])) {
+                                                                echo $_SESSION['confirm-email'];
+                                                                unset($_SESSION['confirm-email']);
+                                                            }
+
+                                                            ?>">
+                                                            <label id="confirmEmailLabel" for="confirm-email"
+                                                                   data-error="Emails do not match">Confirm New
+                                                                Email
+                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
                                                         </div>
-                                                        <div class="row">
-                                                            <button type="submit" id="updateEmailCodeButton"
-                                                                    class="waves-effect waves-light btn right disabled">
-                                                                Update Email
-                                                            </button>
-                                                        </div>
-                                                    </form>
-                                                <?php endif; ?>
+                                                    </div>
+                                                    <div class="row">
+                                                        <button id="updateEmailButton"
+                                                                class="g-recaptcha waves-effect waves-light btn right disabled">
+                                                            Update
+                                                            Email
+                                                        </button>
+                                                    </div>
+                                                </form>
                                             </div>
                                         </div>
                                     </div>
@@ -403,8 +357,8 @@ if ($logged_in) {
                                     <div class="collapsible-body">
                                         <div class="row">
                                             <div class="col l8 offset-l2 m10 offset-m1 s12">
-                                                <form class=""
-                                                      action="php_actions/update_password.php"
+                                                <form id="update_password_form" class=""
+                                                      action="actions/update_password.php"
                                                       method="post">
                                                     <div class="row">
                                                         <blockquote class="blockquote-green w900">
@@ -529,8 +483,8 @@ if ($logged_in) {
                                                         </div>
                                                     </div>
                                                     <div class="row">
-                                                        <button type="submit" id="update_password_button"
-                                                                class="waves-effect waves-light btn right disabled">
+                                                        <button id="update_password_button"
+                                                                class="waves-effect waves-light btn right disabled g-recaptcha">
                                                             Update
                                                             Password
                                                         </button>
@@ -738,7 +692,7 @@ if ($logged_in) {
                                     <div class="collapsible-body">
                                         <div class="row">
                                             <div class="col l10 offset-l1 m10 offset-m1 s12">
-                                                <form method="post" action="php_actions/withdraw.php">
+                                                <form method="post" action="actions/withdraw.php">
                                                     <blockquote class="blockquote-green w900">
                                                         Transfer bitcoin to your personal wallet. Amount must be an
                                                         integer
@@ -1019,7 +973,7 @@ if ($logged_in) {
                                             <div class="col l10 offset-l1 m10 offset-m1 s12">
                                                 <div class="row">
                                                     <form id="transfer_form" method="post"
-                                                          action="php_actions/transfer.php">
+                                                          action="actions/transfer.php">
                                                         <blockquote class="blockquote-green w900">
                                                             Transfer bitcoin to another user. Amount must be an integer
                                                             number greater than 100 bits. A 100 bits
@@ -1304,7 +1258,7 @@ if ($logged_in) {
                                     <div class="collapsible-body">
                                         <div class="row">
                                             <div class="col l8 offset-l2 m10 offset-m1 s12">
-                                                <form method="post" action="php_actions/send_ticket.php"
+                                                <form method="post" action="actions/send_ticket.php"
                                                       id="ticket_form">
                                                     <blockquote class="blockquote-green w900">
                                                         Do you have a question or concern? Send a ticket, and we will be
@@ -1364,9 +1318,7 @@ if ($logged_in) {
                                                     <div class="row"></div>
                                                     <div class="row">
                                                         <button id="ticket_button" disabled
-                                                                class="waves-effect waves-light btn right g-recaptcha disabled"
-                                                                data-sitekey="6Lf1d0EUAAAAAHlf_-pGuqjxWwBfy-UVkdJt-xLf"
-                                                                data-callback="submitTicket">Submit
+                                                                class="waves-effect waves-light btn right disabled">Submit
                                                         </button>
                                                     </div>
                                                 </form>
@@ -1383,7 +1335,7 @@ if ($logged_in) {
                                         You might need to check your junk folder.</p>
                                 </div>
                                 <div class="card-action">
-                                    <a href="php_actions/send_confirmation_email.php">Send email again</a>
+                                    <a href="actions/send_confirmation_email.php">Send email again</a>
                                 </div>
                             </div>
                         <?php endif; ?>
@@ -1402,6 +1354,9 @@ if ($logged_in) {
     </body>
     </html>
 <?php
+
+/*Email update stuff*/
+unset($_SESSION['captcha_failed']);
 
 unset($_SESSION['transfer_user_error']);
 unset($_SESSION['transfer_amount_error']);

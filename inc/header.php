@@ -25,24 +25,24 @@ if ($logged_in) {
     <!-- Profile Structure -->
     <?php if (!empty($username)) : ?>
         <ul id="profileDropdown" class="dropdown-content">
-            <li><a href="account.php"><i class="material-icons left">build</i>Account</a></li>
-            <li><a href="php_actions/logout.php"><i class="material-icons left">exit_to_app</i>Logout</a></li>
+            <li><a href="account"><i class="material-icons left">build</i>Account</a></li>
+            <li><a href="php_actions/logout"><i class="material-icons left">exit_to_app</i>Logout</a></li>
         </ul>
     <?php endif; ?>
     <!-- Stats structure   -->
     <ul id="statsDropdown" class="dropdown-content">
-        <li><a href="user_stats.php"><i class="material-icons left">person</i>User stats</a></li>
-        <li><a href="game_info.php"><i class="material-icons left">assignment</i>Game Info</a></li>
-        <li><a href="games_history.php"><i class="material-icons left">access_time</i>Games History</a></li>
-        <li><a href="stats.php"><i class="material-icons left">assessment</i>Server Stats</a></li>
+        <li><a href="user_stats"><i class="material-icons left">person</i>User stats</a></li>
+        <li><a href="game_info"><i class="material-icons left">assignment</i>Game Info</a></li>
+        <li><a href="games_history"><i class="material-icons left">access_time</i>Games History</a></li>
+        <li><a href="stats"><i class="material-icons left">assessment</i>Server Stats</a></li>
     </ul>
     <!-- Navbar goes here -->
     <nav id="nav-top">
         <div class="nav-wrapper black darken-3">
-            <a href="index.php" class="brand-logo left"><img src="img/nav-logo.png" height="56" ></a>
+            <a href="http://localhost/bitcoinLottery/" class="brand-logo left"><img src="img/nav-logo.png" height="56" ></a>
             <ul id="nav-mobile" class="right .hide-on-small-only nav-letters">
-                <li class=""><a href="help.php"><i class="material-icons left">help</i>Help</a></li>
-                <li class=""><a href="rank.php"><i class="material-icons left">assistant_photo</i>Ranking</a></li>
+                <li class=""><a href="help"><i class="material-icons left">help</i>Help</a></li>
+                <li class=""><a href="rank"><i class="material-icons left">assistant_photo</i>Ranking</a></li>
                 <li><a class="dropdown-button" href="#" data-activates="statsDropdown">
                         <i class="material-icons left">trending_up</i>Stats<i
                             class="material-icons right">arrow_drop_down</i></a></li>
@@ -55,8 +55,8 @@ if ($logged_in) {
                                 class="material-icons right">arrow_drop_down</i></a>
                     </li>
                 <?php else: ?>
-                    <li><a href="registration.php">Register</a></li>
-                    <li><a href="login.php">Login</a></li>
+                    <li><a href="registration">Register</a></li>
+                    <li><a href="login">Login</a></li>
                 <?php endif; ?>
             </ul>
         </div>
