@@ -250,3 +250,110 @@
 <!--GOOGLE RECAPTCHA-->
 data-sitekey="6Lf1d0EUAAAAAHlf_-pGuqjxWwBfy-UVkdJt-xLf"
 data-callback="submitTicket"
+
+<?php
+/**
+ * Created by PhpStorm.
+ * User: luckiestguyever
+ * Date: 3/7/18
+ * Time: 9:12 PM
+ */
+session_start();
+
+include 'connect.php';
+include 'inc/login_checker.php';
+include 'inc/base-dir.php';
+
+$selector = $_GET['sel'];
+$validator = $_GET['val'];
+
+if (!empty($selector) && !empty($validator)) {
+
+    unset($_SESSION['password_reset_token']);
+    unset($_SESSION['password_reset_user_id']);
+
+    try {
+        $conn = new PDO("mysql:host=$servername;dbname=$dbname", $dbuser, $dbpass);
+        // set the PDO error mode to exception
+        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+
+        $stmt = $conn->prepare('SELECT user_id, expires, current_timestamp AS now FROM password_reset WHERE hashed_user_id = :selector
+AND validator = :validator');
+        $stmt->execute(array('selector' => $selector, 'validator' => $validator));
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        $reset_user_id = $result['user_id'];
+        $expires = $result['expires'];
+        $now = $result['now'];
+
+        if (!empty($reset_user_id)) {
+            if (strtotime($expires) < strtotime($now)) {
+                header("Location: /bitcoinLottery/expired-link");
+                die();
+            }
+        } else {
+            header("Location: /bitcoinLottery/expired-link");
+            die();
+        }
+
+
+    } catch (PDOException $e) {
+        echo "Connection failed: " . $e->getMessage();
+    }
+
+
+} else {
+//    header("Location: /bitcoinLottery/lost");
+//    die();
+}
+
+include 'inc/header.php';
+
+display_header("Password Reset - BitcoinPVP", "", "", false, $base_dir, $username, $balance);?>
+<main class="valign-wrapper">
+    <div class="container">
+        <div class="row"></div>
+        <div class="row">
+            <div class="col l6 offset-l3 m8 offset-m2 s12">
+                <div class="card">
+                    <div class="card-content">
+                        <span class="card-title"><b>Password Reset</b></span>
+                        <div class="row"></div>
+                        <form id="login" method="post" action="actions/loading-login.php">
+                            <div class="col m10 offset-m1 s12">
+                                <!--                                        <blockquote class="blockquote-green w900">-->
+                                Your new password must be at least 8 characters long. We
+                                encourage
+                                you
+                                to use a combination of symbols, numbers and letters for
+                                your
+                                new
+                                password in order to protect your account.
+                                <!--                                        </blockquote>-->
+                            </div>
+                            <div class="input-field col m10 offset-m1 s12">
+                                <i class="material-icons prefix">lock_outline</i>
+                                <input id="new_password" type="password" name="new_password">
+                                <label for="new_password">New PasswordARE YOU FUCKING STUPID</label>
+                            </div>
+                            <div class="input-field col m10 offset-m1 s12">
+                                <i class="material-icons prefix">lock</i>
+                                <input id="confirm_new_password" type="password" name="confirm_new_password">
+                                <label for="confirm_new_password">Confirm New Password</label>
+                            </div>
+                            <div class="row">
+                                <div class="input-field col m10 offset-m1 s12">
+                                    <button type="submit" id="ticket_button"
+                                            class="waves-effect waves-light btn right amber darken-3">Reset
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<?php include 'inc/footer.php' ?>
+

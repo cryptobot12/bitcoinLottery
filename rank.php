@@ -380,5 +380,5 @@ if (isset($_GET['user']) && !empty($_GET['user']) && (!isset($rowTable['username
     </div>
 </main>
 <?php include "inc/footer.php"; ?>
-</body>
-</html>
+
+

@@ -138,6 +138,7 @@ try {
 
     <!--Let browser know website is optimized for mobile-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="icon" href="img/favicon_symbol.png" type="image/gif" sizes="16x16">
 </head>
 <body>
 <header>
@@ -165,7 +166,7 @@ try {
                         <span class="card-title"><b>Last Game</b></span>
                         <div id="last_game_med">
                             <p>
-                                <a id="game_link_med" href="game_info.php?game_id=<?php echo $last_game; ?>"
+                                <a id="game_link_med" href="game-info.php?game_id=<?php echo $last_game; ?>"
                                    target="_blank">Game #<span
                                             id="last_game_number_med"><?php echo $last_game; ?></span></a>
                             </p>
@@ -445,5 +446,5 @@ try {
 
 </main>
 <?php include "inc/footer.php"; ?>
-</body>
-</html>
+
+

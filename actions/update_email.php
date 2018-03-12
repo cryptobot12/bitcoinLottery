@@ -15,6 +15,7 @@ require '../vendor/autoload.php';
 
 include "../connect.php";
 include "../inc/login_checker.php";
+include '../inc/base-dir.php';
 
 $hashed_user_id = $_GET['sel'];
 $validator = $_GET['val'];
@@ -94,8 +95,8 @@ AND validator = :validator AND CURRENT_TIMESTAMP < expires');
 
     <div style="background: black; color: white; padding: 10px;">© 2018 Copyright BitcoinPVP</div>
 </div>
-</body>
-</html>';
+
+';
 
             $mail->send();
             echo 'Message has been sent';
@@ -116,7 +117,7 @@ AND validator = :validator AND CURRENT_TIMESTAMP < expires');
 
     }
     else {
-        header("Location: ../expired_link.php" );
+        header("Location: ../expired-link" );
         die();
     }
 

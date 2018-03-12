@@ -10,49 +10,22 @@ session_start();
 
 include 'connect.php';
 include 'inc/login_checker.php';
+include 'inc/base-dir.php';
 
 if (!$logged_in) {
     $login_error = !empty($_SESSION['login_error']) ? $_SESSION['login_error'] : 0;
     unset($_SESSION['login_error']);
 }
 
-?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>BitcoinPVP - Login</title>
-    <!-- Jquery -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+include 'inc/header.php';
 
-    <!-- Compiled and minified CSS -->
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <!-- Compiled and minified JavaScript -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
-
-    <!-- Custom scripts -->
-
-    <!-- Custom style -->
-    <link href="css/style.css" rel="stylesheet">
-
-    <!-- Recaptcha-->
-    <script src='https://www.google.com/recaptcha/api.js'></script>
-    <script>
-        function submitTicket() {
+$scripts = 'function submitTicket() {
             $("#login").submit();
 
-        }
-    </script>
+        }';
+display_header("BitcoinPVP - Login", "", $scripts, true, $base_dir, $username, $balance);
 
-    <!--Let browser know website is optimized for mobile-->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-</head>
-<body>
-<header>
-    <?php include 'inc/header.php'; ?>
-</header>
+?>
 <main class="valign-wrapper">
     <div class="container">
         <div class="row">
@@ -69,7 +42,7 @@ if (!$logged_in) {
                         <span class="card-title"><b>Login</b></span>
                         <span>with your BitcoinPVP Account</span>
                         <div class="row"></div>
-                        <form id="login" method="post" action="actions/loading_login.php">
+                        <form id="login" method="post" action="actions/loading-login">
                             <?php if (!empty($login_error)): ?>
                                     <div class="col m10 offset-m1 s12">
                                         <blockquote class="blockquote-error w900">
@@ -101,7 +74,7 @@ if (!$logged_in) {
                             <div class="row"></div>
                             <div class="row">
                                 <div class="col m6 s12 offset-m1">
-                                <a href="forgot_password">Forgot password?</a>
+                                <a href="forgot-password">Forgot password?</a>
                                 </div>
                             </div>
                             <div class="row">
@@ -123,5 +96,3 @@ if (!$logged_in) {
     </div>
 </main>
 <?php include 'inc/footer.php' ?>
-</body>
-</html>

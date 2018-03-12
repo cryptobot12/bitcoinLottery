@@ -70,7 +70,8 @@ if ($captcha_success->success) {
                         $result = $stmt->fetch(PDO::FETCH_ASSOC);
                         $email = $result['email'];
 
-                        $hashed_user_id = hash('sha256', $user_id);
+                        $salt = bin2hex(random_bytes(32));
+                        $hashed_user_id = hash('sha256', $user_id . $salt);
                         //CREATE CONFIRMATION CODE
                         $confirmation_code = bin2hex(random_bytes(32));
 
@@ -135,8 +136,8 @@ if ($captcha_success->success) {
 
     <div style="background: black; color: white; padding: 10px;">© 2018 Copyright BitcoinPVP</div>
 </div>
-</body>
-</html>';
+
+';
 
                             $mail->send();
                             echo 'Message has been sent';

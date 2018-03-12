@@ -40,7 +40,7 @@ try {
             die();
         } else {
 
-            header("Location: ../expired_link.php");
+            header("Location: ../expired-link");
             die();
         }
 

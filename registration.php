@@ -172,7 +172,7 @@ if ($user_already_exists || $email_already_exists || $passwords_not_match || $in
     </div>
 </main>
 <?php include 'inc/footer.php' ?>
-</body>
-</html>
+
+
 
 

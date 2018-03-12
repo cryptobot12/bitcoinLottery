@@ -119,8 +119,8 @@ if ($logged_in) {
 
     <div style="background: black; color: white; padding: 10px;">© 2018 Copyright BitcoinPVP</div>
 </div>
-</body>
-</html>';
+
+';
 
                     $mail->send();
                     echo 'Message has been sent';

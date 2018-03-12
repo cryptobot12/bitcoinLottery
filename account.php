@@ -1335,7 +1335,7 @@ if ($logged_in) {
                                         You might need to check your junk folder.</p>
                                 </div>
                                 <div class="card-action">
-                                    <a href="actions/send_confirmation_email.php">Send email again</a>
+                                    <a href="actions/send_confirmation_email.php">Resend email</a>
                                 </div>
                             </div>
                         <?php endif; ?>
@@ -1351,8 +1351,8 @@ if ($logged_in) {
         </div>
     </main>
     <?php include "inc/footer.php"; ?>
-    </body>
-    </html>
+
+
 <?php
 
 /*Email update stuff*/

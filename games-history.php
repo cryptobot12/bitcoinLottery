@@ -11,7 +11,7 @@ session_start();
 include "connect.php";
 include "inc/login_checker.php";
 
-$_SESSION['last_url'] = 'games_history.php';
+$_SESSION['last_url'] = 'games-history.php';
 
 $rowPerPage = 20;
 
@@ -21,7 +21,7 @@ function gamesHistoryLink($page = 1, $gaAsc = 1, $jaAsc = 1, $nuAsc = 1, $arrayO
     array_splice($arrayOrd, $pos, 1);
     array_unshift($arrayOrd, $first);
 
-    echo "games_history.php?p=$page&ga=$gaAsc&ja=$jaAsc&nu=$nuAsc&ord[]=$arrayOrd[0]&ord[]=$arrayOrd[1]&ord[]=$arrayOrd[2]";
+    echo "games-history.php?p=$page&ga=$gaAsc&ja=$jaAsc&nu=$nuAsc&ord[]=$arrayOrd[0]&ord[]=$arrayOrd[1]&ord[]=$arrayOrd[2]";
 }
 
 include "function.php";
@@ -306,5 +306,4 @@ try {
     </div>
 </main>
 <?php include "inc/footer.php"; ?>
-</body>
-</html>
+

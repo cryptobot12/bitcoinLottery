@@ -1,0 +1,16 @@
+RewriteEngine On
+
+RewriteBase /bitcoinLottery/
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^password-reset/([^/]+)/([^/]+)/?$ password-reset.php?sel=$1&val=$2 [L,QSA]
+
+RewriteCond %{REQUEST_URI} [/]$
+RewriteRule ^([^/]*)[/]$ $1 [L,R]
+
+# If the request doesn't end in .php (Case insensitive) continue processing rules
+RewriteCond %{REQUEST_URI} !(\.php|\.js|\.css|\.gif|\.jpg|\.jpeg|\.png|\.bmp)$ [NC]
+# If the request doesn't end in a slash continue processing the rules
+RewriteCond %{REQUEST_URI} [^/]$
+# Rewrite the request with a .php extension. L means this is the 'Last' rule
+RewriteRule ^(.*)$ $1.php [L]

@@ -70,5 +70,5 @@ include 'inc/login_checker.php';
 <?php include 'inc/footer.php';
 unset($_SESSION['account_management_success']);
 ?>
-</body>
-</html>
+
+
