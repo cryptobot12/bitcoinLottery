@@ -7,7 +7,7 @@ session_start();
  * Time: 7:23 PM
  */
 
-include "../connect.php";
+include "../globals.php";
 $username = htmlspecialchars($_POST['username']);
 $password = htmlspecialchars($_POST['password']);
 $remember_me = (!empty($_POST['remember_me']) ? true : false);
@@ -92,8 +92,11 @@ if ($captcha_success->success) {
             } else {
 
                 $_SESSION['login_error'] = 3;
-                header("Location: ../login.php");
-                die();
+                echo $password;
+                echo $user_info['password'];
+                var_dump(password_verify($password, $user_info['password']));
+//                header("Location: ../login.php");
+//                die();
             }
         } else {
             $_SESSION['login_error'] = 2;

@@ -8,7 +8,7 @@
 session_start();
 
 include "function.php";
-include "connect.php";
+include "globals.php";
 include "inc/login_checker.php";
 
 $rowPerPage = 7;
@@ -143,55 +143,10 @@ if ($logged_in) {
     }
 
 }
+$title = "Account - BitcoinPVP";
+
+include "inc/header.php";
 ?>
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <!--Let browser know website is optimized for mobile-->
-        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        <title>Bitcoin</title>
-        <!-- Jquery -->
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-
-        <!-- Compiled and minified CSS -->
-        <link rel="stylesheet"
-              href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
-        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-        <!-- Compiled and minified JavaScript -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
-
-        <!-- Custom scripts -->
-        <script src="js/btcvalid.js"></script>
-        <script src="js/account_script.js"></script>
-
-        <!-- Custom style -->
-        <link href="css/style.css" rel="stylesheet">
-
-        <!-- Recaptcha-->
-        <script src='https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit' async defer></script>
-
-        <!-- Form submits -->
-        <script type="text/javascript">
-            var onloadCallback = function () {
-                $(".g-recaptcha").each(function () {
-                    var object = $(this);
-                    grecaptcha.render(object.attr("id"), {
-                        "sitekey": "6Lf1d0EUAAAAAHlf_-pGuqjxWwBfy-UVkdJt-xLf",
-                        "callback": function (token) {
-                            object.parents('form').find(".g-recaptcha-response").val(token);
-                            object.parents('form').submit();
-                        }
-                    });
-                });
-            }
-
-        </script>
-    </head>
-    <body>
-    <header>
-        <?php include "inc/header.php" ?>
-    </header>
     <main class="valign-wrapper">
         <div class="container">
             <?php if ($logged_in): ?>
@@ -255,7 +210,7 @@ if ($logged_in) {
                                                     </blockquote>
                                                 </div>
                                                 <form id="email_update_form" class=""
-                                                      action="actions/update_email_code.php"
+                                                      action="actions/update_email_code"
                                                       method="post">
                                                     <div class="row">
                                                         <div class="input-field col s12">
@@ -358,7 +313,7 @@ if ($logged_in) {
                                         <div class="row">
                                             <div class="col l8 offset-l2 m10 offset-m1 s12">
                                                 <form id="update_password_form" class=""
-                                                      action="actions/update_password.php"
+                                                      action="actions/update_password"
                                                       method="post">
                                                     <div class="row">
                                                         <blockquote class="blockquote-green w900">
@@ -1350,6 +1305,34 @@ if ($logged_in) {
             <?php endif; ?>
         </div>
     </main>
+    <!-- Jquery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+
+    <!-- Custom scripts -->
+    <script src="js/btcvalid.js"></script>
+    <script src="js/account_script.js"></script>
+
+    <!-- Recaptcha-->
+    <script src='https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit' async defer></script>
+
+    <!-- Form submits -->
+    <script type="text/javascript">
+        var onloadCallback = function () {
+            $(".g-recaptcha").each(function () {
+                var object = $(this);
+                grecaptcha.render(object.attr("id"), {
+                    "sitekey": "6Lf1d0EUAAAAAHlf_-pGuqjxWwBfy-UVkdJt-xLf",
+                    "callback": function (token) {
+                        object.parents('form').find(".g-recaptcha-response").val(token);
+                        object.parents('form').submit();
+                    }
+                });
+            });
+        }
+
+    </script>
     <?php include "inc/footer.php"; ?>
 
 

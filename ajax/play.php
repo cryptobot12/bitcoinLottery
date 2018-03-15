@@ -10,7 +10,7 @@ session_start();
  * Time: 12:44 PM
  */
 
-include "../connect.php";
+include "../globals.php";
 include "../inc/login_checker.php";
 
 $betNumber = json_decode(htmlspecialchars($_POST['numbers']));

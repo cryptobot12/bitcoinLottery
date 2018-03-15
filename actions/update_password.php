@@ -13,7 +13,7 @@ use PHPMailer\PHPMailer\Exception;
 //Load composer's autoloader
 require '../vendor/autoload.php';
 
-include "../connect.php";
+include "../globals.php";
 include "../inc/login_checker.php";
 
 $current_password = $_POST['current_password'];
@@ -88,36 +88,25 @@ if ($logged_in) {
                     //Content
                     $mail->CharSet = 'UTF-8';
                     $mail->isHTML(true);                                  // Set email format to HTML
-                    $mail->Subject = 'BitcoinPVP Password changed';
-                    $mail->Body = '<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
-    <style>
-        body {
-            font-family: \'Roboto\', sans-serif;
-        }
-    </style>
-</head>
-<body>
+                    $mail->Subject = 'Password Updated';
+                    $mail->Body = '
 <div style="width: 700px; margin: 0 auto;">
-    <div style="background: black"><img src="http://www.bitcoinpvp.net/img/nav-logo.png" height="56"></div>
+    <div style="background: black"><img src="http://www.bitcoinpvp.net/img/nav-logo.png" height="40"></div>
 
-    <div style="width: 75%; margin: 50px auto;">
+    <div style="width: 75%; margin: 50px auto; color: black;">
 
-<p>Greetings <span style="color: red;"><b>' . $row['email'] . '</b></span>,</p>
+<p>Greetings <span style="color: red;"><b>' . $username . '</b></span>,</p>
         <p>Your password has been recently changed.</p>
 
         <p>If you did not change your password, your account credentials 
         might have been compromised.</p>
 
-        <p>For more information on your account — please visit your <a href="http://localhost/bitcoinLottery/account.php">Account Management page.</a></p>
+        <p>For more information on your account — please visit your <a href="'. $base_dir .'account">Account Management page.</a></p>
 
         <p>BitcoinPVP Team</p>
     </div>
 
-    <div style="background: black; color: white; padding: 10px;">© 2018 Copyright BitcoinPVP</div>
+     <div style="background: black; color: white; padding: 10px;">© ' . date('Y') . ' Copyright BitcoinPVP</div>
 </div>
 
 ';

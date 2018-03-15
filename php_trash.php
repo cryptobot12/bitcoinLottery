@@ -260,9 +260,9 @@ data-callback="submitTicket"
  */
 session_start();
 
-include 'connect.php';
+include 'globals.php';
 include 'inc/login_checker.php';
-include 'inc/base-dir.php';
+include 'inc/';
 
 $selector = $_GET['sel'];
 $validator = $_GET['val'];

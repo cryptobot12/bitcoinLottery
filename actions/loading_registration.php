@@ -13,7 +13,7 @@ use PHPMailer\PHPMailer\Exception;
 require '../vendor/autoload.php';
 
 include '../function.php';
-include "../connect.php";
+include "../globals.php";
 
 
 $username = strtolower($_POST['username']);

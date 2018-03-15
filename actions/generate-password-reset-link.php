@@ -13,8 +13,7 @@ use PHPMailer\PHPMailer\Exception;
 //Load composer's autoloader
 require '../vendor/autoload.php';
 
-include '../connect.php';
-include "../inc/base-dir.php";
+include '../globals.php';
 
 $recaptcha_response = $_POST['g-recaptcha-response'];
 $email_input = $_POST['email_input'];
@@ -109,16 +108,16 @@ if ($captcha_success->success) {
         <p>We\'ve received a password reset request for your BitcoinPVP account.<br>
             To reset your password, click the link below: </p>
 
-        <a href="http://localhost/bitcoinLottery/password-reset/' . $hashed_user_id . '/' . $confirmation_code . '">Reset password</a>
+        <a href="' . $base_dir . 'password-reset/' . $hashed_user_id . '/' . $confirmation_code . '">Reset password</a>
 
         <p>This link will expire in 24 hours. If you did not request a password reset, you can ignore this email.</p>
 
-        <p>For more information on your account — please visit your <a href="'. $base_dir .'account">Account Management page.</a></p>
+        <p>For more information on your account — please visit your <a href="' . $base_dir . 'account">Account Management page.</a></p>
 
         <p>BitcoinPVP Team</p>
     </div>
 
-    <div style="background: black; color: white; padding: 10px;">© 2018 Copyright BitcoinPVP</div>
+    <div style="background: black; color: white; padding: 10px;">© ' . date('Y') . ' Copyright BitcoinPVP</div>
 </div>';
 
                     $mail->send();
@@ -167,16 +166,16 @@ if ($captcha_success->success) {
         <p>We\'ve received a password reset request for your BitcoinPVP account.<br>
             To reset your password, click the link below: </p>
 
-        <a href="http://localhost/bitcoinLottery/password-reset/' . $hashed_user_id . '/' . $confirmation_code . '">Reset password</a>
+        <a href="' . $base_dir . 'password-reset/' . $hashed_user_id . '/' . $confirmation_code . '">Reset password</a>
 
         <p>This link will expire in 24 hours. If you did not request a password reset, you can ignore this email.</p>
 
-        <p>For more information on your account — please visit your <a href="'. $base_dir .'account">Account Management page.</a></p>
+        <p>For more information on your account — please visit your <a href="' . $base_dir . 'account">Account Management page.</a></p>
 
         <p>BitcoinPVP Team</p>
     </div>
 
-    <div style="background: black; color: white; padding: 10px;">© 2018 Copyright BitcoinPVP</div>
+    <div style="background: black; color: white; padding: 10px;">© ' . date('Y') . ' Copyright BitcoinPVP</div>
 </div>';
 
                         $mail->send();
@@ -195,7 +194,7 @@ if ($captcha_success->success) {
 
                     if (strtotime($last_send) < strtotime($now)) {
 
-                        $stmt = $conn->prepare( 'SELECT username, email FROM user WHERE user_id = :user_id');
+                        $stmt = $conn->prepare('SELECT username, email FROM user WHERE user_id = :user_id');
                         $stmt->execute(array('user_id' => $user_id));
                         $result = $stmt->fetch(PDO::FETCH_ASSOC);
                         $username = $result['username'];
@@ -236,16 +235,16 @@ user_id = :user_id');
         <p>We\'ve received a password reset request for your BitcoinPVP account.<br>
             To reset your password, click the link below: </p>
 
-        <a href="http://localhost/bitcoinLottery/password-reset/' . $hashed_user_id . '/' . $confirmation_code . '">Reset password</a>
+        <a href="' . $base_dir . 'password-reset/' . $hashed_user_id . '/' . $confirmation_code . '">Reset password</a>
 
         <p>This link will expire in 24 hours. If you did not request a password reset, you can ignore this email.</p>
 
-        <p>For more information on your account — please visit your <a href="'. $base_dir .'account">Account Management page.</a></p>
+        <p>For more information on your account — please visit your <a href="' . $base_dir . 'account">Account Management page.</a></p>
 
         <p>BitcoinPVP Team</p>
     </div>
 
-    <div style="background: black; color: white; padding: 10px;">© 2018 Copyright BitcoinPVP</div>
+    <div style="background: black; color: white; padding: 10px;">© ' . date('Y') . ' Copyright BitcoinPVP</div>
 </div>';
 
                             $mail->send();
@@ -253,7 +252,6 @@ user_id = :user_id');
                         } catch (Exception $e) {
                             echo $mail->ErrorInfo;
                         }
-
 
 
                     } else {
@@ -265,14 +263,14 @@ user_id = :user_id');
 
             $_SESSION['password_reset_token'] = true;
             $_SESSION['password_reset_user_id'] = $user_id;
-            header("Location: ../password-reset-email-send.php");
+            header("Location: " . $base_dir . "password-reset-email-send");
             die();
 
             /*****************************/
         } else {
             $_SESSION['email_does_not_exist'] = true;
             $_SESSION['email_input'] = $email_input;
-            header("Location: ../forgot-password");
+            header("Location: " . $base_dir . "forgot-password");
             die();
         }
 
@@ -282,6 +280,6 @@ user_id = :user_id');
     }
 } else {
     $_SESSION['captcha_failed'] = true;
-    header("Location: ../forgot-password");
+    header("Location: " . $base_dir . "forgot-password");
     die();
 }

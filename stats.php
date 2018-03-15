@@ -7,7 +7,7 @@
  */
 session_start();
 
-include "connect.php";
+include "globals.php";
 include "inc/login_checker.php";
 
 $_SESSION['last_url'] = 'stats.php';

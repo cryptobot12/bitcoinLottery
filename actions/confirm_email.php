@@ -7,7 +7,7 @@
  */
 session_start();
 
-include "../connect.php";
+include "../globals.php";
 
 $hashed_user_id = $_GET['sel'];
 $validator = $_GET['val'];

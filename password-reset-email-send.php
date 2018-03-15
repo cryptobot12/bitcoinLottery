@@ -7,9 +7,8 @@
  */
 session_start();
 
-include 'connect.php';
+include 'globals.php';
 include 'inc/login_checker.php';
-include 'inc/base-dir.php';
 
 if (empty($_SESSION['password_reset_token']) || $_SESSION['password_reset_token'] == false) {
     header("Location: /bitcoinLottery/lost");
@@ -22,9 +21,9 @@ $failed_resent = !empty($_SESSION['too_soon_to_send_email_again']) ? $_SESSION['
 unset($_SESSION['email_sent_again_success']);
 unset($_SESSION['too_soon_to_send_email_again']);
 
+$title = "Password Reset - BitcoinPVP";
 include "inc/header.php";
 
-display_header("Password reset - BitcoinPVP", [], "", false, $base_dir,$username, $balance);
 ?>
 <main class="valign-wrapper">
     <div class="container">
@@ -54,4 +53,8 @@ display_header("Password reset - BitcoinPVP", [], "", false, $base_dir,$username
         </div>
     </div>
 </main>
+<!-- Jquery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<!-- Compiled and minified JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
 <?php include 'inc/footer.php' ?>

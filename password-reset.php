@@ -7,9 +7,9 @@
  */
 session_start();
 
-include 'connect.php';
+include 'globals.php';
 include 'inc/login_checker.php';
-include 'inc/base-dir.php';
+include 'inc/';
 
 $selector = $_GET['sel'];
 $validator = $_GET['val'];
@@ -59,24 +59,16 @@ $confirm_new_password_input = !empty($_SESSION['confirm_new_password_input']) ? 
 $short_password = !empty($_SESSION['short_password']) ? $_SESSION['short_password'] : false;
 $unmatched_password = !empty($_SESSION['unmatched_password']) ? $_SESSION['unmatched_password'] : false;
 
-if ($short_password)
-    $new_password_de = "Your password must be at least 8 characters long";
-else
-    $new_password_de = "";
-
-if ($unmatched_password)
-    $confirm_new_password_de = "Passwords do not match";
-else
-    $confirm_new_password_de = "";
+$new_password_class = $short_password ? "invalid" : "";
+$confirm_new_password_class = $unmatched_password ? "invalid" : "";
 
 unset($_SESSION['new_password_input']);
 unset($_SESSION['confirm_new_password_input']);
 unset($_SESSION['short_password']);
 unset($_SESSION['unmatched_password']);
 
-include 'inc/header.php';
-
-display_header("Password Reset - BitcoinPVP", "", "", false, $base_dir, $username, $balance); ?>
+$title = "Password Reset - BitcoinPVP";
+include 'inc/header.php'; ?>
 <main class="valign-wrapper">
     <div class="container">
         <div class="row"></div>
@@ -100,29 +92,24 @@ display_header("Password Reset - BitcoinPVP", "", "", false, $base_dir, $usernam
                             </div>
                             <div class="input-field col m10 offset-m1 s12">
                                 <i class="material-icons prefix">lock_outline</i>
-                                <?php if (empty($new_password_de)): ?>
-                                    <input id="new_password" type="password" name="new_password">
-                                <?php else: ?>
-                                    <input id="new_password" type="password" name="new_password" class="invalid">
-                                <?php endif; ?>
-                                <label for="new_password" data-error="<?php echo $new_password_de; ?>">New
+                                <input id="new_password" type="password" name="new_password"
+                                       class="<?php echo $new_password_class; ?>"
+                                       value="<?php echo $new_password_input; ?>">
+                                <label for="new_password" data-error="Your password must be at least 8 characters long">New
                                     Password</label>
                             </div>
                             <div class="input-field col m10 offset-m1 s12">
                                 <i class="material-icons prefix">lock</i>
-                                <?php if (empty($confirm_new_password_de)): ?>
-                                    <input id="confirm_new_password" type="password" name="confirm_new_password">
-                                <?php else: ?>
                                     <input id="confirm_new_password" type="password" name="confirm_new_password"
-                                           class="invalid">
-                                <?php endif; ?>
-                                <label for="confirm_new_password" data-error="<?php echo $new_password_de; ?>">Confirm
+                                           class="<?php echo $confirm_new_password_class;?>"
+                                    value="<?php echo $confirm_new_password_input; ?>">
+                                <label for="confirm_new_password" data-error="Passwords do not match">Confirm
                                     New Password</label>
                             </div>
                             <div class="row">
                                 <div class="input-field col m10 offset-m1 s12">
-                                    <button type="submit" id="ticket_button"
-                                            class="waves-effect waves-light btn right amber darken-3">Reset
+                                    <button id="password_reset_button" type="submit" disabled
+                                            class="waves-effect waves-light btn right amber darken-3 disabled">Reset
                                     </button>
                                 </div>
                             </div>
@@ -138,6 +125,7 @@ display_header("Password Reset - BitcoinPVP", "", "", false, $base_dir, $usernam
 <!-- Jquery -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <!-- Compiled and minified JavaScript -->
-<script src=\"https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js\"></script>";
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+<script src="<?php echo $base_dir; ?>js/password-reset.js"></script>
 <?php include 'inc/footer.php' ?>
 

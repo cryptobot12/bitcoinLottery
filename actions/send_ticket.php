@@ -9,7 +9,7 @@
 session_start();
 
 include '../function.php';
-include '../connect.php';
+include '../globals.php';
 
 $subject = htmlspecialchars($_POST['support_subject']);
 $content = htmlspecialchars($_POST['support_content']);

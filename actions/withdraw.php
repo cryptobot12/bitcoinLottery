@@ -8,7 +8,7 @@
  */
 session_start();
 
-include '../connect.php';
+include '../globals.php';
 include '../function.php';
 
 function decodeBase58($input)

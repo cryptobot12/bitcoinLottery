@@ -9,7 +9,7 @@ session_start();
 
 $rowPerPage = 25;
 
-include "connect.php";
+include "globals.php";
 include "function.php";
 include "inc/login_checker.php";
 

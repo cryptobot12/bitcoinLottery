@@ -7,7 +7,7 @@
  */
 session_start();
 
-include "../connect.php";
+include "../globals.php";
 
 try {
     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $dbuser, $dbpass);

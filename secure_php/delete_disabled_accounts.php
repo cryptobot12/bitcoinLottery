@@ -6,7 +6,7 @@
  * Time: 1:13 PM
  */
 
-include "../connect.php";
+include "../globals.php";
 
 //To run in cron jobs
 try {

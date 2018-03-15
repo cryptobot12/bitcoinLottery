@@ -8,7 +8,7 @@
 
 session_start();
 
-include "../connect.php";
+include "../globals.php";
 include "../inc/login_checker.php";
 
 $username = strtolower($_POST['username']);

@@ -13,9 +13,9 @@ use PHPMailer\PHPMailer\Exception;
 //Load composer's autoloader
 require '../vendor/autoload.php';
 
-include "../connect.php";
+include "../globals.php";
 include "../inc/login_checker.php";
-include '../inc/base-dir.php';
+include '../inc/';
 
 $hashed_user_id = $_GET['sel'];
 $validator = $_GET['val'];
@@ -88,7 +88,7 @@ AND validator = :validator AND CURRENT_TIMESTAMP < expires');
 
         <p>We inform you that your email address for your BitcoinPVP account has been successfully updated.</p>
 
-        <p>For more information on your account — please visit your <a href="http://localhost/bitcoinLottery/account.php">Account Management page.</a></p>
+        <p>For more information on your account — please visit your <a href="' .$base_dir . 'account">Account Management page.</a></p>
 
         <p>BitcoinPVP Team</p>
     </div>
@@ -106,12 +106,10 @@ AND validator = :validator AND CURRENT_TIMESTAMP < expires');
 
         $_SESSION['account_management_success'] = 1;
         if ($logged_in) {
-
-
-            header('Location: ../account.php');
+            header('Location: ' . $base_dir . 'account');
             die();
         } else {
-            header('Location: ../unlogged_success.php');
+            header('Location: ' . $base_dir . 'unlogged-success');
             die();
         }
 

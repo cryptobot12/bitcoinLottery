@@ -9,9 +9,8 @@
 
 session_start();
 
-include 'connect.php';
+include 'globals.php';
 include 'inc/login_checker.php';
-include 'inc/base-dir.php';
 
 $captcha_failed = !empty($_SESSION['captcha_failed']) ? $_SESSION['captcha_failed'] : false;
 $email_does_not_exist = !empty($_SESSION['email_does_not_exist']) ? $_SESSION['email_does_not_exist'] : false;
@@ -26,9 +25,8 @@ if ($captcha_failed || $email_does_not_exist)
 else
     $show_error = false;
 
-include 'inc/header.php';
-display_header("Password Reset - BitcoinPVP", $base_dir, $username, $balance);
-?>
+$title = "Password Recovery - BitcoinPVP";
+include 'inc/header.php'; ?>
     <main class="valign-wrapper">
         <div class="container">
             <div class="row">
@@ -80,6 +78,10 @@ display_header("Password Reset - BitcoinPVP", $base_dir, $username, $balance);
             </div>
         </div>
     </main>
+    <!-- Jquery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
     <script src='https://www.google.com/recaptcha/api.js'></script>
     <script>
         function toggle_button() {
