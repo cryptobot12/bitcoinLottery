@@ -55,7 +55,7 @@ include 'inc/header.php'; ?>
                             <?php endif; ?>
                             <div class="row no-marg-bot">
                                 <form id="password_reset_form" method="post" class="col m10 s12 offset-m1"
-                                      action="actions/generate-password-reset-link">
+                                      action="<?php echo $base_dir; ?>actions/generate-password-reset-link">
                                     <div class="row">
                                         <div class="input-field col s12">
                                             <i class="material-icons prefix">email</i>

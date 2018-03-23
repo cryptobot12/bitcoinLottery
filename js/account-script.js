@@ -4,42 +4,6 @@ function isEmail(email) {
     return regex.test(email);
 }
 
-//Code input for email update
-$(function () {
-
-    var codeInput = $("#code");
-    var regex = /\W/;
-    var submitButton = $("#updateEmailCodeButton");
-
-    var delayEmailCode = (function () {
-        var timer = 0;
-        return function (callback, ms) {
-            clearTimeout(timer);
-            timer = setTimeout(callback, ms);
-        };
-    })();
-
-
-    codeInput.on('keyup input', function () {
-        codeInput.removeClass('valid');
-        codeInput.removeClass('invalid');
-        submitButton.addClass('disabled');
-        submitButton.prop("disabled", true);
-
-        delayEmailCode(function () {
-            if (codeInput.val().length === 4 && !regex.test(codeInput.val())) {
-                submitButton.removeClass('disabled');
-                submitButton.prop("disabled", false);
-            }
-            else {
-                codeInput.addClass('invalid');
-            }
-        }, 1500);
-
-
-    });
-});
-
 /* AJAX EMAIL UNIQUENESS */
 function verifyEmailUniqueness() {
 
@@ -126,6 +90,39 @@ $(function () {
         };
     })();
 
+    //DOCUMENT READY////////////////////////////////////
+    var newEmailVal = newEmail.val();
+    var conEmailVal = confirmEmail.val();
+
+    if (newEmailVal.length > 0) {
+        if (isEmail(newEmailVal)) {
+
+            verifyEmailUniqueness();
+
+        }
+        else {
+            newEmail.addClass("invalid");
+
+            labelNewEmail.attr("data-error", "Invalid email");
+        }
+    }
+
+    if (conEmailVal.length > 0) {
+        if (conEmailVal === newEmailVal && conEmailVal !== "" && newEmailVal !== "") {
+
+            confirmEmail.addClass("valid");
+        }
+        else {
+            confirmEmail.addClass("invalid");
+
+            labelConfirmEmail.attr("data-error", "Emails do not match");
+        }
+    }
+
+    if (newEmail.hasClass('valid') && confirmEmail.hasClass('valid'))
+        toggleEmailButton(true);
+
+    /////////////////////////////////////////////////
     newEmail.on('keyup input', function () {
         newEmail.removeClass('valid');
         newEmail.removeClass('invalid');
@@ -136,6 +133,7 @@ $(function () {
 
         delayNewEmail(function () {
             var newEmailVal = newEmail.val();
+            var conEmailVal = confirmEmail.val();
 
             if (isEmail(newEmailVal)) {
 
@@ -148,6 +146,18 @@ $(function () {
                 labelNewEmail.attr("data-error", "Invalid email");
             }
 
+            if (conEmailVal.length > 0) {
+                if (conEmailVal === newEmailVal && conEmailVal !== "" && newEmailVal !== "") {
+
+                    confirmEmail.addClass("valid");
+                }
+                else {
+                    confirmEmail.addClass("invalid");
+
+                    labelConfirmEmail.attr("data-error", "Emails do not match");
+                }
+            }
+
             if (newEmail.hasClass('valid') && confirmEmail.hasClass('valid'))
                 toggleEmailButton(true);
 
@@ -155,14 +165,6 @@ $(function () {
 
 
     });
-
-    var delayConfirm = (function () {
-        var timer = 0;
-        return function (callback, ms) {
-            clearTimeout(timer);
-            timer = setTimeout(callback, ms);
-        };
-    })();
 
     confirmEmail.on('keyup input', function () {
         confirmEmail.removeClass("valid");
@@ -170,38 +172,57 @@ $(function () {
 
         toggleEmailButton(false);
 
-        delayConfirm(function () {
-            var conEmailVal = confirmEmail.val();
-            var newEmailVal = newEmail.val();
 
-            if (conEmailVal === newEmailVal && conEmailVal !== "" && newEmailVal !== "") {
+        var conEmailVal = confirmEmail.val();
+        var newEmailVal = newEmail.val();
 
-                confirmEmail.addClass("valid");
-            }
-            else {
-                confirmEmail.addClass("invalid");
+        if (conEmailVal === newEmailVal && conEmailVal !== "" && newEmailVal !== "") {
 
-                labelConfirmEmail.attr("data-error", "Emails do not match");
-            }
+            confirmEmail.addClass("valid");
+        }
+        else {
+            confirmEmail.addClass("invalid");
 
-            if (newEmail.hasClass('valid') && confirmEmail.hasClass('valid'))
-                toggleEmailButton(true);
-        }, 2000);
+            labelConfirmEmail.attr("data-error", "Emails do not match");
+        }
+
+        if (newEmail.hasClass('valid') && confirmEmail.hasClass('valid'))
+            toggleEmailButton(true);
+
     });
 
     /* PASSWORD */
     var newPassword = $("#new_password");
     var confirmNewPassword = $("#confirm_new_password");
-    //Labels
-    var newPasswordLabel = $("#new_password-label");
 
-    var delayNewPassword = (function () {
-        var timer = 0;
-        return function (callback, ms) {
-            clearTimeout(timer);
-            timer = setTimeout(callback, ms);
-        };
-    })();
+    /////DOCUMENT READY ///////////////////////////
+
+    var newPasswordVal = newPassword.val();
+
+    if (newPasswordVal.length > 0) {
+        if (newPasswordVal.length < 8)
+            newPassword.addClass("invalid");
+        else
+            newPassword.addClass("valid");
+    }
+
+
+    var confirmNewPasswordVal = confirmNewPassword.val();
+
+
+    if (confirmNewPasswordVal.length > 0) {
+        if (confirmNewPasswordVal !== newPasswordVal)
+            confirmNewPassword.addClass("invalid");
+        else
+            confirmNewPassword.addClass("valid");
+
+    }
+
+    if (newPassword.hasClass("valid") && confirmNewPassword.hasClass("valid"))
+        togglePasswordButton(true);
+
+
+    /////////////////////////////////////////////
 
     newPassword.on('keyup input', function () {
         newPassword.removeClass("valid");
@@ -211,31 +232,27 @@ $(function () {
 
         togglePasswordButton(false);
 
-        delayNewPassword(function () {
-            var newPasswordVal = newPassword.val();
+        var confirmNewPasswordVal = confirmNewPassword.val();
+        var newPasswordVal = newPassword.val();
 
-            if (newPasswordVal.length < 8) {
-                newPassword.addClass("invalid");
-                newPasswordLabel.attr("data-error", "Password must be at least 8 characters long");
-            }
-            else {
-                newPassword.addClass("valid");
-            }
+        if (newPasswordVal.length < 8)
+            newPassword.addClass("invalid");
+        else
+            newPassword.addClass("valid");
 
-            if (newPassword.hasClass("valid") && confirmNewPassword.hasClass("valid"))
-                togglePasswordButton(true);
+        if (confirmNewPasswordVal.length > 0) {
+            if (confirmNewPasswordVal !== newPasswordVal)
+                confirmNewPassword.addClass("invalid");
+            else
+                confirmNewPassword.addClass("valid");
+        }
 
-        }, 2000);
+
+        if (newPassword.hasClass("valid") && confirmNewPassword.hasClass("valid"))
+            togglePasswordButton(true);
+
 
     });
-
-    var delayConfirmNewPassword = (function () {
-        var timer = 0;
-        return function (callback, ms) {
-            clearTimeout(timer);
-            timer = setTimeout(callback, ms);
-        };
-    })();
 
     confirmNewPassword.on('keyup input', function () {
         confirmNewPassword.removeClass("invalid");
@@ -243,23 +260,20 @@ $(function () {
 
         togglePasswordButton(false);
 
-        delayConfirmNewPassword(function () {
-            var confirmNewPasswordVal = confirmNewPassword.val();
-            var newPasswordVal = newPassword.val();
+
+        var confirmNewPasswordVal = confirmNewPassword.val();
+        var newPasswordVal = newPassword.val();
 
 
-            if (confirmNewPasswordVal !== newPasswordVal) {
-                confirmNewPassword.addClass("invalid");
-                confirmNewPassword.attr("data-error", "Passwords do not match");
-            }
-            else {
-                confirmNewPassword.addClass("valid");
-            }
+        if (confirmNewPasswordVal !== newPasswordVal)
+            confirmNewPassword.addClass("invalid");
+        else
+            confirmNewPassword.addClass("valid");
 
-            if (newPassword.hasClass("valid") && confirmNewPassword.hasClass("valid"))
-                togglePasswordButton(true);
 
-        }, 2000);
+        if (newPassword.hasClass("valid") && confirmNewPassword.hasClass("valid"))
+            togglePasswordButton(true);
+
 
     });
 
@@ -409,55 +423,13 @@ function toggleWithdrawButton(isEnabled) {
 /* Listeners for withdrawal */
 $(function () {
     /* Inputs */
-    var withdrawalAddressInput = $("#withdraw_address");
     var withdrawalAmountInput = $("#withdraw_amount");
 
     /* Labels */
-    var withdrawalAddressLabel = $("#withdraw_address_label");
     var withdrawalAmountLabel = $("#withdraw_amount_label");
 
     /*Balance*/
     var balance = parseInt($("#balanceNumber").html());
-
-    var delayWAddress = (function () {
-        var timer = 0;
-        return function (callback, ms) {
-            clearTimeout(timer);
-            timer = setTimeout(callback, ms);
-        };
-    })();
-
-    withdrawalAddressInput.on('input keyup', function () {
-        withdrawalAddressInput.removeClass('invalid');
-        withdrawalAddressInput.removeClass('valid');
-
-        toggleWithdrawButton(false);
-
-        delayWA(function () {
-            var bitcoinAddress = withdrawalAddressInput.val();
-
-            if (checkAddress(normalizedBitcoinAddress)) {
-                withdrawalAddressInput.addClass('valid');
-            }
-            else {
-                withdrawalAddressInput.addClass('invalid');
-                withdrawalAddressLabel.attr('data-error', 'Invalid address')
-            }
-
-            if (withdrawalAddressInput.hasClass('valid') && withdrawalAmountInput.hasClass('valid'))
-                toggleWithdrawButton(true);
-
-        }, 2000)
-
-    });
-
-    var delayWAmount = (function () {
-        var timer = 0;
-        return function (callback, ms) {
-            clearTimeout(timer);
-            timer = setTimeout(callback, ms);
-        };
-    })();
 
     withdrawalAmountInput.on('input keyup', function () {
         withdrawalAmountInput.removeClass('invalid');
@@ -465,29 +437,28 @@ $(function () {
 
         toggleWithdrawButton(false);
 
-        delayWAmount(function () {
 
-            var amount = parseFloat(withdrawalAmountInput.val());
+        var amount = parseFloat(withdrawalAmountInput.val());
 
-            if (!Number.isInteger(amount)) {
-                withdrawalAmountLabel.attr('data-error', "Amount must be an integer number");
-                withdrawalAmountInput.addClass('invalid');
-            }
-            else if (amount <= 100) {
-                withdrawalAmountLabel.attr('data-error', "Amount must be greater than 100");
-                withdrawalAmountInput.addClass('invalid');
-            }
-            else if ((amount + 100) > balance) {
-                withdrawalAmountLabel.attr('data-error', "Not enough bits");
-                withdrawalAmountInput.addClass('invalid');
-            }
-            else
-                withdrawalAmountInput.addClass('valid');
+        if (!Number.isInteger(amount)) {
+            withdrawalAmountLabel.attr('data-error', "Amount must be an integer number");
+            withdrawalAmountInput.addClass('invalid');
+        }
+        else if (amount <= 100) {
+            withdrawalAmountLabel.attr('data-error', "Amount must be greater than 100");
+            withdrawalAmountInput.addClass('invalid');
+        }
+        else if ((amount + 100) > balance) {
+            withdrawalAmountLabel.attr('data-error', "Not enough bits");
+            withdrawalAmountInput.addClass('invalid');
+        }
+        else
+            withdrawalAmountInput.addClass('valid');
 
-            if (withdrawalAddressInput.hasClass('valid') && withdrawalAmountInput.hasClass('valid'))
-                toggleWithdrawButton(true);
+        if (withdrawalAmountInput.hasClass('valid'))
+            toggleWithdrawButton(true);
 
-        }, 2000);
+
     })
 
 });
@@ -505,6 +476,7 @@ function toggleTicketButton(enabled) {
         ticketButton.prop("disabled", true);
     }
 }
+
 /* Listener for ticket */
 $(function () {
 

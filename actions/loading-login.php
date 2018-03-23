@@ -85,22 +85,24 @@ if ($captcha_success->success) {
                 }
 
                 if (!empty($_SESSION['last_url']))
-                    header("Location: ../" . $_SESSION['last_url']);
+                    header("Location: " . $base_dir . $_SESSION['last_url']);
                 else
-                    header("Location: ../index.php");
+                    header("Location: " . $base_dir);
                 die();
             } else {
 
                 $_SESSION['login_error'] = 3;
-                echo $password;
-                echo $user_info['password'];
-                var_dump(password_verify($password, $user_info['password']));
-//                header("Location: ../login.php");
-//                die();
+                $_SESSION['username_input'] = $username;
+                $_SESSION['remember_me_input'] = $remember_me;
+
+                header("Location: " . $base_dir ."login");
+                die();
             }
         } else {
             $_SESSION['login_error'] = 2;
-            header("Location: ../login.php");
+            $_SESSION['username_input'] = $username;
+            $_SESSION['remember_me_input'] = $remember_me;
+            header("Location: " . $base_dir ."login");
             die();
         }
 
@@ -112,6 +114,8 @@ if ($captcha_success->success) {
 
 } else {
     $_SESSION['login_error'] = 1;
-    header("Location: ../login.php");
+    $_SESSION['username_input'] = $username;
+    $_SESSION['remember_me_input'] = $remember_me;
+    header("Location: " . $base_dir ."login");
     die();
 }

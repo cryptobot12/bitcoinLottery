@@ -59,8 +59,10 @@ if ($logged_in) {
             if (!empty($_GET['p'])) {
                 $page = htmlspecialchars($_GET['p']);
                 filterOnlyNumber($page, 1, $pageCount, 1);
+                $page_deposit_parameter = $page;
             } else {
                 $page = 1;
+                $page_deposit_parameter = 0;
             }
 
             //Withdraws pageCount
@@ -73,8 +75,10 @@ if ($logged_in) {
             if (!empty($_GET['pw'])) {
                 $pageWithdraw = htmlspecialchars($_GET['pw']);
                 filterOnlyNumber($pageWithdraw, 1, $pageWithdrawCount, 1);
+                $page_withdraw_parameter = $pageWithdraw;
             } else {
                 $pageWithdraw = 1;
+                $page_withdraw_parameter = 0;
             }
 
             //Transfers pageCount
@@ -87,30 +91,32 @@ if ($logged_in) {
             if (!empty($_GET['pt'])) {
                 $pageTransfer = htmlspecialchars($_GET['pt']);
                 filterOnlyNumber($pageTransfer, 1, $pageTransferCount, 1);
+                $page_transfer_parameter = $pageTransfer;
             } else {
                 $pageTransfer = 1;
+                $page_transfer_parameter = 0;
             }
 
             //Selecting deposits
-            $stmt = $conn->prepare('SELECT hash, amount, DATE_FORMAT(deposit_date, "%M %D, %Y") AS deposit_date FROM deposit WHERE user_id = :user_id
-                                      ORDER BY deposit_date DESC LIMIT :rows OFFSET :the_offset');
+            $stmt = $conn->prepare('SELECT hash, amount, DATE_FORMAT(deposit_date, "%M %D, %Y") AS deposit_date, deposit_date AS dpt FROM deposit WHERE user_id = :user_id
+                                      ORDER BY dpt DESC LIMIT :rows OFFSET :the_offset');
             $stmt->execute(array('user_id' => $user_id, 'rows' => $rowPerPage, 'the_offset' => (($page - 1) * $rowPerPage)));
             $rowTableDeposits = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             //Selecting withdrawals
             $stmt = $conn->prepare('SELECT hash, amount, DATE_FORMAT(request_date, "%M %D, %Y") AS request_date,
- DATE_FORMAT(completed_on, "%M %D, %Y") AS completed_on FROM withdrawal WHERE user_id = :user_id
-                                      ORDER BY request_date DESC LIMIT :rows OFFSET :the_offset');
+ DATE_FORMAT(completed_on, "%M %D, %Y") AS completed_on, request_date AS rdt FROM withdrawal WHERE user_id = :user_id
+                                      ORDER BY rdt DESC LIMIT :rows OFFSET :the_offset');
             $stmt->execute(array('user_id' => $user_id, 'rows' => $rowPerPage, 'the_offset' => (($pageWithdraw - 1) * $rowPerPage)));
             $rowTableWithdraws = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             //Selecting transfers
-            $stmt = $conn->prepare('SELECT u.username, hash, amount, DATE_FORMAT(request_date, "%M %D, %Y") AS request_date,
+            $stmt = $conn->prepare('SELECT u.username, hash, amount, DATE_FORMAT(request_date, "%M %D, %Y") AS request_date, request_date AS rdt,
  DATE_FORMAT(completed_on, "%M %D, %Y") AS completed_on FROM transfer AS t 
   INNER JOIN user AS u
   ON t.to_user = u.user_id
   WHERE t.user_id = :user_id
-                                      ORDER BY request_date DESC LIMIT :rows OFFSET :the_offset');
+                                      ORDER BY rdt DESC LIMIT :rows OFFSET :the_offset');
             $stmt->execute(array('user_id' => $user_id, 'rows' => $rowPerPage, 'the_offset' => (($pageTransfer - 1) * $rowPerPage)));
             $rowTableTransfers = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -134,7 +140,41 @@ if ($logged_in) {
 //Hiding part of email for security purposes
             $email = hide_mail($email);
 
-            $email_update_captcha_failed = $_SESSION['captcha_failed'];
+            $error_update_email = !empty($_SESSION['expand_email']) ? $_SESSION['expand_email'] : false;
+            $email_update_captcha_failed = !empty($_SESSION['captcha_failed_email']) ? $_SESSION['captcha_failed_email'] : false;
+            $expand_email_collapsible = $email_update_requests || $error_update_email;
+
+            unset($_SESSION['expand_email']);
+            unset($_SESSION['captcha_failed_email']);
+
+            $new_email_input = !empty($_SESSION['new-email']) ? $_SESSION['new-email'] : "";
+            $confirm_email_input = !empty($_SESSION['confirm-email']) ? $_SESSION['confirm-email'] : "";
+
+            unset($_SESSION['new-email']);
+            unset($_SESSION['confirm-email']);
+
+            $expand_password_collapsible = !empty($_SESSION['expand_password']) ? $_SESSION['expand_password'] : false;
+
+            if (!empty($_SESSION['captcha_failed_password']) && $_SESSION['captcha_failed_password'])
+                $password_error_message = "reCAPTCHA validation failed.";
+            elseif (!empty($_SESSION['incorrect_password']) && $_SESSION['incorrect_password'])
+                $password_error_message = "Incorrect password";
+            elseif (!empty($_SESSION['diff_pass']) && $_SESSION['diff_pass'])
+                $password_error_message = "New password must be different from current password";
+            else
+                $password_error_message = "";
+
+            unset($_SESSION['expand_password']);
+            unset($_SESSION['captcha_failed_password']);
+            unset($_SESSION['incorrect_password']);
+            unset($_SESSION['diff_pass']);
+
+            $new_password_input = !empty($_SESSION['new_password']) ? $_SESSION['new_password'] : "";
+            $confirm_new_password_input = !empty($_SESSION['confirm_new_password']) ? $_SESSION['confirm_new_password'] : "";
+
+            unset($_SESSION['new_password']);
+            unset($_SESSION['confirm_new_password']);
+
 
         }
 
@@ -150,6 +190,7 @@ include "inc/header.php";
     <main class="valign-wrapper">
         <div class="container">
             <?php if ($logged_in): ?>
+                <div class="row"></div>
                 <div class="row">
                     <div class="col l10 offset-l1 m10 offset-m1 s12">
                         <?php if ($is_user_enabled): ?>
@@ -182,11 +223,11 @@ include "inc/header.php";
                                     </div>
                                 </div>
                             <?php endif; ?>
+                            <div class="row"></div>
                             <ul class="collapsible popout" data-collapsible="expandable">
                                 <li>
-                                    <div class="collapsible-header <?php if ($email_update_requests > 0 || $email_update_captcha_failed) {
-                                        echo "active";
-                                    } ?>"><i class="material-icons">email</i>Update email
+                                    <div class="collapsible-header <?php if ($expand_email_collapsible) echo "active"; ?>">
+                                        <i class="material-icons">email</i>Update email
                                     </div>
                                     <div class="collapsible-body">
                                         <div class="row">
@@ -201,16 +242,15 @@ include "inc/header.php";
                                                         Please check your email before sending a new request.
                                                     <?php endif; ?>
                                                 </blockquote>
-                                                <div class="col s12">
-                                                    <blockquote class="blockquote-error w900">
-                                                        <?php
-                                                        if ($email_update_captcha_failed == 1)
-                                                            echo "reCAPTCHA validation failed";
-                                                        ?>
-                                                    </blockquote>
-                                                </div>
+                                                <?php if ($email_update_captcha_failed == true) : ?>
+                                                    <div class="col s12">
+                                                        <blockquote class="blockquote-error w900">
+                                                            reCAPTCHA validation failed
+                                                        </blockquote>
+                                                    </div>
+                                                <?php endif; ?>
                                                 <form id="email_update_form" class=""
-                                                      action="actions/update_email_code"
+                                                      action="<?php echo $base_dir; ?>actions/update-email-code"
                                                       method="post">
                                                     <div class="row">
                                                         <div class="input-field col s12">
@@ -224,73 +264,26 @@ include "inc/header.php";
                                                         <div class="input-field col s12">
                                                             <i class="material-icons prefix">mail_outline</i>
                                                             <input name="new-email" id="new-email" type="email"
-                                                                   class="<?php
-                                                                   if (!empty($_SESSION['invalid_email']) || !empty($_SESSION['email_taken'])) {
-                                                                       echo 'invalid';
-                                                                   }
-                                                                   ?>" value="<?php
-                                                            if (!empty($_SESSION['new-email'])) {
-                                                                echo $_SESSION['new-email'];
-                                                                unset($_SESSION['new-email']);
-                                                            }
-                                                            ?>">
+                                                                   class="" value="<?php echo $new_email_input; ?>">
                                                             <label id="newEmailLabel" for="new-email"
-                                                                   data-error="<?php
-                                                                   if (!empty($_SESSION['email_taken'])) {
-                                                                       echo "Email is already taken";
-                                                                       unset($_SESSION['email_taken']);
-                                                                   }
-
-                                                                   if (!empty($_SESSION['invalid_email'])) {
-                                                                       echo "Invalid email";
-                                                                       unset($_SESSION['invalid_email']);
-                                                                   }
-
-                                                                   ?>" data-success="Email is available">New
-                                                                Email
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                                                                   data-error="" data-success="Email is available">New
+                                                                Email</label>
                                                         </div>
                                                         <div class="input-field col s12">
                                                             <i class="material-icons prefix">mail</i>
                                                             <input name="confirm-email" id="confirm-email"
                                                                    type="email"
-                                                                   class="<?php
-                                                                   if (!empty($_SESSION['unmatch'])) {
-                                                                       echo 'invalid';
-                                                                       unset($_SESSION['unmatch']);
-                                                                   }
-                                                                   ?>" value="<?php
-                                                            if (!empty($_SESSION['confirm-email'])) {
-                                                                echo $_SESSION['confirm-email'];
-                                                                unset($_SESSION['confirm-email']);
-                                                            }
-
-                                                            ?>">
+                                                                   class="" value="<?php echo $confirm_email_input; ?>">
                                                             <label id="confirmEmailLabel" for="confirm-email"
                                                                    data-error="Emails do not match">Confirm New
-                                                                Email
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                                                                Email</label>
                                                         </div>
                                                     </div>
                                                     <div class="row">
                                                         <button id="updateEmailButton"
-                                                                class="g-recaptcha waves-effect waves-light btn right disabled">
-                                                            Update
-                                                            Email
+                                                                class="g-recaptcha waves-effect waves-light btn right disabled
+                                                                amber darken-3">
+                                                            Update Email
                                                         </button>
                                                     </div>
                                                 </form>
@@ -299,21 +292,14 @@ include "inc/header.php";
                                     </div>
                                 </li>
                                 <li>
-                                    <div class="collapsible-header <?php
-
-
-                                    if (!empty($_SESSION['incorrect_cp']) || !empty($_SESSION['incorrect_length']) ||
-                                        !empty($_SESSION['unmatch_p']) || !empty($_SESSION['diff_pass'])) {
-                                        echo "active";
-                                    }
-
-                                    ?>"><i class="material-icons">lock</i>Update password
+                                    <div class="collapsible-header <?php if ($expand_password_collapsible) echo "active"; ?>">
+                                        <i class="material-icons">lock</i>Update password
                                     </div>
                                     <div class="collapsible-body">
                                         <div class="row">
                                             <div class="col l8 offset-l2 m10 offset-m1 s12">
-                                                <form id="update_password_form" class=""
-                                                      action="actions/update_password"
+                                                <form id="update_password_form"
+                                                      action="<?php echo $base_dir; ?>actions/update-password"
                                                       method="post">
                                                     <div class="row">
                                                         <blockquote class="blockquote-green w900">
@@ -325,123 +311,43 @@ include "inc/header.php";
                                                             new
                                                             password in order to protect your account.
                                                         </blockquote>
+                                                        <?php if ($password_error_message != "") : ?>
+                                                            <div class="col s12">
+                                                                <blockquote class="blockquote-error w900">
+                                                                    <?php echo $password_error_message; ?>
+                                                                </blockquote>
+                                                            </div>
+                                                        <?php endif; ?>
                                                         <div class="input-field col s12">
                                                             <i class="material-icons prefix">lock_outline</i>
                                                             <input name="current_password" id="current_password"
-                                                                   type="password"
-                                                                   class="<?php
-
-                                                                   if (!empty($_SESSION['incorrect_cp'])) {
-                                                                       echo "invalid";
-                                                                       unset($_SESSION['incorrect_cp']);
-                                                                   }
-
-                                                                   ?>"
-                                                                   value="<?php
-
-                                                                   if (!empty($_SESSION['current_password'])) {
-                                                                       echo $_SESSION['current_password'];
-                                                                       unset($_SESSION['current_password']);
-                                                                   }
-
-
-                                                                   ?>">
-                                                            <label id="current_password-label" for="current_password"
-                                                                   data-error="Incorrect password">Current
-                                                                password&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                                                                   type="password">
+                                                            <label id="current_password-label" for="current_password">Current
+                                                                Password</label>
                                                         </div>
                                                         <div class="input-field col s12">
                                                             <i class="material-icons prefix">lock</i>
                                                             <input name="new_password" id="new_password" type="password"
-                                                                   class="<?php
-
-                                                                   if (!empty($_SESSION['incorrect_length']) || !empty($_SESSION['diff_pass'])) {
-                                                                       echo "invalid";
-                                                                   }
-
-                                                                   ?>"
-                                                                   value="<?php
-
-                                                                   if (!empty($_SESSION['new_password'])) {
-                                                                       echo $_SESSION['new_password'];
-                                                                       unset($_SESSION['new_password']);
-                                                                   }
-
-
-                                                                   ?>">
+                                                                   value="<?php echo $new_password_input; ?>">
                                                             <label id="new_password-label" for="new_password"
-                                                                   data-error="<?php
-
-                                                                   if (!empty($_SESSION['incorrect_length']))
-                                                                       echo "Password must be at least 8 characters long";
-                                                                   elseif (!empty($_SESSION['diff_pass']))
-                                                                       echo "New password must be different from current password";
-
-                                                                   unset($_SESSION['incorrect_length']);
-                                                                   unset($_SESSION['diff_pass']);
-
-                                                                   ?>">New
-                                                                password
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                                                                   data-error="Password must be at least 8 characters long">New
+                                                                Password</label>
                                                         </div>
                                                         <div class="input-field col s12">
                                                             <i class="material-icons prefix">enhanced_encryption</i>
                                                             <input name="confirm_new_password" id="confirm_new_password"
-                                                                   type="password" class="<?php
-
-                                                            if (!empty($_SESSION['unmatch_p'])) {
-                                                                echo "invalid";
-                                                                unset($_SESSION['unmatch_p']);
-                                                            }
-
-                                                            ?>"
-                                                                   value="<?php
-
-                                                                   if (!empty($_SESSION['confirm_new_password'])) {
-                                                                       echo $_SESSION['confirm_new_password'];
-                                                                       unset($_SESSION['confirm_new_password']);
-                                                                   }
-
-
-                                                                   ?>">
+                                                                   type="password"
+                                                                   value="<?php echo $confirm_new_password_input; ?>">
                                                             <label id="confirm_new_password-label"
                                                                    for="confirm_new_password"
                                                                    data-error="Passwords do not match">Confirm
-                                                                new password&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                                                                New Password</label>
                                                         </div>
                                                     </div>
                                                     <div class="row">
                                                         <button id="update_password_button"
-                                                                class="waves-effect waves-light btn right disabled g-recaptcha">
-                                                            Update
-                                                            Password
+                                                                class="amber darken-3 waves-effect waves-light btn right disabled g-recaptcha">
+                                                            Update Password
                                                         </button>
                                                     </div>
                                                 </form>
@@ -452,7 +358,7 @@ include "inc/header.php";
                                 <li>
                                     <div class="collapsible-header <?php
 
-                                    if (!empty($_GET['p']))
+                                    if ($page_deposit_parameter > 0)
                                         echo "active";
 
                                     ?>"><i class="material-icons">account_balance</i>Deposit
@@ -462,7 +368,7 @@ include "inc/header.php";
                                             <div class="col l8 offset-l2 m10 offset-m1 s12">
                                                 <div class="row">
                                                     <blockquote class="blockquote-green w900">
-                                                        This is your bitPVP wallet. Transfer bitcoin to this wallet
+                                                        This is your BitcoinPVP wallet. Transfer bitcoin to this wallet
                                                         to fund your account.
                                                     </blockquote>
                                                 </div>
@@ -522,7 +428,7 @@ include "inc/header.php";
                                                                 ?>"><a href="<?php
 
                                                                     if ($page > 1)
-                                                                        echo "account.php?p=" . ($page - 1);
+                                                                        echo $base_dir . "account/" . ($page_deposit_parameter - 1) . $page_withdraw_parameter . $page_transfer_parameter;
                                                                     else
                                                                         echo "#!";
 
@@ -538,7 +444,7 @@ include "inc/header.php";
                                                                             echo "waves-effect";
 
                                                                         ?>">
-                                                                            <a href="<?php echo "account.php?p=" . $i ?>">
+                                                                            <a href="<?php echo $base_dir . "account/" . $i . $page_withdraw_parameter . $page_transfer_parameter; ?>">
                                                                                 <?php echo $i; ?>
                                                                             </a>
                                                                         </li>
@@ -553,20 +459,20 @@ include "inc/header.php";
                                                                                 echo "waves-effect";
 
                                                                             ?>">
-                                                                                <a href="<?php echo "account.php?p=" . $i ?>">
+                                                                                <a href="<?php echo $base_dir . "account/" . $i . $page_withdraw_parameter . $page_transfer_parameter; ?>">
                                                                                     <?php echo $i; ?>
                                                                                 </a>
                                                                             </li>
                                                                         <?php endfor; ?>
                                                                         <li class="">...</li>
                                                                         <li class="waves-effect">
-                                                                            <a href="<?php echo "account.php?p=" . $pageCount ?>">
+                                                                            <a href="<?php echo $base_dir . "account/" . $pageCount . $page_withdraw_parameter . $page_transfer_parameter; ?>">
                                                                                 <?php echo $pageCount; ?>
                                                                             </a>
                                                                         </li>
                                                                     <?php elseif ($page > 3 && $page < ($pageCount - 3)): ?>
                                                                         <li class="waves-effect"><a
-                                                                                    href="account.php?p=1">1</a>
+                                                                                    href="<?php echo $base_dir . "account/1" . $page_withdraw_parameter . $page_transfer_parameter; ?>">1</a>
                                                                         </li>
                                                                         <li>...</li>
                                                                         <?php for ($i = $page - 2; $i <= $page + 2; $i++): ?>
@@ -577,20 +483,20 @@ include "inc/header.php";
                                                                                 echo "waves-effect";
 
                                                                             ?>">
-                                                                                <a href="<?php echo "account.php?p=" . $i ?>">
+                                                                                <a href="<?php echo $base_dir . "account/" . $i . $page_withdraw_parameter . $page_transfer_parameter; ?>">
                                                                                     <?php echo $i; ?>
                                                                                 </a>
                                                                             </li>
                                                                         <?php endfor; ?>
                                                                         <li>...</li>
                                                                         <li class="waves-effect">
-                                                                            <a href="<?php echo "account.php?p=" . $pageCount ?>">
+                                                                            <a href="<?php echo $base_dir . "account/" . $pageCount . $page_withdraw_parameter . $page_transfer_parameter; ?>">
                                                                                 <?php echo $pageCount; ?>
                                                                             </a>
                                                                         </li>
                                                                     <?php else: ?>
                                                                         <li class="waves-effect"><a
-                                                                                    href="account.php?p=1">1</a>
+                                                                                    href="<?php echo $base_dir . "account/1" . $page_withdraw_parameter . $page_transfer_parameter; ?>">1</a>
                                                                         </li>
                                                                         <li>...</li>
                                                                         <?php for ($i = $pageCount - 5; $i <= $pageCount; $i++): ?>
@@ -601,7 +507,7 @@ include "inc/header.php";
                                                                                 echo "waves-effect";
 
                                                                             ?>">
-                                                                                <a href="<?php echo "account.php?p=" . $i ?>">
+                                                                                <a href="<?php echo $base_dir . "account/" . $i . $page_withdraw_parameter . $page_transfer_parameter; ?>">
                                                                                     <?php echo $i; ?>
                                                                                 </a>
                                                                             </li>
@@ -619,8 +525,10 @@ include "inc/header.php";
 
                                                                 ?>"><a href="<?php
 
-                                                                    if ($page < $pageCount)
-                                                                        echo "account.php?p=" . ($page + 1);
+                                                                    if ($page_deposit_parameter == 0)
+                                                                        echo $base_dir . "account/2" . $page_withdraw_parameter . $page_transfer_parameter;
+                                                                    else if ($page < $pageCount)
+                                                                        echo $base_dir . "account/" . ($page_deposit_parameter + 1) . $page_withdraw_parameter . $page_transfer_parameter;
                                                                     else
                                                                         echo "#!";
 
@@ -638,7 +546,7 @@ include "inc/header.php";
                                     <div class="collapsible-header <?php
 
                                     if (!empty($_SESSION['withdraw_address_error']) || !(empty($_SESSION['withdraw_amount_error'])) ||
-                                        !empty($_SESSION['withdraw_insufficient']) || !empty($_GET['pw'])) {
+                                        !empty($_SESSION['withdraw_insufficient']) || ($page_withdraw_parameter > 0)) {
                                         echo "active";
                                     }
 
@@ -647,7 +555,8 @@ include "inc/header.php";
                                     <div class="collapsible-body">
                                         <div class="row">
                                             <div class="col l10 offset-l1 m10 offset-m1 s12">
-                                                <form method="post" action="actions/withdraw.php">
+                                                <form method="post"
+                                                      action="<?php echo $base_dir; ?>actions/withdraw">
                                                     <blockquote class="blockquote-green w900">
                                                         Transfer bitcoin to your personal wallet. Amount must be an
                                                         integer
@@ -687,19 +596,7 @@ include "inc/header.php";
                                                             unset($_SESSION['withdraw_address_error']);
                                                         }
 
-                                                        ?>" id="withdraw_address_label">Wallet Address&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                            &nbsp;&nbsp;</label>
+                                                        ?>" id="withdraw_address_label">Wallet Address</label>
                                                     </div>
                                                     <div class="input-field col l4 m5 s6">
                                                         <i class="material-icons prefix">bubble_chart</i>
@@ -725,18 +622,7 @@ include "inc/header.php";
                                                             unset($_SESSION['withdraw_amount_error']);
                                                         }
 
-                                                        ?>" id="withdraw_amount_label">Amount (bits)&nbsp;&nbsp;&nbsp;&nbsp;
-                                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                                                        ?>" id="withdraw_amount_label">Amount (bits)</label>
                                                     </div>
                                                     <div class="row">
 
@@ -805,7 +691,7 @@ include "inc/header.php";
                                                         ?>"><a href="<?php
 
                                                             if ($pageWithdraw > 1)
-                                                                echo "account.php?pw=" . ($pageWithdraw - 1);
+                                                                echo $base_dir . "account/" . $page_deposit_parameter . ($page_withdraw_parameter - 1) . $page_transfer_parameter;
                                                             else
                                                                 echo "#!";
 
@@ -821,7 +707,7 @@ include "inc/header.php";
                                                                     echo "waves-effect";
 
                                                                 ?>">
-                                                                    <a href="<?php echo "account.php?pw=" . $i ?>">
+                                                                    <a href="<?php echo $base_dir . "account/" . $page_deposit_parameter . $i . $page_transfer_parameter ?>">
                                                                         <?php echo $i; ?>
                                                                     </a>
                                                                 </li>
@@ -836,20 +722,20 @@ include "inc/header.php";
                                                                         echo "waves-effect";
 
                                                                     ?>">
-                                                                        <a href="<?php echo "account.php?pw=" . $i ?>">
+                                                                        <a href="<?php echo $base_dir . "account/" . $page_deposit_parameter . $i . $page_transfer_parameter ?>">
                                                                             <?php echo $i; ?>
                                                                         </a>
                                                                     </li>
                                                                 <?php endfor; ?>
                                                                 <li class="">...</li>
                                                                 <li class="waves-effect">
-                                                                    <a href="<?php echo "account.php?pw=" . $pageWithdrawCount ?>">
+                                                                    <a href="<?php echo $base_dir . "account/" . $page_deposit_parameter . $pageWithdrawCount . $page_transfer_parameter ?>">
                                                                         <?php echo $pageWithdrawCount; ?>
                                                                     </a>
                                                                 </li>
                                                             <?php elseif ($pageWithdraw > 3 && $pageWithdraw < ($pageWithdrawCount - 3)): ?>
                                                                 <li class="waves-effect"><a
-                                                                            href="account.php?pw=1">1</a>
+                                                                            href="<?php echo $base_dir . "account/" . $page_deposit_parameter . "1" . $page_transfer_parameter; ?>">1</a>
                                                                 </li>
                                                                 <li>...</li>
                                                                 <?php for ($i = $pageWithdraw - 2; $i <= $pageWithdraw + 2; $i++): ?>
@@ -860,20 +746,20 @@ include "inc/header.php";
                                                                         echo "waves-effect";
 
                                                                     ?>">
-                                                                        <a href="<?php echo "account.php?pw=" . $i ?>">
+                                                                        <a href="<?php echo $base_dir . "account/" . $page_deposit_parameter . $i . $page_transfer_parameter; ?>">
                                                                             <?php echo $i; ?>
                                                                         </a>
                                                                     </li>
                                                                 <?php endfor; ?>
                                                                 <li>...</li>
                                                                 <li class="waves-effect">
-                                                                    <a href="<?php echo "account.php?pw=" . $pageWithdrawCount ?>">
+                                                                    <a href="<?php echo $base_dir . "account/" . $page_deposit_parameter . $pageWithdrawCount . $page_transfer_parameter; ?>">
                                                                         <?php echo $pageWithdrawCount; ?>
                                                                     </a>
                                                                 </li>
                                                             <?php else: ?>
                                                                 <li class="waves-effect"><a
-                                                                            href="account.php?pw=1">1</a>
+                                                                            href="<?php echo $base_dir . "account/" . $page_deposit_parameter . "1" . $page_transfer_parameter; ?>">1</a>
                                                                 </li>
                                                                 <li>...</li>
                                                                 <?php for ($i = $pageWithdrawCount - 5; $i <= $pageWithdrawCount; $i++): ?>
@@ -884,7 +770,7 @@ include "inc/header.php";
                                                                         echo "waves-effect";
 
                                                                     ?>">
-                                                                        <a href="<?php echo "account.php?pw=" . $i ?>">
+                                                                        <a href="<?php echo $base_dir . "account/" . $page_deposit_parameter . $i . $page_transfer_parameter; ?>">
                                                                             <?php echo $i; ?>
                                                                         </a>
                                                                     </li>
@@ -902,8 +788,10 @@ include "inc/header.php";
 
                                                         ?>"><a href="<?php
 
-                                                            if ($pageWithdraw < $pageWithdrawCount)
-                                                                echo "account.php?pw=" . ($pageWithdraw + 1);
+                                                            if ($page_withdraw_parameter == 0)
+                                                                echo $base_dir . "account/" . $page_deposit_parameter . "2" . $page_transfer_parameter;
+                                                            elseif ($pageWithdraw < $pageWithdrawCount)
+                                                                echo $base_dir . "account/" . $page_deposit_parameter . ($page_withdraw_parameter + 1) . $page_transfer_parameter;
                                                             else
                                                                 echo "#!";
 
@@ -918,7 +806,7 @@ include "inc/header.php";
                                 <li>
                                     <div class="collapsible-header <?php
 
-                                    if (!empty($_SESSION['transfer_user_error']) || !empty($_SESSION['transfer_amount_error']))
+                                    if (!empty($_SESSION['transfer_user_error']) || !empty($_SESSION['transfer_amount_error']) || ($page_transfer_parameter > 0))
                                         echo "active";
 
                                     ?>"><i class="material-icons">swap_horiz</i>Transfer
@@ -928,7 +816,7 @@ include "inc/header.php";
                                             <div class="col l10 offset-l1 m10 offset-m1 s12">
                                                 <div class="row">
                                                     <form id="transfer_form" method="post"
-                                                          action="actions/transfer.php">
+                                                          action="<?php echo $base_dir; ?>actions/transfer">
                                                         <blockquote class="blockquote-green w900">
                                                             Transfer bitcoin to another user. Amount must be an integer
                                                             number greater than 100 bits. A 100 bits
@@ -964,19 +852,7 @@ include "inc/header.php";
                                                                        }
 
                                                                        ?>">
-                                                                User&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                &nbsp;&nbsp;</label>
+                                                                User</label>
                                                         </div>
                                                         <div class="input-field col l4 m5 s6">
                                                             <i class="material-icons prefix">bubble_chart</i>
@@ -1012,14 +888,7 @@ include "inc/header.php";
                                                                        }
                                                                    }
 
-                                                                   ?>">Amount(bits)&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                                                                   ?>">Amount(bits)</label>
                                                         </div>
                                                         <div class="row"></div>
                                                         <div class="row">
@@ -1090,7 +959,7 @@ include "inc/header.php";
                                                                 ?>"><a href="<?php
 
                                                                     if ($pageTransfer > 1)
-                                                                        echo "account.php?pt=" . ($pageTransfer - 1);
+                                                                        echo $base_dir . "account/" . $page_deposit_parameter . $page_withdraw_parameter . ($page_transfer_parameter - 1);
                                                                     else
                                                                         echo "#!";
 
@@ -1106,7 +975,7 @@ include "inc/header.php";
                                                                             echo "waves-effect";
 
                                                                         ?>">
-                                                                            <a href="<?php echo "account.php?pt=" . $i ?>">
+                                                                            <a href="<?php echo $base_dir . "account/" . $page_deposit_parameter . $page_withdraw_parameter . $i ?>">
                                                                                 <?php echo $i; ?>
                                                                             </a>
                                                                         </li>
@@ -1121,20 +990,20 @@ include "inc/header.php";
                                                                                 echo "waves-effect";
 
                                                                             ?>">
-                                                                                <a href="<?php echo "account.php?pt=" . $i ?>">
+                                                                                <a href="<?php echo $base_dir . "account/" . $page_deposit_parameter . $page_withdraw_parameter . $i ?>">
                                                                                     <?php echo $i; ?>
                                                                                 </a>
                                                                             </li>
                                                                         <?php endfor; ?>
                                                                         <li class="">...</li>
                                                                         <li class="waves-effect">
-                                                                            <a href="<?php echo "account.php?pt=" . $pageTransferCount ?>">
+                                                                            <a href="<?php echo $base_dir . "account/" . $page_deposit_parameter . $page_withdraw_parameter . $pageTransferCount ?>">
                                                                                 <?php echo $pageTransferCount; ?>
                                                                             </a>
                                                                         </li>
                                                                     <?php elseif ($pageTransfer > 3 && $pageTransfer < ($pageTransferCount - 3)): ?>
                                                                         <li class="waves-effect"><a
-                                                                                    href="account.php?pt=1">1</a>
+                                                                                    href="<?php echo $base_dir . "account/" . $page_deposit_parameter . $page_withdraw_parameter . "1"; ?>">1</a>
                                                                         </li>
                                                                         <li>...</li>
                                                                         <?php for ($i = $pageTransfer - 2; $i <= $pageTransfer + 2; $i++): ?>
@@ -1145,20 +1014,20 @@ include "inc/header.php";
                                                                                 echo "waves-effect";
 
                                                                             ?>">
-                                                                                <a href="<?php echo "account.php?pt=" . $i ?>">
+                                                                                <a href="<?php echo $base_dir . "account/" . $page_deposit_parameter . $page_withdraw_parameter . $i ?>">
                                                                                     <?php echo $i; ?>
                                                                                 </a>
                                                                             </li>
                                                                         <?php endfor; ?>
                                                                         <li>...</li>
                                                                         <li class="waves-effect">
-                                                                            <a href="<?php echo "account.php?pt=" . $pageTransferCount ?>">
+                                                                            <a href="<?php echo $base_dir . "account/" . $page_deposit_parameter . $page_withdraw_parameter . $pageTransferCount ?>">
                                                                                 <?php echo $pageTransferCount; ?>
                                                                             </a>
                                                                         </li>
                                                                     <?php else: ?>
                                                                         <li class="waves-effect"><a
-                                                                                    href="account.php?pt=1">1</a>
+                                                                                    href="<?php echo $base_dir . "account/" . $page_deposit_parameter . $page_withdraw_parameter . "1"; ?>">1</a>
                                                                         </li>
                                                                         <li>...</li>
                                                                         <?php for ($i = $pageTransferCount - 5; $i <= $pageTransferCount; $i++): ?>
@@ -1169,7 +1038,7 @@ include "inc/header.php";
                                                                                 echo "waves-effect";
 
                                                                             ?>">
-                                                                                <a href="<?php echo "account.php?pt=" . $i ?>">
+                                                                                <a href="<?php echo $base_dir . "account/" . $page_deposit_parameter . $page_withdraw_parameter . $i ?>">
                                                                                     <?php echo $i; ?>
                                                                                 </a>
                                                                             </li>
@@ -1187,8 +1056,10 @@ include "inc/header.php";
 
                                                                 ?>"><a href="<?php
 
-                                                                    if ($pageTransfer < $pageTransferCount)
-                                                                        echo "account.php?pt=" . ($pageTransfer + 1);
+                                                                    if ($page_transfer_parameter == 0)
+                                                                        echo $base_dir . "account/" . $page_deposit_parameter . $page_withdraw_parameter . "2";
+                                                                    elseif ($pageTransfer < $pageTransferCount)
+                                                                        echo $base_dir . "account/" . $page_deposit_parameter . $page_withdraw_parameter . ($page_transfer_parameter + 1);
                                                                     else
                                                                         echo "#!";
 
@@ -1213,7 +1084,8 @@ include "inc/header.php";
                                     <div class="collapsible-body">
                                         <div class="row">
                                             <div class="col l8 offset-l2 m10 offset-m1 s12">
-                                                <form method="post" action="actions/send_ticket.php"
+                                                <form method="post"
+                                                      action="<?php echo $base_dir; ?>actions/send_ticket"
                                                       id="ticket_form">
                                                     <blockquote class="blockquote-green w900">
                                                         Do you have a question or concern? Send a ticket, and we will be
@@ -1231,11 +1103,7 @@ include "inc/header.php";
                                                                if (!empty($_SESSION['ticket_input_subject']))
                                                                    echo $_SESSION['ticket_input_subject']; ?>">
                                                         <label for="support_subject" id="support_subject_label"
-                                                               data-error="<?php echo $ticket_subject_data_error; ?>">Subject&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                                                               data-error="<?php echo $ticket_subject_data_error; ?>">Subject</label>
                                                     </div>
                                                     <div class="input-field col s12">
                                                         <i class="material-icons prefix">textsms</i>
@@ -1257,23 +1125,18 @@ include "inc/header.php";
                                                         <?php if ($ticket_content_error == 2): ?>
                                                             <label for="support_content" id="support_content_label"
                                                                    data-error="Message must have at least 50 characters">
-                                                                Message&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                                                                Message</label>
                                                         <?php else: ?>
                                                             <label for="support_content" id="support_content_label"
-                                                                   data-error="Message is too long">Message&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                                                                   data-error="Message is too long">Message</label>
                                                         <?php endif; ?>
                                                     </div>
                                                     <div class="row"></div>
                                                     <div class="row"></div>
                                                     <div class="row">
                                                         <button id="ticket_button" disabled
-                                                                class="waves-effect waves-light btn right disabled">Submit
+                                                                class="waves-effect waves-light btn right disabled">
+                                                            Submit
                                                         </button>
                                                     </div>
                                                 </form>
@@ -1290,7 +1153,7 @@ include "inc/header.php";
                                         You might need to check your junk folder.</p>
                                 </div>
                                 <div class="card-action">
-                                    <a href="actions/send_confirmation_email.php">Resend email</a>
+                                    <a href="actions/send_confirmation_email">Resend email</a>
                                 </div>
                             </div>
                         <?php endif; ?>
@@ -1312,7 +1175,7 @@ include "inc/header.php";
 
     <!-- Custom scripts -->
     <script src="js/btcvalid.js"></script>
-    <script src="js/account_script.js"></script>
+    <script src="js/account-script.js"></script>
 
     <!-- Recaptcha-->
     <script src='https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit' async defer></script>
@@ -1333,13 +1196,7 @@ include "inc/header.php";
         }
 
     </script>
-    <?php include "inc/footer.php"; ?>
-
-
-<?php
-
-/*Email update stuff*/
-unset($_SESSION['captcha_failed']);
+<?php include "inc/footer.php";
 
 unset($_SESSION['transfer_user_error']);
 unset($_SESSION['transfer_amount_error']);

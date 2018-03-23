@@ -16,6 +16,18 @@ if (!$logged_in) {
     unset($_SESSION['login_error']);
 }
 
+$username_input = !empty($_SESSION['username_input']) ? $_SESSION['username_input'] : "";
+
+
+if (!empty($_SESSION['remember_me_input'] && $_SESSION['remember_me_input'] == 1)) {
+    $remember_me_input = "checked";
+} else {
+    $remember_me_input = "";
+}
+
+unset($_SESSION['remember_me_input']);
+unset($_SESSION['username_input']);
+
 $title = "Login - BitcoinPVP";
 include 'inc/header.php';
 ?>
@@ -37,8 +49,8 @@ include 'inc/header.php';
                                 <span class="card-title"><b>Login</b></span>
                                 <span>with your BitcoinPVP Account</span>
                                 <div class="row"></div>
-                                <form id="login" method="post" action="actions/loading-login">
-                                    <?php if (!empty($login_error)): ?>
+                                <form id="login" method="post" action="<?php echo $base_dir; ?>actions/loading-login">
+                                    <?php if ($login_error != 0): ?>
                                         <div class="col m10 offset-m1 s12">
                                             <blockquote class="blockquote-error w900">
                                                 <?php
@@ -54,7 +66,8 @@ include 'inc/header.php';
                                     <?php endif; ?>
                                     <div class="input-field col m10 offset-m1 s12">
                                         <i class="material-icons prefix">account_circle</i>
-                                        <input id="username" type="text" name="username">
+                                        <input id="username" type="text" name="username"
+                                               value="<?php echo $username_input; ?>">
                                         <label for="username">Username</label>
                                     </div>
                                     <div class="input-field col m10 offset-m1 s12">
@@ -63,13 +76,14 @@ include 'inc/header.php';
                                         <label for="password">Password</label>
                                     </div>
                                     <div class="col col m10 offset-m1 s12">
-                                        <input type="checkbox" id="remember_me" name="remember_me" value="1"/>
+                                        <input type="checkbox" id="remember_me" name="remember_me"
+                                               value="1" <?php echo $remember_me_input; ?>>
                                         <label for="remember_me">Remember me</label>
                                     </div>
                                     <div class="row"></div>
                                     <div class="row">
                                         <div class="col m6 s12 offset-m1">
-                                            <a href="forgot-password">Forgot password?</a>
+                                            <a href="<?php echo $base_dir; ?>forgot-password">Forgot password?</a>
                                         </div>
                                     </div>
                                     <div class="row">

@@ -113,39 +113,13 @@ try {
 } catch (PDOException $e) {
     echo "Connection failed: " . $e->getMessage();
 }
-?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Bitcoin</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <!-- Compiled and minified CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <!-- Compiled and minified JavaScript -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
-    <script src="js/autobahn.js"></script>
-    <script>
-        var numbersGlobal = <?php
-            if ($logged_in) {
-                echo json_encode($arrayOfNumbers);
-            }?>;
-    </script>
-    <script src="js/index_script.js"></script>
 
-    <link href="css/style.css" rel="stylesheet">
+$title = "BitcoinPVP";
 
-    <!--Let browser know website is optimized for mobile-->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <link rel="icon" href="img/favicon_symbol.png" type="image/gif" sizes="16x16">
-</head>
-<body>
-<header>
-    <?php include 'inc/header.php' ?>
-</header>
+include 'inc/header.php' ?>
 <main>
     <div class="alt-container">
+        <div class="row"></div>
         <div class="row">
             <div class="col l4 m6 s12">
                 <!--            Jackpot card   -->
@@ -445,6 +419,17 @@ try {
     </div>
 
 </main>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<!-- Compiled and minified JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+<script src="js/autobahn.js"></script>
+<script>
+    var numbersGlobal = <?php
+        if ($logged_in) {
+            echo json_encode($arrayOfNumbers);
+        }?>;
+</script>
+<script src="js/index_script.js"></script>
 <?php include "inc/footer.php"; ?>
 
 

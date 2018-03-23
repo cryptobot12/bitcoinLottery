@@ -91,7 +91,7 @@ if ($user_already_exists || $email_already_exists || $passwords_not_match || $in
                         <span class="card-title"><b>Create</b></span>
                         <span>a BitcoinPVP Account</span>
                         <div class="row"></div>
-                        <form id="registration" method="post" action="actions/loading_registration.php">
+                        <form id="registration" method="post" action="<?php echo $base_dir; ?>actions/loading_registration.php">
                             <?php if ($show_error): ?>
                                 <div class="col m10 offset-m1 s12">
                                     <blockquote class="blockquote-error w900">

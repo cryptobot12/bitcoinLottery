@@ -75,7 +75,7 @@ if ($captcha_success->success) {
                         //CREATE CONFIRMATION CODE
                         $confirmation_code = bin2hex(random_bytes(32));
 
-                        $stmt = $conn->prepare('INSERT INTO email_update(user_id, new_email,hashed_user_id, validator, expires) 
+                        $stmt = $conn->prepare('INSERT INTO email_update(user_id, new_email,hashed_user_id, validator, expires)
                   VALUES(:user_id, :new_email, :hashed_user_id, :validator, DATE_ADD(NOW(), INTERVAL 24 HOUR))');
                         $stmt->execute(array('user_id' => $user_id, 'new_email' => $new_email, 'hashed_user_id' => $hashed_user_id,
                             'validator' => $confirmation_code));
@@ -102,86 +102,71 @@ if ($captcha_success->success) {
                             //Content
                             $mail->CharSet = 'UTF-8';
                             $mail->isHTML(true);                                  // Set email format to HTML
-                            $mail->Subject = 'BitcoinPVP Email update request';
-                            $mail->Body = '<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
-    <style>
-        body {
-            font-family: \'Roboto\', sans-serif;
-        }
-    </style>
-</head>
-<body>
-<div style="width: 700px; margin: 0 auto;">
-    <div style="background: black"><img src="http://www.bitcoinpvp.net/img/nav-logo.png" height="56"></div>
+                            $mail->Subject = 'Email Update Request';
+                            $mail->Body = '<div style="width: 700px; margin: 0 auto;">
+    <div style="background: black"><img src="http://www.bitcoinpvp.net/img/nav-logo.png" height="40"></div>
 
-    <div style="width: 75%; margin: 50px auto;">
+    <div style="width: 75%; margin: 50px auto; color: black;">
 
 <p>Greetings <span style="color: red;"><b>' . $username . '</b></span>,</p>
         <p>We\'ve received an email update request for your BitcoinPVP account.<br>
             To update your email, click the link below: </p>
 
-        <a href="http://localhost/bitcoinLottery/actions/update_email.php?sel=' . $hashed_user_id . '&val=' . $confirmation_code . '">Update email</a>
+        <a href="' . $base_dir . 'actions/update-email/' . $hashed_user_id . '/' . $confirmation_code . '">Update email</a>
 
-        <p>This link will expire in 24 hours. If you did not request an email update, your account credentials 
+        <p>This link will expire in 24 hours. If you did not request an email update, your account credentials
         might have been compromised, and we encourage to change your password.</p>
 
-        <p>For more information on your account — please visit your <a href="http://localhost/bitcoinLottery/account.php">Account Management page.</a></p>
+        <p>For more information on your account — please visit your <a href="' . $base_dir . 'account">Account Management page.</a></p>
 
         <p>BitcoinPVP Team</p>
     </div>
 
-    <div style="background: black; color: white; padding: 10px;">© 2018 Copyright BitcoinPVP</div>
-</div>
-
-';
+    <div style="background: black; color: white; padding: 10px;">© ' . date('Y') . ' Copyright BitcoinPVP</div>
+</div>';
 
                             $mail->send();
-                            echo 'Message has been sent';
+
                         } catch (Exception $e) {
                             echo 'Message could not be sent. Mailer Error: ', $mail->ErrorInfo;
                         }
 
                         /*****************************/
                     } else {
-                        $_SESSION['email_taken'] = true;
                         $_SESSION['new-email'] = $new_email;
                         $_SESSION['confirm-email'] = $confirm_email;
+                        $_SESSION['expand_email'] = true;
                     }
 
-                    header("Location: ../account.php");
+                    header("Location: " . $base_dir . "account");
                     die();
                 } catch (PDOException $e) {
                     echo "Connection failed: " . $e->getMessage();
                 }
             } else {
                 //Invalid email
-                $_SESSION['upd_email'] = true;
-                $_SESSION['invalid_email'] = true;
                 $_SESSION['new-email'] = $new_email;
                 $_SESSION['confirm-email'] = $confirm_email;
-                header("Location: ../account.php");
+                $_SESSION['expand_email'] = true;
+                header("Location: " . $base_dir . "account.php");
                 die();
             }
         } else {
-            $_SESSION['upd_email'] = true;
-            $_SESSION['unmatch'] = true;
             $_SESSION['new-email'] = $new_email;
             $_SESSION['confirm-email'] = $confirm_email;
-            header("Location: ../account.php");
+            $_SESSION['expand_email'] = true;
+            header("Location: " . $base_dir . "account");
             die();
         }
     } // Not logged in
     else {
-        header("Location: ../account.php");
+        header("Location: " . $base_dir . "lost");
         die();
     }
 } //No captcha passed
 else {
-//    $_SESSION['captcha_failed'] = true;
-//    header("Location: ../account.php");
-//    die();
+    $_SESSION['captcha_failed_email'] = true;
+    $_SESSION['expand_email'] = true;
+    header("Location: " . $base_dir . "account");
+    die();
 }

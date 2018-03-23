@@ -8,7 +8,7 @@
 <!--EMAIL UPDATE CODE-->
 <?php if (1 == 0): ?>
     <form class=""
-          action="actions/update_email.php"
+          action="actions/update-email.php"
           method="post">
         <div class="row">
             <div class="input-field col s12">
@@ -357,3 +357,15 @@ display_header("Password Reset - BitcoinPVP", "", "", false, $base_dir, $usernam
 </main>
 <?php include 'inc/footer.php' ?>
 
+
+data-error="<?php
+
+if (!empty($_SESSION['incorrect_length']))
+    echo "Password must be at least 8 characters long";
+elseif (!empty($_SESSION['diff_pass']))
+    echo "New password must be different from current password";
+
+unset($_SESSION['incorrect_length']);
+unset($_SESSION['diff_pass']);
+
+?>"

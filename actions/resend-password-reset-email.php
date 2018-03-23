@@ -66,7 +66,7 @@ user_id = :user_id');
                     //Content
                     $mail->CharSet = 'UTF-8';
                     $mail->isHTML(true);                                  // Set email format to HTML
-                    $mail->Subject = 'BitcoinPVP Password Reset';
+                    $mail->Subject = 'Password Reset';
                     $mail->Body = '
 <div style="width: 700px; margin: 0 auto;">
     <div style="background: black"><img src="http://www.bitcoinpvp.net/img/nav-logo.png" height="40"></div>

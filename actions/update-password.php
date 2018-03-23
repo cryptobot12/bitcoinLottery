@@ -19,7 +19,6 @@ include "../inc/login_checker.php";
 $current_password = $_POST['current_password'];
 $new_password = $_POST['new_password'];
 $confirm_new_password = $_POST['confirm_new_password'];
-$user_id = $_SESSION['user_id'];
 
 $recaptcha_response = $_POST['g-recaptcha-response'];
 
@@ -112,38 +111,29 @@ if ($logged_in) {
 ';
 
                     $mail->send();
-                    echo 'Message has been sent';
                 } catch (Exception $e) {
                     echo 'Message could not be sent. Mailer Error: ', $mail->ErrorInfo;
                 }
 
                 /************************************************************/
                 $_SESSION['account_management_success'] = 2;
-                header("Location: ../account.php");
+                header("Location: " . $base_dir . "account");
                 die();
 
 
             } else {
 
-                if (strlen($new_password) < 8) {
-                    $_SESSION['incorrect_length'] = true;
-                }
-
-
                 if (!password_verify($current_password, $row['password']))
-                    $_SESSION['incorrect_cp'] = true;
+                    $_SESSION['incorrect_password'] = true;
                 elseif ($current_password == $new_password)
                     $_SESSION['diff_pass'] = true;
 
-                if ($new_password != $confirm_new_password)
-                    $_SESSION['unmatch_p'] = true;
 
-
-                $_SESSION['current_password'] = $current_password;
                 $_SESSION['new_password'] = $new_password;
                 $_SESSION['confirm_new_password'] = $confirm_new_password;
+                $_SESSION['expand_password'] = true;
 
-                header("Location: ../account.php");
+                header("Location: " . $base_dir . "account");
                 die();
             }
 
@@ -151,10 +141,11 @@ if ($logged_in) {
             echo "Connection failed: " . $e->getMessage();
         }
     } else {
-        echo "Cata failed.";
+        $_SESSION['captcha_failed_password'] = true;
+        $_SESSION['expand_password'] = true;
     }
 } else {
-    header("Location: ../index.php");
+    header("Location: " . $base_dir . "lost");
     die();
 }
 
