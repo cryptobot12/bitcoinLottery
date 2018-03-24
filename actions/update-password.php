@@ -143,6 +143,8 @@ if ($logged_in) {
     } else {
         $_SESSION['captcha_failed_password'] = true;
         $_SESSION['expand_password'] = true;
+        header("Location: " . $base_dir . "account");
+        die();
     }
 } else {
     header("Location: " . $base_dir . "lost");

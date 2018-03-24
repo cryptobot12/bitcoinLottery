@@ -428,8 +428,22 @@ $(function () {
     /* Labels */
     var withdrawalAmountLabel = $("#withdraw_amount_label");
 
-    /*Balance*/
-    var balance = parseInt($("#balanceNumber").html());
+    var amount = parseFloat(withdrawalAmountInput.val());
+
+    if (amount > 0) {
+        if (!Number.isInteger(amount)) {
+            withdrawalAmountLabel.attr('data-error', "Amount must be an integer number");
+            withdrawalAmountInput.addClass('invalid');
+        }
+        else if (amount <= 100) {
+            withdrawalAmountLabel.attr('data-error', "Amount must be greater than 100");
+            withdrawalAmountInput.addClass('invalid');
+        } else
+            withdrawalAmountInput.addClass('valid');
+
+        if (withdrawalAmountInput.hasClass('valid'))
+            toggleWithdrawButton(true);
+    }
 
     withdrawalAmountInput.on('input keyup', function () {
         withdrawalAmountInput.removeClass('invalid');
@@ -447,19 +461,14 @@ $(function () {
         else if (amount <= 100) {
             withdrawalAmountLabel.attr('data-error', "Amount must be greater than 100");
             withdrawalAmountInput.addClass('invalid');
-        }
-        else if ((amount + 100) > balance) {
-            withdrawalAmountLabel.attr('data-error', "Not enough bits");
-            withdrawalAmountInput.addClass('invalid');
-        }
-        else
+        } else
             withdrawalAmountInput.addClass('valid');
 
         if (withdrawalAmountInput.hasClass('valid'))
             toggleWithdrawButton(true);
 
 
-    })
+    });
 
 });
 

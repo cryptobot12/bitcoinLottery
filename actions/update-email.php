@@ -115,7 +115,7 @@ AND validator = :validator AND CURRENT_TIMESTAMP < expires');
 
     }
     else {
-        header("Location: ../expired-link" );
+        header("Location: ' . $base_dir . 'expired-link" );
         die();
     }
 

@@ -176,6 +176,26 @@ if ($logged_in) {
             unset($_SESSION['confirm_new_password']);
 
 
+            /*WITHDRAW STUFF*/
+
+            $withdraw_address_input = !empty($_SESSION['withdraw_address_input']) ? $_SESSION['withdraw_address_input'] : "";
+            $withdraw_amount_input = !empty($_SESSION['withdraw_amount_input']) ? $_SESSION['withdraw_amount_input'] : "";
+
+            unset($_SESSION['withdraw_address_input']);
+            unset($_SESSION['withdraw_amount_input']);
+
+            if (!empty($_SESSION['captcha_failed_withdraw']) && $_SESSION['captcha_failed_withdraw'])
+                $withdraw_error_message = "reCAPTCHA validation failed.";
+            elseif (!empty($_SESSION['withdraw_invalid_address']) && $_SESSION['withdraw_invalid_address'])
+                $withdraw_error_message = "Invalid Bitcoin address.";
+            elseif (!empty($_SESSION['withdraw_insufficient']) && $_SESSION['withdraw_insufficient'])
+                $withdraw_error_message = "You do not have enough bits to do this transaction.";
+            else
+                $withdraw_error_message = "";
+
+            unset($_SESSION['captcha_failed_withdraw']);
+            unset($_SESSION['withdraw_invalid_address']);
+            unset($_SESSION['withdraw_insufficient']);
         }
 
     } catch (PDOException $e) {
@@ -280,7 +300,7 @@ include "inc/header.php";
                                                         </div>
                                                     </div>
                                                     <div class="row">
-                                                        <button id="updateEmailButton"
+                                                        <button id="updateEmailButton" disabled
                                                                 class="g-recaptcha waves-effect waves-light btn right disabled
                                                                 amber darken-3">
                                                             Update Email
@@ -345,7 +365,7 @@ include "inc/header.php";
                                                         </div>
                                                     </div>
                                                     <div class="row">
-                                                        <button id="update_password_button"
+                                                        <button id="update_password_button" disabled
                                                                 class="amber darken-3 waves-effect waves-light btn right disabled g-recaptcha">
                                                             Update Password
                                                         </button>
@@ -545,8 +565,7 @@ include "inc/header.php";
                                 <li>
                                     <div class="collapsible-header <?php
 
-                                    if (!empty($_SESSION['withdraw_address_error']) || !(empty($_SESSION['withdraw_amount_error'])) ||
-                                        !empty($_SESSION['withdraw_insufficient']) || ($page_withdraw_parameter > 0)) {
+                                    if (!empty($withdraw_error_message) || ($page_withdraw_parameter > 0)) {
                                         echo "active";
                                     }
 
@@ -563,73 +582,33 @@ include "inc/header.php";
                                                         number greater than 100 bits. A 100 bits
                                                         mining fee will be added to the transaction.
                                                     </blockquote>
-                                                    <?php if (!empty($_SESSION['withdraw_insufficient'])) :
-                                                        unset($_SESSION['withdraw_insufficient']); ?>
-                                                        <div class="row">
-                                                            <p class="input-alert font-15">* You do not have enough bits
-                                                                to
-                                                                do
-                                                                this transaction.</p>
+                                                    <?php if (!empty($withdraw_error_message)) : ?>
+                                                        <div class="col s12">
+                                                            <blockquote class="blockquote-error w900">
+                                                                <?php echo $withdraw_error_message; ?>
+                                                            </blockquote>
                                                         </div>
                                                     <?php endif; ?>
                                                     <div class="input-field col l8 m7 s6">
                                                         <i class="material-icons prefix">account_balance_wallet</i>
-                                                        <input class="<?php
-
-                                                        if (!empty($_SESSION['withdraw_address_error'])) {
-                                                            echo "invalid";
-                                                        }
-
-                                                        ?>" type="text" id="withdraw_address" name="withdraw_address"
-                                                               value="<?php
-
-                                                               if (!empty($_SESSION['withdraw_address_input'])) {
-                                                                   echo $_SESSION['withdraw_address_input'];
-                                                                   unset($_SESSION['withdraw_address_input']);
-                                                               }
-
-                                                               ?>">
-                                                        <label for="withdraw_address" data-error="<?php
-
-                                                        if (!empty($_SESSION['withdraw_address_error'])) {
-                                                            echo $_SESSION['withdraw_address_error'];
-                                                            unset($_SESSION['withdraw_address_error']);
-                                                        }
-
-                                                        ?>" id="withdraw_address_label">Wallet Address</label>
+                                                        <input type="text" id="withdraw_address" name="withdraw_address"
+                                                               value="<?php echo $withdraw_address_input; ?>">
+                                                        <label for="withdraw_address" id="withdraw_address_label">Wallet
+                                                            Address</label>
                                                     </div>
                                                     <div class="input-field col l4 m5 s6">
                                                         <i class="material-icons prefix">bubble_chart</i>
                                                         <input type="number" id="withdraw_amount" name="withdraw_amount"
-                                                               class="<?php
-
-                                                               if (!empty($_SESSION['withdraw_amount_error'])) {
-                                                                   echo "invalid";
-                                                               }
-
-                                                               ?>" value="<?php
-
-                                                        if (!empty($_SESSION['withdraw_amount_input'])) {
-                                                            echo $_SESSION['withdraw_amount_input'];
-                                                            unset($_SESSION['withdraw_amount_input']);
-                                                        }
-
-                                                        ?>">
-                                                        <label for="withdraw_amount" data-error="<?php
-
-                                                        if (!empty($_SESSION['withdraw_amount_error'])) {
-                                                            echo $_SESSION['withdraw_amount_error'];
-                                                            unset($_SESSION['withdraw_amount_error']);
-                                                        }
-
-                                                        ?>" id="withdraw_amount_label">Amount (bits)</label>
+                                                               value="<?php echo $withdraw_amount_input; ?>">
+                                                        <label for="withdraw_amount" id="withdraw_amount_label">Amount
+                                                            (bits)</label>
                                                     </div>
                                                     <div class="row">
 
                                                     </div>
                                                     <div class="row">
-                                                        <button id="withdraw_button" type="submit"
-                                                                class="waves-effect waves-light btn right disabled">
+                                                        <button id="withdraw_button" disabled
+                                                                class="amber darken-3 waves-effect waves-light btn right disabled g-recaptcha">
                                                             Withdraw
                                                         </button>
                                                     </div>
@@ -892,8 +871,8 @@ include "inc/header.php";
                                                         </div>
                                                         <div class="row"></div>
                                                         <div class="row">
-                                                            <button type="submit" id="transfer_button"
-                                                                    class="waves-effect waves-light btn right disabled">
+                                                            <button id="transfer_button" disabled
+                                                                    class="amber darken-3 waves-effect waves-light btn right disabled g-recatpcha">
                                                                 Transfer
                                                             </button>
                                                         </div>
@@ -1135,7 +1114,7 @@ include "inc/header.php";
                                                     <div class="row"></div>
                                                     <div class="row">
                                                         <button id="ticket_button" disabled
-                                                                class="waves-effect waves-light btn right disabled">
+                                                                class="waves-effect waves-light btn right disabled g-recaptcha">
                                                             Submit
                                                         </button>
                                                     </div>
@@ -1174,8 +1153,7 @@ include "inc/header.php";
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
 
     <!-- Custom scripts -->
-    <script src="js/btcvalid.js"></script>
-    <script src="js/account-script.js"></script>
+    <script src="<?php echo $base_dir; ?>js/account-script.js"></script>
 
     <!-- Recaptcha-->
     <script src='https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit' async defer></script>
