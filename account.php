@@ -141,22 +141,32 @@ if ($logged_in) {
             $email = hide_mail($email);
 
             $error_update_email = !empty($_SESSION['expand_email']) ? $_SESSION['expand_email'] : false;
-            $email_update_captcha_failed = !empty($_SESSION['captcha_failed_email']) ? $_SESSION['captcha_failed_email'] : false;
             $expand_email_collapsible = $email_update_requests || $error_update_email;
 
             unset($_SESSION['expand_email']);
-            unset($_SESSION['captcha_failed_email']);
 
             $new_email_input = !empty($_SESSION['new-email']) ? $_SESSION['new-email'] : "";
             $confirm_email_input = !empty($_SESSION['confirm-email']) ? $_SESSION['confirm-email'] : "";
 
+            if (!empty($_SESSION['captcha_failed_email']) && $_SESSION['captcha_failed_email'])
+                $email_error_message = "reCAPTCHA validation field.";
+            elseif (!empty($_SESSION['email_empty_fields']) && $_SESSION['email_empty_fields'])
+                $email_error_message = "All fields are required.";
+            else
+                $email_error_message = "";
+
+            unset($_SESSION['captcha_failed_email']);
+            unset($_SESSION['email_empty_fields']);
             unset($_SESSION['new-email']);
             unset($_SESSION['confirm-email']);
 
+            /* PASSWORD STUFF */
             $expand_password_collapsible = !empty($_SESSION['expand_password']) ? $_SESSION['expand_password'] : false;
 
             if (!empty($_SESSION['captcha_failed_password']) && $_SESSION['captcha_failed_password'])
                 $password_error_message = "reCAPTCHA validation failed.";
+            elseif (!empty($_SESSION['password_empty_fields']) && $_SESSION['password_empty_fields'])
+                $password_error_message = "All fields are required.";
             elseif (!empty($_SESSION['incorrect_password']) && $_SESSION['incorrect_password'])
                 $password_error_message = "Incorrect password";
             elseif (!empty($_SESSION['diff_pass']) && $_SESSION['diff_pass'])
@@ -176,7 +186,7 @@ if ($logged_in) {
             unset($_SESSION['confirm_new_password']);
 
 
-            /*WITHDRAW STUFF*/
+            /* WITHDRAW STUFF */
 
             $withdraw_address_input = !empty($_SESSION['withdraw_address_input']) ? $_SESSION['withdraw_address_input'] : "";
             $withdraw_amount_input = !empty($_SESSION['withdraw_amount_input']) ? $_SESSION['withdraw_amount_input'] : "";
@@ -186,6 +196,8 @@ if ($logged_in) {
 
             if (!empty($_SESSION['captcha_failed_withdraw']) && $_SESSION['captcha_failed_withdraw'])
                 $withdraw_error_message = "reCAPTCHA validation failed.";
+            elseif (!empty($_SESSION['withdraw_empty_fields']) && $_SESSION['withdraw_empty_fields'])
+                $withdraw_error_message = "All fields are required.";
             elseif (!empty($_SESSION['withdraw_invalid_address']) && $_SESSION['withdraw_invalid_address'])
                 $withdraw_error_message = "Invalid Bitcoin address.";
             elseif (!empty($_SESSION['withdraw_insufficient']) && $_SESSION['withdraw_insufficient'])
@@ -193,9 +205,34 @@ if ($logged_in) {
             else
                 $withdraw_error_message = "";
 
+            $expand_withdraw_collapsible = !empty($_SESSION['expand_withdraw']) ? $_SESSION['expand_withdraw'] : false;
+
             unset($_SESSION['captcha_failed_withdraw']);
             unset($_SESSION['withdraw_invalid_address']);
             unset($_SESSION['withdraw_insufficient']);
+            unset($_SESSION['withdraw_empty_fields']);
+            unset($_SESSION['expand_withdraw']);
+
+            /* TRANSFER STUFF */
+
+            $transfer_user_input = !empty($_SESSION['transfer_user_input']) ? $_SESSION['transfer_user_input'] : "";
+            $transfer_amount_input = !empty($_SESSION['transfer_amount_input']) ? $_SESSION['transfer_amount_input'] : "";
+
+            if (!empty($_SESSION['captcha_failed_transfer']) && $_SESSION['captcha_failed_transfer'])
+                $transfer_error_message = "reCAPTCHA validation failed.";
+            elseif (!empty($_SESSION['transfer_empty_fields']) && $_SESSION['transfer_empty_fields'])
+                $transfer_error_message = "All fields are required.";
+            elseif (!empty($_SESSION['transfer_not_enough_balance']) && $_SESSION['transfer_not_enough_balance'])
+                $transfer_error_message = "You do not have enough bits to do this transaction.";
+            else
+                $transfer_error_message = "";
+
+            unset($_SESSION['transfer_user_input']);
+            unset($_SESSION['transfer_amount_input']);
+            unset($_SESSION['captcha_failed_transfer']);
+            unset($_SESSION['transfer_empty_fields']);
+            unset($_SESSION['transfer_not_enough_balance']);
+
         }
 
     } catch (PDOException $e) {
@@ -205,8 +242,7 @@ if ($logged_in) {
 }
 $title = "Account - BitcoinPVP";
 
-include "inc/header.php";
-?>
+include "inc/header.php"; ?>
     <main class="valign-wrapper">
         <div class="container">
             <?php if ($logged_in): ?>
@@ -262,10 +298,10 @@ include "inc/header.php";
                                                         Please check your email before sending a new request.
                                                     <?php endif; ?>
                                                 </blockquote>
-                                                <?php if ($email_update_captcha_failed == true) : ?>
+                                                <?php if (!empty($email_error_message)): ?>
                                                     <div class="col s12">
                                                         <blockquote class="blockquote-error w900">
-                                                            reCAPTCHA validation failed
+                                                            <?php echo $email_error_message; ?>
                                                         </blockquote>
                                                     </div>
                                                 <?php endif; ?>
@@ -300,9 +336,9 @@ include "inc/header.php";
                                                         </div>
                                                     </div>
                                                     <div class="row">
-                                                        <button id="updateEmailButton" disabled
-                                                                class="g-recaptcha waves-effect waves-light btn right disabled
-                                                                amber darken-3">
+                                                        <button id="updateEmailButton"
+                                                                class="g-recaptcha waves-effect waves-light btn right disabled amber darken-3"
+                                                                disabled>
                                                             Update Email
                                                         </button>
                                                     </div>
@@ -564,8 +600,8 @@ include "inc/header.php";
                                 </li>
                                 <li>
                                     <div class="collapsible-header <?php
-
-                                    if (!empty($withdraw_error_message) || ($page_withdraw_parameter > 0)) {
+                                    if (!empty($withdraw_error_message) || ($page_withdraw_parameter > 0) ||
+                                    $expand_withdraw_collapsible) {
                                         echo "active";
                                     }
 
@@ -785,10 +821,8 @@ include "inc/header.php";
                                 <li>
                                     <div class="collapsible-header <?php
 
-                                    if (!empty($_SESSION['transfer_user_error']) || !empty($_SESSION['transfer_amount_error']) || ($page_transfer_parameter > 0))
-                                        echo "active";
-
-                                    ?>"><i class="material-icons">swap_horiz</i>Transfer
+                                    if (!empty($transfer_error_message) || ($page_transfer_parameter > 0))
+                                        echo "active"; ?>"><i class="material-icons">swap_horiz</i>Transfer
                                     </div>
                                     <div class="collapsible-body">
                                         <div class="row">
@@ -801,78 +835,32 @@ include "inc/header.php";
                                                             number greater than 100 bits. A 100 bits
                                                             mining fee will be added to the transaction.
                                                         </blockquote>
+                                                        <?php if (!empty($transfer_error_message)) : ?>
+                                                            <div class="col s12">
+                                                                <blockquote class="blockquote-error w900">
+                                                                    <?php echo $transfer_error_message; ?>
+                                                                </blockquote>
+                                                            </div>
+                                                        <?php endif; ?>
                                                         <div class="input-field col l8 m7 s6">
                                                             <i class="material-icons prefix">account_circle</i>
                                                             <input type="text" id="transfer_user" name="transfer_user"
-                                                                   class="<?php
-
-                                                                   if (!empty($_SESSION['transfer_user_error']))
-                                                                       echo "invalid";
-
-                                                                   ?>" value="<?php
-                                                            if (!empty($_SESSION['transfer_user_input']))
-                                                                echo $_SESSION['transfer_user_input'];
-
-                                                            ?>"><label id="transfer_user_label" for="transfer_user"
-                                                                       data-error="<?php
-
-                                                                       if (!empty($_SESSION['transfer_user_error'])) {
-                                                                           switch ($_SESSION['transfer_user_error']) {
-                                                                               case 1:
-                                                                                   echo "Empty field";
-                                                                                   break;
-                                                                               case 2:
-                                                                                   echo "User does not exist";
-                                                                                   break;
-                                                                               case 3:
-                                                                                   echo "User cannot be yourself";
-                                                                                   break;
-                                                                           }
-                                                                       }
-
-                                                                       ?>">
+                                                                   value="<?php echo $transfer_user_input; ?>">
+                                                            <label id="transfer_user_label" for="transfer_user">
                                                                 User</label>
                                                         </div>
                                                         <div class="input-field col l4 m5 s6">
                                                             <i class="material-icons prefix">bubble_chart</i>
                                                             <input type="number" id="transfer_amount"
                                                                    name="transfer_amount"
-                                                                   class="<?php
-
-                                                                   if (!empty($_SESSION['transfer_amount_error']))
-                                                                       echo "invalid";
-
-                                                                   ?>" value="<?php
-                                                            if (!empty($_SESSION['transfer_amount_input']))
-                                                                echo $_SESSION['transfer_amount_input'];
-
-                                                            ?>">
-                                                            <label id="transfer_amount_label" for="transfer_amount"
-                                                                   data-error="<?php
-
-                                                                   if (!empty($_SESSION['transfer_amount_error'])) {
-                                                                       switch ($_SESSION['transfer_amount_error']) {
-                                                                           case 1:
-                                                                               echo "Empty field";
-                                                                               break;
-                                                                           case 2:
-                                                                               echo "Amount must be an integer number";
-                                                                               break;
-                                                                           case 3:
-                                                                               echo "Amount must be greater than 100";
-                                                                               break;
-                                                                           case 4:
-                                                                               echo "Not enough bits";
-                                                                               break;
-                                                                       }
-                                                                   }
-
-                                                                   ?>">Amount(bits)</label>
+                                                                   value="<?php echo $transfer_amount_input; ?>">
+                                                            <label id="transfer_amount_label" for="transfer_amount">Amount(bits)</label>
                                                         </div>
                                                         <div class="row"></div>
                                                         <div class="row">
-                                                            <button id="transfer_button" disabled
-                                                                    class="amber darken-3 waves-effect waves-light btn right disabled g-recatpcha">
+                                                            <button id="transfer_button"
+                                                                    class="amber darken-3 waves-effect waves-light btn right disabled g-recaptcha"
+                                                                    disabled>
                                                                 Transfer
                                                             </button>
                                                         </div>
@@ -1155,9 +1143,6 @@ include "inc/header.php";
     <!-- Custom scripts -->
     <script src="<?php echo $base_dir; ?>js/account-script.js"></script>
 
-    <!-- Recaptcha-->
-    <script src='https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit' async defer></script>
-
     <!-- Form submits -->
     <script type="text/javascript">
         var onloadCallback = function () {
@@ -1169,19 +1154,22 @@ include "inc/header.php";
                         object.parents('form').find(".g-recaptcha-response").val(token);
                         object.parents('form').submit();
                     }
+
                 });
+                object.prop('disabled', true);
             });
         }
 
     </script>
+
+    <!-- Recaptcha-->
+    <script src='https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit' async defer></script>
+
+
 <?php include "inc/footer.php";
 
-unset($_SESSION['transfer_user_error']);
-unset($_SESSION['transfer_amount_error']);
-unset($_SESSION['transfer_amount_input']);
-unset($_SESSION['transfer_user_input']);
+
 unset($_SESSION['account_management_success']);
-unset($_SESSION['input_code']);
 
 /*Ticket stuff*/
 unset($_SESSION['ticket_input_subject']);

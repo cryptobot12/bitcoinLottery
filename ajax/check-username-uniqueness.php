@@ -11,12 +11,12 @@ session_start();
 include "../globals.php";
 include "../inc/login_checker.php";
 
-$username = strtolower($_POST['username']);
+$username_to_check = strtolower($_POST['username']);
 
 //For transfer
 if ($logged_in) {
 
-    if ($username != $_SESSION['username']) {
+    if ($username_to_check != $username) {
         try {
             $conn = new PDO("mysql:host=$servername;dbname=$dbname", $dbuser, $dbpass);
             // set the PDO error mode to exception
@@ -26,7 +26,7 @@ if ($logged_in) {
             /*****Checking if email is taken ****/
 
             $stmt = $conn->prepare("SELECT COUNT(user_id) AS user_count FROM user WHERE username = :username");
-            $stmt->execute(array('username' => $username));
+            $stmt->execute(array('username' => $username_to_check));
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
             $user_count = $result['user_count'];
 

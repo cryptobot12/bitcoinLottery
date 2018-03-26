@@ -13,7 +13,7 @@ function verifyEmailUniqueness() {
     var newEmailVal = newEmail.val();
 
 
-    $.ajax('ajax/check_email_uniqueness.php', {
+    $.ajax('ajax/check-email-uniqueness.php', {
         success: function (result) {
             var response = JSON.parse(result);
 
@@ -305,8 +305,56 @@ $(function () {
     var transferUserLabel = $("#transfer_user_label");
     var transferAmountLabel = $("#transfer_amount_label");
 
-    /*Balance*/
-    var balance = parseInt($("#balanceNumber").html());
+    //ONLOAD
+    var amount = parseFloat(transferAmountInput.val());
+
+    //Not empty inputs
+    if (transferAmountInput.val().length > 0) {
+        if (!Number.isInteger(amount)) {
+            transferAmountLabel.attr('data-error', "Amount must be an integer number");
+            transferAmountInput.addClass('invalid');
+        }
+        else if (amount <= 100) {
+            transferAmountLabel.attr('data-error', "Amount must be greater than 100");
+            transferAmountInput.addClass('invalid');
+        } else
+            transferAmountInput.addClass('valid');
+    }
+
+    var username = transferUserInput.val();
+
+    if (username.length > 0) {
+        $.ajax('ajax/check-username-uniqueness.php', {
+            success: function (result) {
+                var response = JSON.parse(result);
+
+                if (response['same'] === true) {
+                    transferUserInput.addClass('invalid');
+                    transferUserLabel.attr('data-error', 'User cannot be yourself');
+                }
+                else if (response['exists'] === false) {
+                    transferUserInput.addClass('invalid');
+                    transferUserLabel.attr('data-error', 'User does not exist');
+                }
+                else {
+                    transferUserInput.removeClass('invalid');
+                    transferUserInput.addClass('valid');
+                }
+
+                if (transferUserInput.hasClass('valid') && transferAmountInput.hasClass('valid'))
+                    toggleTransferButton(true);
+
+            },
+            data: {
+                username: username
+            },
+            error: function () {
+                console.log("Could not verify if user exists");
+            },
+            method: 'POST'
+        })
+    }
+
 
     var delayTransferUser = (function () {
         var timer = 0;
@@ -322,11 +370,11 @@ $(function () {
 
         toggleTransferButton(false);
 
-        delayTransfer(function () {
+        delayTransferUser(function () {
             var username = transferUserInput.val();
 
             if (username.length > 0) {
-                $.ajax('ajax/check_username_uniqueness.php', {
+                $.ajax('ajax/check-username-uniqueness.php', {
                     success: function (result) {
                         var response = JSON.parse(result);
 
@@ -360,13 +408,6 @@ $(function () {
         }, 1800);
     });
 
-    var delayTransferAmount = (function () {
-        var timer = 0;
-        return function (callback, ms) {
-            clearTimeout(timer);
-            timer = setTimeout(callback, ms);
-        };
-    })();
 
     transferAmountInput.on('input keyup', function () {
         transferAmountInput.removeClass('invalid');
@@ -374,31 +415,24 @@ $(function () {
 
         toggleTransferButton(false);
 
-        delayTransferAmount(function () {
-            var amount = parseFloat(transferAmountInput.val());
 
-            //Not empty inputs
-            if (transferAmountInput.val().length > 0) {
-                if (!Number.isInteger(amount)) {
-                    transferAmountLabel.attr('data-error', "Amount must be an integer number");
-                    transferAmountInput.addClass('invalid');
-                }
-                else if (amount <= 100) {
-                    transferAmountLabel.attr('data-error', "Amount must be greater than 100");
-                    transferAmountInput.addClass('invalid');
-                }
-                else if ((amount + 100) > balance) {
-                    transferAmountLabel.attr('data-error', "Not enough bits");
-                    transferAmountInput.addClass('invalid');
-                }
-                else
-                    transferAmountInput.addClass('valid');
+        var amount = parseFloat(transferAmountInput.val());
+
+        //Not empty inputs
+        if (transferAmountInput.val().length > 0) {
+            if (!Number.isInteger(amount)) {
+                transferAmountLabel.attr('data-error', "Amount must be an integer number");
+                transferAmountInput.addClass('invalid');
             }
+            else if (amount <= 100) {
+                transferAmountLabel.attr('data-error', "Amount must be greater than 100");
+                transferAmountInput.addClass('invalid');
+            } else
+                transferAmountInput.addClass('valid');
+        }
 
-            if (transferUserInput.hasClass('valid') && transferAmountInput.hasClass('valid'))
-                toggleTransferButton(true);
-
-        }, 1800);
+        if (transferUserInput.hasClass('valid') && transferAmountInput.hasClass('valid'))
+            toggleTransferButton(true);
 
 
     });
@@ -430,6 +464,7 @@ $(function () {
 
     var amount = parseFloat(withdrawalAmountInput.val());
 
+    //ONLOAD
     if (amount > 0) {
         if (!Number.isInteger(amount)) {
             withdrawalAmountLabel.attr('data-error', "Amount must be an integer number");

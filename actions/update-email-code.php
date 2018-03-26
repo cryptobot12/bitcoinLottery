@@ -44,6 +44,14 @@ if ($captcha_success->success) {
         $new_email = strtolower(filter_var($_POST['new-email'], FILTER_SANITIZE_EMAIL));
         $confirm_email = strtolower(filter_var($_POST['confirm-email'], FILTER_SANITIZE_EMAIL));
 
+        if (strlen($new_email) == 0 || strlen($confirm_email) == 0) {
+
+            $_SESSION['email_empty_fields'] = true;
+            $_SESSION['expand_email'] = true;
+            header("Location: " . $base_dir . "account");
+            die();
+        }
+
         if ($new_email == $confirm_email) {
             if (filter_var($new_email, FILTER_VALIDATE_EMAIL)) {
                 //Valid email
@@ -148,7 +156,7 @@ if ($captcha_success->success) {
                 $_SESSION['new-email'] = $new_email;
                 $_SESSION['confirm-email'] = $confirm_email;
                 $_SESSION['expand_email'] = true;
-                header("Location: " . $base_dir . "account.php");
+                header("Location: " . $base_dir . "account");
                 die();
             }
         } else {
