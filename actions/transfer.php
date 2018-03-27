@@ -81,17 +81,20 @@ if ($logged_in) {
                     $result = $stmt->fetch(PDO::FETCH_ASSOC);
                     $balance = $result['balance'];
 
+                    var_dump($balance);
+                    echo $balance;
+
                     if ($balance >= ($amount * 100 + 10000))
-                        $enough_balance = true;
+                        $not_enough_balance = false;
                     else
-                        $enough_balance = false;
+                        $not_enough_balance = true;
                 }
 
             } catch (PDOException $e) {
                 echo "Connection failed: " . $e->getMessage();
             }
 
-            if (ctype_digit($amount) && $amount > 100 && $user_exists && $enough_balance && !$is_the_same_user) {
+            if (ctype_digit($amount) && $amount > 100 && $user_exists && !$not_enough_balance && !$is_the_same_user) {
 
                 try {
                     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $dbuser, $dbpass);
@@ -130,12 +133,13 @@ if ($logged_in) {
 
             } else {
 
-                if (!$enough_balance) {
+                if ($not_enough_balance) {
                     $_SESSION['transfer_not_enough_balance'] = true;
                 }
 
                 $_SESSION['transfer_amount_input'] = $amount;
                 $_SESSION['transfer_user_input'] = $to_user;
+                $_SESSION['expand_transfer'] = true;
 
                 header('Location: ' . $base_dir . 'account');
                 die();
@@ -144,6 +148,7 @@ if ($logged_in) {
             $_SESSION['transfer_empty_fields'] = true;
             $_SESSION['transfer_amount_input'] = $amount;
             $_SESSION['transfer_user_input'] = $to_user;
+            $_SESSION['expand_transfer'] = true;
 
             header('Location: ' . $base_dir . 'account');
             die();
@@ -153,6 +158,7 @@ if ($logged_in) {
         $_SESSION['captcha_failed_transfer'] = true;
         $_SESSION['transfer_amount_input'] = $amount;
         $_SESSION['transfer_user_input'] = $to_user;
+        $_SESSION['expand_transfer'] = true;
 
         header('Location: ' . $base_dir . 'account');
         die();

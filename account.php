@@ -227,11 +227,14 @@ if ($logged_in) {
             else
                 $transfer_error_message = "";
 
+            $expand_transfer_collapsible = !empty($_SESSION['expand_transfer']) ? $_SESSION['expand_transfer'] : false;
+
             unset($_SESSION['transfer_user_input']);
             unset($_SESSION['transfer_amount_input']);
             unset($_SESSION['captcha_failed_transfer']);
             unset($_SESSION['transfer_empty_fields']);
             unset($_SESSION['transfer_not_enough_balance']);
+            unset($_SESSION['expand_transfer']);
 
         }
 
@@ -601,7 +604,7 @@ include "inc/header.php"; ?>
                                 <li>
                                     <div class="collapsible-header <?php
                                     if (!empty($withdraw_error_message) || ($page_withdraw_parameter > 0) ||
-                                    $expand_withdraw_collapsible) {
+                                        $expand_withdraw_collapsible) {
                                         echo "active";
                                     }
 
@@ -821,7 +824,7 @@ include "inc/header.php"; ?>
                                 <li>
                                     <div class="collapsible-header <?php
 
-                                    if (!empty($transfer_error_message) || ($page_transfer_parameter > 0))
+                                    if ($expand_transfer_collapsible || ($page_transfer_parameter > 0))
                                         echo "active"; ?>"><i class="material-icons">swap_horiz</i>Transfer
                                     </div>
                                     <div class="collapsible-body">
@@ -1052,7 +1055,7 @@ include "inc/header.php"; ?>
                                         <div class="row">
                                             <div class="col l8 offset-l2 m10 offset-m1 s12">
                                                 <form method="post"
-                                                      action="<?php echo $base_dir; ?>actions/send_ticket"
+                                                      action="<?php echo $base_dir; ?>actions/send-ticket"
                                                       id="ticket_form">
                                                     <blockquote class="blockquote-green w900">
                                                         Do you have a question or concern? Send a ticket, and we will be
@@ -1120,7 +1123,7 @@ include "inc/header.php"; ?>
                                         You might need to check your junk folder.</p>
                                 </div>
                                 <div class="card-action">
-                                    <a href="actions/send_confirmation_email">Resend email</a>
+                                    <a href="actions/send-confirmation-email">Resend email</a>
                                 </div>
                             </div>
                         <?php endif; ?>
