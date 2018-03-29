@@ -5,6 +5,7 @@ RewriteBase /bitcoinLottery/
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^password-reset/([^/]+)/([^/]+)/?$ password-reset.php?sel=$1&val=$2 [L,QSA]
 RewriteRule ^actions/update-email/([^/]+)/([^/]+)/?$ actions/update-email.php?sel=$1&val=$2 [L,QSA]
+RewriteRule ^support/respond-ticket/([^/]+)/([^/]+)/?$ support/respond-ticket.php?ticket=$1&val=$2 [L,QSA]
 RewriteRule ^account/([^/])([^/])([^/])/?$ account.php?p=$1&pw=$2&pt=$3 [L,QSA]
 
 RewriteCond %{REQUEST_URI} [/]$

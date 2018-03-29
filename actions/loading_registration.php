@@ -6,6 +6,7 @@
  * Time: 6:02 PM
  */
 session_start();
+
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
@@ -180,7 +181,7 @@ if ($captcha_success->success) {
                 $mail->CharSet = 'UTF-8';
                 $mail->isHTML(true);                                  // Set email format to HTML
                 $mail->Subject = 'Verify your email address';
-                $mail->Body    = '<!DOCTYPE html>
+                $mail->Body = '<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -196,15 +197,15 @@ if ($captcha_success->success) {
     <div style="background: black"><img src="http://www.bitcoinpvp.net/img/nav-logo.png" height="56"></div>
 
     <div style="width: 75%; margin: 50px auto;">
-        <p>Greetings <span style="color: red;"><b>' . $username .'</b></span>,<br>
+        <p>Greetings <span style="color: red;"><b>' . $username . '</b></span>,<br>
             Please click the link below to verify your email address with BitcoinPVP:</p>
 
-        <a href="http://localhost/bitcoinLottery/actions/confirm_email.php?sel=' . $hashed_user_id . '&val='. $confirmation_code.'">Click here</a>
+        <a href="http://localhost/bitcoinLottery/actions/confirm_email.php?sel=' . $hashed_user_id . '&val=' . $confirmation_code . '">Click here</a>
 
         <p>Verifying your email address ensures an extra layer of security for your account. We know we have the correct info on
             file should you need assistance with your account.</p>
 
-        <p>For more information on your account — please visit your <a>Account Management page.</a></p>
+        <p>For more information on your account — please visit your <a href="' . $base_dir . 'account">Account Management page.</a></p>
 
         <p>BitcoinPVP Team</p>
     </div>
@@ -227,8 +228,6 @@ if ($captcha_success->success) {
             }
 
 
-
-
         } else {
 
             $_SESSION['input_username'] = $username;
@@ -243,8 +242,6 @@ if ($captcha_success->success) {
 
     } catch (PDOException $e) {
         echo "Connection failed: " . $e->getMessage();
-    } catch (Exception $e) {
-        echo $e->getMessage();
     }
 
 } else {

@@ -23,9 +23,9 @@ $content = htmlspecialchars($_POST['support_content']);
 $recaptcha_response = $_POST['g-recaptcha-response'];
 
 
-$subject_max_length = 50;
+$subject_max_length = 78;
 $content_max_length = 2000;
-$content_min_length = 50;
+$content_min_length = 60;
 
 /* Captcha verifying */
 $privatekey = "6Lf1d0EUAAAAAPhwWXktY_b1rBWR_ClydgLfj8g1";
@@ -62,9 +62,13 @@ if ($logged_in) {
                 $result = $stmt->fetch(PDO::FETCH_ASSOC);
                 $user_email = $result['email'];
 
-                $stmt = $conn->prepare('INSERT INTO ticket(user_id, submitted_on)
-                                          VALUES(:user_id, CURRENT_TIMESTAMP)');
-                $stmt->execute(array('user_id' => $user_id));
+                $validator = bin2hex(random_bytes(32));
+                $hashed_validator = password_hash($validator, PASSWORD_DEFAULT);
+
+                $stmt = $conn->prepare('INSERT INTO ticket(user_id, submitted_on, validator, subject, content)
+                                          VALUES(:user_id, CURRENT_TIMESTAMP, :hashed_validator, :subject, :content)');
+                $stmt->execute(array('user_id' => $user_id, 'hashed_validator' => $hashed_validator, 'subject' => $subject,
+                    'content' => $content));
                 $row = $stmt->fetch(PDO::FETCH_ASSOC);
                 $stmt = $conn->prepare('SELECT LAST_INSERT_ID() AS ticket_id');
                 $stmt->execute();
@@ -91,7 +95,7 @@ if ($logged_in) {
                     $mail->Port = 587;                                    // TCP port to connect to
 
                     //Recipients
-                    $mail->setFrom('no-reply@bitconpvp.net', 'BitcoinPVP');
+                    $mail->setFrom('no-reply@bitconpvp.net', 'BitcoinPVP Bot');
                     $mail->addAddress('support@bitcoinpvp.net');     // Add a recipient
 
 
@@ -105,35 +109,52 @@ if ($logged_in) {
     <div style="width: 75%; margin: 50px auto; color: black;">
 
 
-<b>REPLY TO: </b><span>' . $user_email . '</span>
+<b>REPLY TO: </b><span>' . $user_email . '</span><br>
+<b>USERNAME: </b><span>' . $username . '</span><br>
 <b>TICKET ID: </b><span>' . $ticket_id . '</span>
 
 <p>' . $content . '</p>
+
+<a href="' . $base_dir . 'support/respond-ticket/' . $ticket_id . '/' . $validator . '">Click here to respond</a>
     </div>
 
     <div style="background: black; color: white; padding: 10px;">© ' . date('Y') . ' Copyright BitcoinPVP</div>
 </div>';
 
                     $mail->send();
-
+                    $mail->ClearAllRecipients();
                     // TO USER
 
-                    $mail->setFrom('no-reply@bitconpvp.net', 'BitcoinPVP Support Team');
-                    $mail->addAddress('support@bitcoinpvp.net');     // Add a recipient
+                    $mail->setFrom('support@bitconpvp.net', 'BitcoinPVP Support Team');
+                    $mail->addAddress($user_email);     // Add a recipient
 
 
                     //Content
                     $mail->CharSet = 'UTF-8';
-                    $mail->Subject = 'BitcoinPVP Support Ticket #' . $ticket_id;
+                    $mail->Subject = 'Support Ticket #' . $ticket_id;
                     $mail->Body = '<div style="width: 700px; margin: 0 auto;">
     <div style="background: black"><img src="http://www.bitcoinpvp.net/img/nav-logo.png" height="40"></div>
 
     <div style="width: 75%; margin: 50px auto; color: black;">
 
 
-<b>REPLY TO: </b><span>' . $user_email . '</span>
+<p>Greetings <span style="color: red;"><b>' . $username . '</b></span>,<br><br>
+            Thanks for contacting our Support Team! We\'ve received your ticket (#' . $ticket_id . ').</p>
+            
+            <div style="width: 90%; margin: auto; color: black;">
+            <p><b>' . $subject . '</b></p>
+            <p><i>' . $content . '</i></p>
+            </div>
+            
+<p>Looks like a response will take a little longer than normal due to a high volume of requests, sit tight and one of
+ our specialists will answer you as soon as they can. Try not to bump your ticket unless you have additional information
+  that we could use to help you since bumping your ticket repeatedly will increase your wait time.</p>
 
-<p>' . $content . '</p>
+        <p>For more information on your account — please visit your <a href="' . $base_dir . 'account">Account Management page.</a></p>
+
+        <p>BitcoinPVP Support Team</p>
+
+
     </div>
 
     <div style="background: black; color: white; padding: 10px;">© ' . date('Y') . ' Copyright BitcoinPVP</div>
