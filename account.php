@@ -120,22 +120,6 @@ if ($logged_in) {
             $stmt->execute(array('user_id' => $user_id, 'rows' => $rowPerPage, 'the_offset' => (($pageTransfer - 1) * $rowPerPage)));
             $rowTableTransfers = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-            /* Ticket form*/
-            $ticket_content_error = (!empty($_SESSION['ticket_content_error']) ? $_SESSION['ticket_content_error'] : 0);
-
-
-            $ticket_subject_error = (!empty($_SESSION['ticket_subject_error']) ? $_SESSION['ticket_subject_error'] : 0);
-
-            $is_ticket_subject_invalid = !empty($_SESSION['ticket_subject_error']) ? 'invalid' : 'valid';
-
-            if ($ticket_subject_error == 1)
-                $ticket_subject_data_error = 'Subject is too long';
-            else
-                $ticket_subject_data_error = '';
-
-            unset($_SESSION['ticket_subject_error']);
-            unset($_SESSION['ticket_content_error']);
-
 
 //Hiding part of email for security purposes
             $email = hide_mail($email);
@@ -236,7 +220,36 @@ if ($logged_in) {
             unset($_SESSION['transfer_not_enough_balance']);
             unset($_SESSION['expand_transfer']);
 
+            /* Ticket form*/
+
+            $ticket_input_subject = !empty($_SESSION['ticket_input_subject']) ? $_SESSION['ticket_input_subject'] : "";
+            $ticket_input_content = !empty($_SESSION['ticket_input_content']) ? $_SESSION['ticket_input_content'] : "";
+
+
+            if (!empty($_SESSION['captcha_failed_ticket']) && $_SESSION['captcha_failed_ticket'])
+                $ticket_error_message = "reCAPTCHA validation failed.";
+            elseif (!empty($_SESSION['ticket_empty_content']) && $_SESSION['ticket_empty_content'])
+                $ticket_error_message = "Message cannot be empty.";
+            else
+                $ticket_error_message = "";
+
+            $expand_ticket_collapsible = !empty($_SESSION['expand_ticket']) ? $_SESSION['expand_ticket'] : false;
+
+            unset($_SESSION['ticket_input_subject']);
+            unset($_SESSION['ticket_input_content']);
+            unset($_SESSION['captcha_failed_ticket']);
+            unset($_SESSION['ticket_empty_content']);
+            unset($_SESSION['expand_ticket']);
+
+        } else {
+
+            $successfully_resent = !empty($_SESSION['confirm_email_sent_again_success']) ? $_SESSION['confirm_email_sent_again_success'] : false;
+            $failed_resent = !empty($_SESSION['too_soon_to_send_confirm_email_again']) ? $_SESSION['too_soon_to_send_confirm_email_again'] : false;
+
+            unset($_SESSION['confirm_email_sent_again_success']);
+            unset($_SESSION['too_soon_to_send_confirm_email_again']);
         }
+
 
     } catch (PDOException $e) {
         echo "Connection failed: " . $e->getMessage();
@@ -284,8 +297,8 @@ include "inc/header.php"; ?>
                             <?php endif; ?>
                             <div class="row"></div>
                             <ul class="collapsible popout" data-collapsible="expandable">
-                                <li>
-                                    <div class="collapsible-header <?php if ($expand_email_collapsible) echo "active"; ?>">
+                                <li class="<?php if ($expand_email_collapsible) echo "active"; ?>">
+                                    <div class="collapsible-header">
                                         <i class="material-icons">email</i>Update email
                                     </div>
                                     <div class="collapsible-body">
@@ -324,18 +337,18 @@ include "inc/header.php"; ?>
                                                             <i class="material-icons prefix">mail_outline</i>
                                                             <input name="new-email" id="new-email" type="email"
                                                                    class="" value="<?php echo $new_email_input; ?>">
-                                                            <label id="newEmailLabel" for="new-email"
-                                                                   data-error="" data-success="Email is available">New
-                                                                Email</label>
+                                                            <label for="new-email">New Email</label>
+                                                            <span id="new_email_helper" class="helper-text"
+                                                                  data-error="" data-success="Email is available">e.g myemail@email.com</span>
                                                         </div>
                                                         <div class="input-field col s12">
                                                             <i class="material-icons prefix">mail</i>
                                                             <input name="confirm-email" id="confirm-email"
                                                                    type="email"
                                                                    class="" value="<?php echo $confirm_email_input; ?>">
-                                                            <label id="confirmEmailLabel" for="confirm-email"
-                                                                   data-error="Emails do not match">Confirm New
-                                                                Email</label>
+                                                            <label for="confirm-email">Confirm New Email</label>
+                                                            <span id="confirm_email_helper" class="helper-text"
+                                                                  data-error="Emails do not match"></span>
                                                         </div>
                                                     </div>
                                                     <div class="row">
@@ -350,8 +363,8 @@ include "inc/header.php"; ?>
                                         </div>
                                     </div>
                                 </li>
-                                <li>
-                                    <div class="collapsible-header <?php if ($expand_password_collapsible) echo "active"; ?>">
+                                <li class="<?php if ($expand_password_collapsible) echo "active"; ?>">
+                                    <div class="collapsible-header">
                                         <i class="material-icons">lock</i>Update password
                                     </div>
                                     <div class="collapsible-body">
@@ -381,26 +394,26 @@ include "inc/header.php"; ?>
                                                             <i class="material-icons prefix">lock_outline</i>
                                                             <input name="current_password" id="current_password"
                                                                    type="password">
-                                                            <label id="current_password-label" for="current_password">Current
-                                                                Password</label>
+                                                            <label for="current_password">Current Password</label>
+                                                            <span class="helper-text">The password you use to log in</span>
                                                         </div>
                                                         <div class="input-field col s12">
                                                             <i class="material-icons prefix">lock</i>
                                                             <input name="new_password" id="new_password" type="password"
                                                                    value="<?php echo $new_password_input; ?>">
-                                                            <label id="new_password-label" for="new_password"
-                                                                   data-error="Password must be at least 8 characters long">New
-                                                                Password</label>
+                                                            <label for="new_password">New Password</label>
+                                                            <span class="helper-text"
+                                                                  data-error="New password must be at least 8 characters long">At least 8 characters long</span>
                                                         </div>
                                                         <div class="input-field col s12">
                                                             <i class="material-icons prefix">enhanced_encryption</i>
                                                             <input name="confirm_new_password" id="confirm_new_password"
                                                                    type="password"
                                                                    value="<?php echo $confirm_new_password_input; ?>">
-                                                            <label id="confirm_new_password-label"
-                                                                   for="confirm_new_password"
-                                                                   data-error="Passwords do not match">Confirm
-                                                                New Password</label>
+                                                            <label for="confirm_new_password">Confirm New
+                                                                Password</label>
+                                                            <span class="helper-text"
+                                                                  data-error="Passwords do not match"></span>
                                                         </div>
                                                     </div>
                                                     <div class="row">
@@ -414,13 +427,8 @@ include "inc/header.php"; ?>
                                         </div>
                                     </div>
                                 </li>
-                                <li>
-                                    <div class="collapsible-header <?php
-
-                                    if ($page_deposit_parameter > 0)
-                                        echo "active";
-
-                                    ?>"><i class="material-icons">account_balance</i>Deposit
+                                <li class="<?php if ($page_deposit_parameter > 0) echo "active"; ?>">
+                                    <div class="collapsible-header"><i class="material-icons">account_balance</i>Deposit
                                     </div>
                                     <div class="collapsible-body">
                                         <div class="row">
@@ -601,14 +609,12 @@ include "inc/header.php"; ?>
                                         </div>
                                     </div>
                                 </li>
-                                <li>
-                                    <div class="collapsible-header <?php
-                                    if (!empty($withdraw_error_message) || ($page_withdraw_parameter > 0) ||
-                                        $expand_withdraw_collapsible) {
-                                        echo "active";
-                                    }
-
-                                    ?>"><i class="material-icons">file_download</i>Withdraw
+                                <li class="<?php
+                                if (!empty($withdraw_error_message) || ($page_withdraw_parameter > 0) ||
+                                    $expand_withdraw_collapsible) {
+                                    echo "active";
+                                } ?>">
+                                    <div class="collapsible-header"><i class="material-icons">file_download</i>Withdraw
                                     </div>
                                     <div class="collapsible-body">
                                         <div class="row">
@@ -632,15 +638,16 @@ include "inc/header.php"; ?>
                                                         <i class="material-icons prefix">account_balance_wallet</i>
                                                         <input type="text" id="withdraw_address" name="withdraw_address"
                                                                value="<?php echo $withdraw_address_input; ?>">
-                                                        <label for="withdraw_address" id="withdraw_address_label">Wallet
-                                                            Address</label>
+                                                        <label for="withdraw_address">Wallet Address</label>
+                                                        <span class="helper-text">The Bitcoin address in which you will send your bits</span>
+
                                                     </div>
                                                     <div class="input-field col l4 m5 s6">
                                                         <i class="material-icons prefix">bubble_chart</i>
                                                         <input type="number" id="withdraw_amount" name="withdraw_amount"
                                                                value="<?php echo $withdraw_amount_input; ?>">
-                                                        <label for="withdraw_amount" id="withdraw_amount_label">Amount
-                                                            (bits)</label>
+                                                        <label for="withdraw_amount">Amount (bits)</label>
+                                                        <span id="withdraw_amount_helper" class="helper-text">Only integers allowed.</span>
                                                     </div>
                                                     <div class="row">
 
@@ -821,11 +828,9 @@ include "inc/header.php"; ?>
                                         </div>
                                     </div>
                                 </li>
-                                <li>
-                                    <div class="collapsible-header <?php
-
-                                    if ($expand_transfer_collapsible || ($page_transfer_parameter > 0))
-                                        echo "active"; ?>"><i class="material-icons">swap_horiz</i>Transfer
+                                <li class="<?php if ($expand_transfer_collapsible || ($page_transfer_parameter > 0))
+                                    echo "active"; ?>">
+                                    <div class="collapsible-header"><i class="material-icons">swap_horiz</i>Transfer
                                     </div>
                                     <div class="collapsible-body">
                                         <div class="row">
@@ -849,15 +854,16 @@ include "inc/header.php"; ?>
                                                             <i class="material-icons prefix">account_circle</i>
                                                             <input type="text" id="transfer_user" name="transfer_user"
                                                                    value="<?php echo $transfer_user_input; ?>">
-                                                            <label id="transfer_user_label" for="transfer_user">
-                                                                User</label>
+                                                            <label for="transfer_user">User</label>
+                                                            <span id="transfer_user_helper" class="helper-text">To whom are you sending bits?</span>
                                                         </div>
                                                         <div class="input-field col l4 m5 s6">
                                                             <i class="material-icons prefix">bubble_chart</i>
                                                             <input type="number" id="transfer_amount"
                                                                    name="transfer_amount"
                                                                    value="<?php echo $transfer_amount_input; ?>">
-                                                            <label id="transfer_amount_label" for="transfer_amount">Amount(bits)</label>
+                                                            <label for="transfer_amount">Amount(bits)</label>
+                                                            <span id="transfer_amount_helper" class="helper-text">Only integers allowed</span>
                                                         </div>
                                                         <div class="row"></div>
                                                         <div class="row">
@@ -1043,14 +1049,10 @@ include "inc/header.php"; ?>
                                         </div>
                                     </div>
                                 </li>
-                                <li>
-                                    <?php if ($ticket_content_error != 0): ?>
-                                        <div class="collapsible-header active"><i class="material-icons">live_help</i>Support
-                                        </div>
-                                    <?php else: ?>
-                                        <div class="collapsible-header"><i class="material-icons">live_help</i>Support
-                                        </div>
-                                    <?php endif; ?>
+                                <li class="<?php if ($expand_ticket_collapsible) echo "active"; ?>">
+                                    <div class="collapsible-header">
+                                        <i class="material-icons">live_help</i>Support
+                                    </div>
                                     <div class="collapsible-body">
                                         <div class="row">
                                             <div class="col l8 offset-l2 m10 offset-m1 s12">
@@ -1063,49 +1065,33 @@ include "inc/header.php"; ?>
                                                         to help you.
                                                     </blockquote>
                                                     <br>
+                                                    <?php if (!empty($ticket_error_message)) : ?>
+                                                        <div class="col s12">
+                                                            <blockquote class="blockquote-error w900">
+                                                                <?php echo $ticket_error_message; ?>
+                                                            </blockquote>
+                                                        </div>
+                                                    <?php endif; ?>
                                                     <div class="input-field col s12">
                                                         <i class="material-icons prefix">short_text</i>
                                                         <input type="text" id="support_subject"
-                                                               class="<?php echo $is_ticket_subject_invalid; ?>"
                                                                name="support_subject"
-                                                               placeholder="Subject (optional)" data-length="80"
-                                                               value="<?php
-                                                               if (!empty($_SESSION['ticket_input_subject']))
-                                                                   echo $_SESSION['ticket_input_subject']; ?>">
-                                                        <label for="support_subject" id="support_subject_label"
-                                                               data-error="<?php echo $ticket_subject_data_error; ?>">Subject</label>
+                                                               placeholder="(Optional)" data-length="78"
+                                                               value="<?php echo $ticket_input_subject; ?>">
+                                                        <label for="support_subject">Subject</label>
+                                                        <span id="support_subject_helper" class="helper-text"></span>
                                                     </div>
                                                     <div class="input-field col s12">
                                                         <i class="material-icons prefix">textsms</i>
-                                                        <?php //If there is an error
-                                                        //Add invalid class
-                                                        if ($ticket_content_error != 0): ?>
-                                                            <textarea id="support_content" name="support_content"
-                                                                      class="materialize-textarea invalid"
-                                                                      data-length="2000"><?php
-                                                                if (!empty($_SESSION['ticket_input_content']))
-                                                                    echo $_SESSION['ticket_input_content']; ?></textarea>
-                                                        <?php else: ?>
-                                                            <textarea id="support_content" name="support_content"
-                                                                      class="materialize-textarea"
-                                                                      data-length="2000"><?php
-                                                                if (!empty($_SESSION['ticket_input_content']))
-                                                                    echo $_SESSION['ticket_input_content']; ?></textarea>
-                                                        <?php endif; ?>
-                                                        <?php if ($ticket_content_error == 2): ?>
-                                                            <label for="support_content" id="support_content_label"
-                                                                   data-error="Message must have at least 50 characters">
-                                                                Message</label>
-                                                        <?php else: ?>
-                                                            <label for="support_content" id="support_content_label"
-                                                                   data-error="Message is too long">Message</label>
-                                                        <?php endif; ?>
+                                                        <textarea id="support_content" name="support_content"
+                                                                  class="materialize-textarea"
+                                                                  data-length="2000"><?php echo $ticket_input_content; ?></textarea>
+                                                        <label for="support_content"> Message</label>
+                                                        <span id="support_content_helper" class="helper-text"></span>
                                                     </div>
-                                                    <div class="row"></div>
-                                                    <div class="row"></div>
                                                     <div class="row">
                                                         <button id="ticket_button" disabled
-                                                                class="waves-effect waves-light btn right disabled g-recaptcha">
+                                                                class="waves-effect waves-light btn right disabled g-recaptcha amber darken-3">
                                                             Submit
                                                         </button>
                                                     </div>
@@ -1116,6 +1102,16 @@ include "inc/header.php"; ?>
                                 </li>
                             </ul>
                         <?php else: ?>
+                            <?php if ($successfully_resent): ?>
+                                <blockquote class="blockquote-green w900">
+                                    Email successfully sent.
+                                </blockquote>
+                            <?php endif; ?>
+                            <?php if ($failed_resent): ?>
+                                <blockquote class="blockquote-error w900">
+                                    Wait at least 10 minutes to resend the link.
+                                </blockquote>
+                            <?php endif; ?>
                             <div class="card">
                                 <div class="card-content">
                                     <span class="card-title"><b>Email Confirmation</b></span>
@@ -1123,7 +1119,7 @@ include "inc/header.php"; ?>
                                         You might need to check your junk folder.</p>
                                 </div>
                                 <div class="card-action">
-                                    <a href="actions/send-confirmation-email">Resend email</a>
+                                    <a href="<?php echo $base_dir; ?>actions/resend-confirmation-email">Resend email</a>
                                 </div>
                             </div>
                         <?php endif; ?>
@@ -1141,7 +1137,7 @@ include "inc/header.php"; ?>
     <!-- Jquery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <!-- Compiled and minified JavaScript -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/js/materialize.min.js"></script>
 
     <!-- Custom scripts -->
     <script src="<?php echo $base_dir; ?>js/account-script.js"></script>

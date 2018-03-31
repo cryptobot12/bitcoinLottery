@@ -25,21 +25,22 @@ if (!empty($selector) && !empty($validator)) {
         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 
-        $stmt = $conn->prepare('SELECT user_id, expires, current_timestamp AS now FROM password_reset WHERE hashed_user_id = :selector
-AND validator = :validator');
-        $stmt->execute(array('selector' => $selector, 'validator' => $validator));
+        $stmt = $conn->prepare('SELECT user_id, expires, validator, current_timestamp AS now 
+FROM password_reset WHERE hashed_user_id = :selector');
+        $stmt->execute(array('selector' => $selector));
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         $reset_user_id = $result['user_id'];
         $expires = $result['expires'];
         $now = $result['now'];
+        $hashed_validator = $result['validator'];
 
-        if (!empty($reset_user_id)) {
+        if (!empty($reset_user_id) && password_verify($validator, $hashed_validator)) {
             if (strtotime($expires) < strtotime($now)) {
                 header("Location: " . $base_dir . "expired-link");
                 die();
             }
         } else {
-            header("Location: " . $base_dir . "expired-link");
+            header("Location: " . $base_dir . "lost");
             die();
         }
 
@@ -95,8 +96,11 @@ include 'inc/header.php'; ?>
                                 <input id="new_password" type="password" name="new_password"
                                        class="<?php echo $new_password_class; ?>"
                                        value="<?php echo $new_password_input; ?>">
-                                <label for="new_password" data-error="Your password must be at least 8 characters long">New
+                                <label for="new_password">New
                                     Password</label>
+                                <span class="helper-text" data-error="Your password must be at least 8 characters long">
+                                    At leas 8 characters long.
+                                </span>
                             </div>
                             <div class="input-field col m10 offset-m1 s12">
                                 <i class="material-icons prefix">lock</i>
@@ -105,6 +109,7 @@ include 'inc/header.php'; ?>
                                     value="<?php echo $confirm_new_password_input; ?>">
                                 <label for="confirm_new_password" data-error="Passwords do not match">Confirm
                                     New Password</label>
+                                <span class="helper-text" data-error="Passwords do not match"></span>
                             </div>
                             <div class="row">
                                 <div class="input-field col m10 offset-m1 s12">
@@ -125,7 +130,7 @@ include 'inc/header.php'; ?>
 <!-- Jquery -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <!-- Compiled and minified JavaScript -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/js/materialize.min.js"></script>
 <script src="<?php echo $base_dir; ?>js/password-reset.js"></script>
 <?php include 'inc/footer.php' ?>
 

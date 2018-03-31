@@ -7,6 +7,7 @@ RewriteRule ^password-reset/([^/]+)/([^/]+)/?$ password-reset.php?sel=$1&val=$2 
 RewriteRule ^actions/update-email/([^/]+)/([^/]+)/?$ actions/update-email.php?sel=$1&val=$2 [L,QSA]
 RewriteRule ^support/respond-ticket/([^/]+)/([^/]+)/?$ support/respond-ticket.php?ticket=$1&val=$2 [L,QSA]
 RewriteRule ^account/([^/])([^/])([^/])/?$ account.php?p=$1&pw=$2&pt=$3 [L,QSA]
+RewriteRule ^confirm-email/([^/]+)/([^/]+)/?$ actions/confirm-email?sel=$1&val=$2 [L,QSA]
 
 RewriteCond %{REQUEST_URI} [/]$
 RewriteRule ^([^/]*)[/]$ $1 [L,R]

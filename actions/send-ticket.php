@@ -175,6 +175,9 @@ if ($logged_in) {
             }
         } else {
 
+            if (strlen($content) == 0)
+                $_SESSION['ticket_empty_content'] = true;
+
             $_SESSION['ticket_input_subject'] = $subject;
             $_SESSION['ticket_input_content'] = $content;
             $_SESSION['expand_ticket'] = true;

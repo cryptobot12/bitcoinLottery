@@ -61,7 +61,7 @@ else {
         /*****Checking if email is taken ****/
 
         $stmt = $conn->prepare("SELECT COUNT(user_id) AS user_count FROM user WHERE username = :username");
-        $stmt->execute(array('username' => $username));
+        $stmt->execute(array('username' => $username_to_check));
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         $user_count = $result['user_count'];
 

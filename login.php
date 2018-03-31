@@ -76,9 +76,11 @@ include 'inc/header.php';
                                         <label for="password">Password</label>
                                     </div>
                                     <div class="col col m10 offset-m1 s12">
-                                        <input type="checkbox" id="remember_me" name="remember_me"
+                                        <label>
+                                        <input class="checkbox-indigo" type="checkbox" id="remember_me" name="remember_me"
                                                value="1" <?php echo $remember_me_input; ?>>
-                                        <label for="remember_me">Remember me</label>
+                                            <span>Remember me</span>
+                                       </label>
                                     </div>
                                     <div class="row"></div>
                                     <div class="row">
@@ -107,8 +109,12 @@ include 'inc/header.php';
     <!-- Jquery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <!-- Compiled and minified JavaScript -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/js/materialize.min.js"></script>
     <script>
+        $(document).ready(function () {
+            M.AutoInit();
+        });
+
         function submitTicket() {
             $("#login").submit();
 

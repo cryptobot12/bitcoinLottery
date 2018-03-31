@@ -1,26 +1,32 @@
 /* EMAIL CHECKER */
 function isEmail(email) {
-    var regex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
-    return regex.test(email);
+    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
 }
+
+$(document).ready(function () {
+    M.AutoInit();
+
+    $('input#support_subject, textarea#support_content').characterCounter();
+});
 
 /* AJAX EMAIL UNIQUENESS */
 function verifyEmailUniqueness() {
 
     var newEmail = $("#new-email");
-    var labelNewEmail = $("#newEmailLabel");
+    var helperNewEmail = $("#new_email_helper");
     var confirmEmail = $("#confirm-email");
     var newEmailVal = newEmail.val();
 
 
-    $.ajax('ajax/check-email-uniqueness.php', {
+    $.ajax('ajax/check-email-uniqueness', {
         success: function (result) {
             var response = JSON.parse(result);
 
             if (response['taken'] === true) {
                 newEmail.addClass("invalid");
 
-                labelNewEmail.attr("data-error", "Email is already taken");
+                helperNewEmail.attr("data-error", "Email is already taken");
             }
             else {
                 newEmail.addClass('valid');
@@ -79,8 +85,8 @@ $(function () {
     /* EMAIL */
     var newEmail = $("#new-email");
     var confirmEmail = $("#confirm-email");
-    var labelNewEmail = $("#newEmailLabel");
-    var labelConfirmEmail = $("#confirmEmailLabel");
+    var helperNewEmail = $("#new_email_helper");
+    var helperConfirmEmail = $("#confirm_email_helper");
 
     var delayNewEmail = (function () {
         var timer = 0;
@@ -103,7 +109,7 @@ $(function () {
         else {
             newEmail.addClass("invalid");
 
-            labelNewEmail.attr("data-error", "Invalid email");
+            helperNewEmail.attr("data-error", "Invalid email");
         }
     }
 
@@ -115,7 +121,7 @@ $(function () {
         else {
             confirmEmail.addClass("invalid");
 
-            labelConfirmEmail.attr("data-error", "Emails do not match");
+            helperConfirmEmail.attr("data-error", "Emails do not match");
         }
     }
 
@@ -143,7 +149,7 @@ $(function () {
             else {
                 newEmail.addClass("invalid");
 
-                labelNewEmail.attr("data-error", "Invalid email");
+                helperNewEmail.attr("data-error", "Invalid email");
             }
 
             if (conEmailVal.length > 0) {
@@ -154,7 +160,7 @@ $(function () {
                 else {
                     confirmEmail.addClass("invalid");
 
-                    labelConfirmEmail.attr("data-error", "Emails do not match");
+                    helperConfirmEmail.attr("data-error", "Emails do not match");
                 }
             }
 
@@ -183,7 +189,7 @@ $(function () {
         else {
             confirmEmail.addClass("invalid");
 
-            labelConfirmEmail.attr("data-error", "Emails do not match");
+            helperConfirmEmail.attr("data-error", "Emails do not match");
         }
 
         if (newEmail.hasClass('valid') && confirmEmail.hasClass('valid'))
@@ -302,8 +308,8 @@ $(function () {
     var transferAmountInput = $("#transfer_amount");
 
     /*Labels*/
-    var transferUserLabel = $("#transfer_user_label");
-    var transferAmountLabel = $("#transfer_amount_label");
+    var transferUserHelper = $("#transfer_user_helper");
+    var transferAmountHelper = $("#transfer_amount_helper");
 
     //ONLOAD
     var amount = parseFloat(transferAmountInput.val());
@@ -311,11 +317,11 @@ $(function () {
     //Not empty inputs
     if (transferAmountInput.val().length > 0) {
         if (!Number.isInteger(amount)) {
-            transferAmountLabel.attr('data-error', "Amount must be an integer number");
+            transferAmountHelper.attr('data-error', "Amount must be an integer number");
             transferAmountInput.addClass('invalid');
         }
         else if (amount <= 100) {
-            transferAmountLabel.attr('data-error', "Amount must be greater than 100");
+            transferAmountHelper.attr('data-error', "Amount must be greater than 100");
             transferAmountInput.addClass('invalid');
         } else
             transferAmountInput.addClass('valid');
@@ -324,17 +330,17 @@ $(function () {
     var username = transferUserInput.val();
 
     if (username.length > 0) {
-        $.ajax('ajax/check-username-uniqueness.php', {
+        $.ajax('ajax/check-username-uniqueness', {
             success: function (result) {
                 var response = JSON.parse(result);
 
                 if (response['same'] === true) {
                     transferUserInput.addClass('invalid');
-                    transferUserLabel.attr('data-error', 'User cannot be yourself');
+                    transferUserHelper.attr('data-error', 'User cannot be yourself');
                 }
                 else if (response['exists'] === false) {
                     transferUserInput.addClass('invalid');
-                    transferUserLabel.attr('data-error', 'User does not exist');
+                    transferUserHelper.attr('data-error', 'User does not exist');
                 }
                 else {
                     transferUserInput.removeClass('invalid');
@@ -374,17 +380,17 @@ $(function () {
             var username = transferUserInput.val();
 
             if (username.length > 0) {
-                $.ajax('ajax/check-username-uniqueness.php', {
+                $.ajax('ajax/check-username-uniqueness', {
                     success: function (result) {
                         var response = JSON.parse(result);
 
                         if (response['same'] === true) {
                             transferUserInput.addClass('invalid');
-                            transferUserLabel.attr('data-error', 'User cannot be yourself');
+                            transferUserHelper.attr('data-error', 'User cannot be yourself');
                         }
                         else if (response['exists'] === false) {
                             transferUserInput.addClass('invalid');
-                            transferUserLabel.attr('data-error', 'User does not exist');
+                            transferUserHelper.attr('data-error', 'User does not exist');
                         }
                         else {
                             transferUserInput.removeClass('invalid');
@@ -421,11 +427,11 @@ $(function () {
         //Not empty inputs
         if (transferAmountInput.val().length > 0) {
             if (!Number.isInteger(amount)) {
-                transferAmountLabel.attr('data-error', "Amount must be an integer number");
+                transferAmountHelper.attr('data-error', "Amount must be an integer number");
                 transferAmountInput.addClass('invalid');
             }
             else if (amount <= 100) {
-                transferAmountLabel.attr('data-error', "Amount must be greater than 100");
+                transferAmountHelper.attr('data-error', "Amount must be greater than 100");
                 transferAmountInput.addClass('invalid');
             } else
                 transferAmountInput.addClass('valid');
@@ -459,19 +465,18 @@ $(function () {
     /* Inputs */
     var withdrawalAmountInput = $("#withdraw_amount");
 
-    /* Labels */
-    var withdrawalAmountLabel = $("#withdraw_amount_label");
+    var withdrawalAmountHelper = $("#withdraw_amount_helper");
 
     var amount = parseFloat(withdrawalAmountInput.val());
 
     //ONLOAD
     if (amount > 0) {
         if (!Number.isInteger(amount)) {
-            withdrawalAmountLabel.attr('data-error', "Amount must be an integer number");
+            withdrawalAmountHelper.attr('data-error', "Amount must be an integer number");
             withdrawalAmountInput.addClass('invalid');
         }
         else if (amount <= 100) {
-            withdrawalAmountLabel.attr('data-error', "Amount must be greater than 100");
+            withdrawalAmountHelper.attr('data-error', "Amount must be greater than 100");
             withdrawalAmountInput.addClass('invalid');
         } else
             withdrawalAmountInput.addClass('valid');
@@ -490,11 +495,11 @@ $(function () {
         var amount = parseFloat(withdrawalAmountInput.val());
 
         if (!Number.isInteger(amount)) {
-            withdrawalAmountLabel.attr('data-error', "Amount must be an integer number");
+            withdrawalAmountHelper.attr('data-error', "Amount must be an integer number");
             withdrawalAmountInput.addClass('invalid');
         }
         else if (amount <= 100) {
-            withdrawalAmountLabel.attr('data-error', "Amount must be greater than 100");
+            withdrawalAmountHelper.attr('data-error', "Amount must be greater than 100");
             withdrawalAmountInput.addClass('invalid');
         } else
             withdrawalAmountInput.addClass('valid');
@@ -524,19 +529,46 @@ function toggleTicketButton(enabled) {
 /* Listener for ticket */
 $(function () {
 
-    var delayTicket = (function () {
-        var timer = 0;
-        return function (callback, ms) {
-            clearTimeout(timer);
-            timer = setTimeout(callback, ms);
-        };
-    })();
-
     var ticket_content_input = $("#support_content");
-    var ticket_content_label = $("#support_content_label");
+    var ticket_content_helper = $("#support_content_helper");
 
     var ticket_subject_input = $("#support_subject");
-    var ticket_subject_label = $("#support_subject_label");
+    var ticket_subject_helper = $("#support_subject_helper");
+
+    M.textareaAutoResize(ticket_content_input);
+
+    //ONLOAD
+
+    if (ticket_content_input.val().length > 0) {
+        if (ticket_content_input.val().length < 60) {
+
+            ticket_content_helper.attr('data-error', "Message must have at least 60 characters");
+            ticket_content_input.addClass('invalid');
+
+        } else if (ticket_content_input.val().length > 2000) {
+            ticket_content_helper.attr('data-error', "Message is too long");
+            ticket_content_input.addClass('invalid');
+
+        }
+        else {
+            ticket_content_input.addClass('valid');
+        }
+    }
+
+    if (ticket_subject_input.val().length > 0) {
+        if (ticket_subject_input.val().length > 78) {
+            ticket_subject_helper.attr('data-error', "Subject is too long");
+            ticket_subject_input.addClass('invalid');
+
+        }
+        else {
+            ticket_subject_input.addClass('valid');
+        }
+
+    }
+    if (ticket_content_input.hasClass('valid') && ticket_subject_input.hasClass('valid')) {
+        toggleTicketButton(true);
+    }
 
     ticket_content_input.on('keyup input', function () {
 
@@ -545,27 +577,24 @@ $(function () {
         ticket_content_input.removeClass('invalid');
         ticket_content_input.removeClass('valid');
 
-        delayTicket(function () {
 
-            if (ticket_content_input.val().length < 50) {
+        if (ticket_content_input.val().length < 60) {
 
-                ticket_content_label.attr('data-error', "Message must have at least 50 characters");
-                ticket_content_input.addClass('invalid');
+            ticket_content_helper.attr('data-error', "Message must have at least 60 characters");
+            ticket_content_input.addClass('invalid');
 
-            } else if (ticket_content_input.val().length > 2000) {
-                ticket_content_label.attr('data-error', "Message is too long");
-                ticket_content_input.addClass('invalid');
+        } else if (ticket_content_input.val().length > 2000) {
+            ticket_content_helper.attr('data-error', "Message is too long");
+            ticket_content_input.addClass('invalid');
 
-            }
-            else {
-                ticket_content_input.addClass('valid');
-            }
+        }
+        else {
+            ticket_content_input.addClass('valid');
+        }
 
-            if (ticket_content_input.hasClass('valid') && ticket_subject_input.hasClass('valid')) {
-                toggleTicketButton(true);
-            }
-
-        }, 2000);
+        if (ticket_content_input.hasClass('valid') && ticket_subject_input.hasClass('valid')) {
+            toggleTicketButton(true);
+        }
     });
 
     ticket_subject_input.on('keyup input', function () {
@@ -575,22 +604,20 @@ $(function () {
         ticket_subject_input.removeClass('invalid');
         ticket_subject_input.removeClass('valid');
 
-        delayTicket(function () {
 
-            if (ticket_subject_input.val().length > 80) {
-                ticket_subject_label.attr('data-error', "Subject is too long");
-                ticket_subject_input.addClass('invalid');
+        if (ticket_subject_input.val().length > 78) {
+            ticket_subject_helper.attr('data-error', "Subject is too long");
+            ticket_subject_input.addClass('invalid');
 
-            }
-            else {
-                ticket_subject_input.addClass('valid');
-            }
+        }
+        else {
+            ticket_subject_input.addClass('valid');
+        }
 
-            if (ticket_subject_input.hasClass('valid') && ticket_content_input.hasClass('valid')) {
-                toggleTicketButton(true);
-            }
+        if (ticket_subject_input.hasClass('valid') && ticket_content_input.hasClass('valid')) {
+            toggleTicketButton(true);
+        }
 
-        }, 2000);
     });
 
 

@@ -6,6 +6,7 @@ $(function () {
 
 //Resize chat input
 $(document).ready(function () {
+    M.AutoInit();
 
     //chat
     var chat_send = $("#chat-send");

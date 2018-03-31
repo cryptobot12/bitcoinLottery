@@ -1,9 +1,9 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: luckiestguyever
- * Date: 3/8/18
- * Time: 7:36 PM
+ * User: Frank
+ * Date: 1/25/2018
+ * Time: 1:21 PM
  */
 session_start();
 
@@ -12,10 +12,12 @@ use PHPMailer\PHPMailer\Exception;
 
 //Load composer's autoloader
 require '../vendor/autoload.php';
-include '../globals.php';
 
-if (!empty($_SESSION['password_reset_user_id'])) {
-    $user_id = $_SESSION['password_reset_user_id'];
+include "../globals.php";
+include "../inc/login_checker.php";
+
+if ($logged_in) {
+    //Send email again and do the stuff here
 
     try {
         $conn = new PDO("mysql:host=$servername;dbname=$dbname", $dbuser, $dbpass);
@@ -23,23 +25,18 @@ if (!empty($_SESSION['password_reset_user_id'])) {
         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 
-        $stmt = $conn->prepare('SELECT last_send,  DATE_ADD(CURRENT_TIMESTAMP, INTERVAL -10 MINUTE) AS now 
-FROM password_reset WHERE user_id = :user_id');
+        $stmt = $conn->prepare('SELECT user_id, last_send, hashed_user_id, validator,
+ DATE_ADD(CURRENT_TIMESTAMP, INTERVAL -10 MINUTE) AS now FROM email_confirmation WHERE user_id = :user_id');
         $stmt->execute(array('user_id' => $user_id));
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         $last_send = $result['last_send'];
         $now = $result['now'];
 
-
-        if (!empty($result['last_send'])) {
+        if (!empty($result['user_id'])) {
 
             if (strtotime($last_send) < strtotime($now)) {
 
-                $salt = bin2hex(random_bytes(32));
-                $hashed_user_id = hash('sha256', $user_id . $salt);
-                //CREATE CONFIRMATION CODE
-                $confirmation_code = bin2hex(random_bytes(32));
-                $hashed_confirmation_code = password_hash($confirmation_code, PASSWORD_DEFAULT);
+                $hashed_user_id = $result['hashed_user_id'];
 
                 $stmt = $conn->prepare('SELECT username, email FROM user WHERE user_id = :user_id');
                 $stmt->execute(array('user_id' => $user_id));
@@ -47,11 +44,14 @@ FROM password_reset WHERE user_id = :user_id');
                 $username = $result['username'];
                 $email = $result['email'];
 
-                $stmt = $conn->prepare('UPDATE password_reset SET hashed_user_id = :hashed_user_id,
-validator = :validator, expires = DATE_ADD(NOW(), INTERVAL 24 HOUR),
-                    last_send = CURRENT_TIMESTAMP WHERE user_id = :user_id');
-                $stmt->execute(array('hashed_user_id' => $hashed_user_id,
-                    'validator' => $hashed_confirmation_code, 'user_id' => $user_id));
+                $confirmation_code = bin2hex(random_bytes(32));
+                $hashed_confirmation_code = password_hash($confirmation_code, PASSWORD_DEFAULT);
+
+
+                $stmt = $conn->prepare('UPDATE email_confirmation SET last_send = CURRENT_TIMESTAMP,
+ validator = :validator, expires = ADDDATE(CURRENT_TIMESTAMP, INTERVAL 3 HOUR) WHERE
+user_id = :user_id');
+                $stmt->execute(array('validator' => $hashed_confirmation_code, 'user_id' => $user_id));
 
                 $mail = new PHPMailer(true);                              // Passing `true` enables exceptions
                 try {
@@ -73,31 +73,29 @@ validator = :validator, expires = DATE_ADD(NOW(), INTERVAL 24 HOUR),
                     //Content
                     $mail->CharSet = 'UTF-8';
                     $mail->isHTML(true);                                  // Set email format to HTML
-                    $mail->Subject = 'Password Reset';
-                    $mail->Body = '
-<div style="width: 700px; margin: 0 auto;">
+                    $mail->Subject = 'Verify your email address';
+                    $mail->Body = '<div style="width: 700px; margin: 0 auto;">
     <div style="background: black"><img src="http://www.bitcoinpvp.net/img/nav-logo.png" height="40"></div>
 
     <div style="width: 75%; margin: 50px auto; color: black;">
+        <p>Greetings <span style="color: red;"><b>' . $username . '</b></span>,<br>
+            Please click the link below to verify your email address with BitcoinPVP:</p>
 
-<p>Greetings <span style="color: red;"><b>' . $username . '</b></span>,</p>
-        <p>We\'ve received a password reset request for your BitcoinPVP account.<br>
-            To reset your password, click the link below: </p>
+        <a href="' . $base_dir . 'confirm-email/' . $hashed_user_id . '/' . $confirmation_code . '">Click here</a>
 
-        <a href="' . $base_dir . 'password-reset/' . $hashed_user_id . '/' . $confirmation_code . '">Reset password</a>
-
-        <p>This link will expire in 24 hours. If you did not request a password reset, you can ignore this email.</p>
+        <p>Verifying your email address ensures an extra layer of security for your account. We know we have the correct info on
+            file should you need assistance with your account.</p>
 
         <p>For more information on your account — please visit your <a href="' . $base_dir . 'account">Account Management page.</a></p>
 
         <p>BitcoinPVP Team</p>
     </div>
 
-    <div style="background: black; color: white; padding: 10px;">© ' . date('Y') . ' Copyright BitcoinPVP</div>
+    <div style="background: black; color: white; padding: 10px;">© 2018 Copyright BitcoinPVP</div>
 </div>';
 
                     $mail->send();
-                    $_SESSION['email_sent_again_success'] = true;
+                    $_SESSION['confirm_email_sent_again_success'] = true;
 
                 } catch (Exception $e) {
                     echo $mail->ErrorInfo;
@@ -105,12 +103,13 @@ validator = :validator, expires = DATE_ADD(NOW(), INTERVAL 24 HOUR),
 
 
             } else {
-                $_SESSION['too_soon_to_send_email_again'] = true;
+                $_SESSION['too_soon_to_send_confirm_email_again'] = true;
             }
+
+            header("Location: " . $base_dir . "account");
+            die();
         } else {
 
-            unset($_SESSION['password_reset_token']);
-            unset($_SESSION['password_reset_user_id']);
             header("Location: " . $base_dir . "lost");
             die();
         }
@@ -119,10 +118,8 @@ validator = :validator, expires = DATE_ADD(NOW(), INTERVAL 24 HOUR),
     }
 
 
-    header("Location: " . $base_dir . "password-reset-email-send");
-    die();
+
 } else {
     header("Location: " . $base_dir . "lost");
     die();
 }
-?>

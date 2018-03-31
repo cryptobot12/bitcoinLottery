@@ -69,7 +69,7 @@ if ($logged_in) {
                 <li class=""><a href="<?php echo $base_dir; ?>help"><i class="material-icons left">help</i>Help</a></li>
                 <li class=""><a href="<?php echo $base_dir; ?>rank"><i class="material-icons left">assistant_photo</i>Ranking</a>
                 </li>
-                <li><a class="dropdown-button" href="#" data-activates="statsDropdown">
+                <li><a class="dropdown-trigger" href="#" data-target="statsDropdown">
                         <i class="material-icons left">trending_up</i>Stats<i
                                 class="material-icons right">arrow_drop_down</i></a></li>
                 <li class="no-link-nav hide-on-med-and-down">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>
@@ -77,7 +77,7 @@ if ($logged_in) {
                     <li class="no-link-nav"><i class="material-icons left">account_balance_wallet</i>
                         Balance: <span id="my_balance"><?php echo $balance; ?></span> bits
                     </li>
-                    <li><a class="dropdown-button" href="#" data-activates="profileDropdown">
+                    <li><a class="dropdown-trigger" href="#" data-target="profileDropdown">
                             <?php echo $username; ?><i
                                     class="material-icons right">arrow_drop_down</i></a>
                     </li>

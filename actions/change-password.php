@@ -24,16 +24,16 @@ try {
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 
-    $stmt = $conn->prepare('SELECT user_id, expires, current_timestamp AS now FROM password_reset WHERE hashed_user_id = :selector
-AND validator = :validator');
-    $stmt->execute(array('selector' => $selector, 'validator' => $validator));
+    $stmt = $conn->prepare('SELECT user_id, validator, expires, current_timestamp AS now FROM password_reset WHERE hashed_user_id = :selector');
+    $stmt->execute(array('selector' => $selector));
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
     $reset_user_id = $result['user_id'];
     $expires = $result['expires'];
     $now = $result['now'];
+    $hashed_validator = $result['validator'];
 
     if (!empty($reset_user_id)) {
-        if (strtotime($expires) < strtotime($now)) {
+        if (strtotime($expires) < strtotime($now) || !password_verify($validator, $hashed_validator)) {
             header("Location: " . $base_dir . "lost");
             die();
         } else {

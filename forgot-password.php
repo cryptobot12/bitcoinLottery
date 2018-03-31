@@ -29,6 +29,7 @@ $title = "Password Recovery - BitcoinPVP";
 include 'inc/header.php'; ?>
     <main class="valign-wrapper">
         <div class="container">
+            <div class="row"></div>
             <div class="row">
                 <div class="col l6 offset-l3 m8 offset-m2 s12">
                     <div class="card">
@@ -61,7 +62,8 @@ include 'inc/header.php'; ?>
                                             <i class="material-icons prefix">email</i>
                                             <input id="email_input" name="email_input" type="email"
                                                    value="<?php echo $email_input; ?>">
-                                            <label id="email_label" for="email_input">Email</label>
+                                            <label for="email_input">Email</label>
+                                            <span id="email_helper" class="helper-text">myemail@email.com</span>
                                         </div>
                                         <button id="forgot_password_button"
                                                 disabled
@@ -81,8 +83,7 @@ include 'inc/header.php'; ?>
     <!-- Jquery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <!-- Compiled and minified JavaScript -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
-    <script src='https://www.google.com/recaptcha/api.js'></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/js/materialize.min.js"></script>
     <script>
         function toggle_button() {
             var email_input = $("#email_input");
@@ -103,21 +104,19 @@ include 'inc/header.php'; ?>
         }
 
         function isEmail(email) {
-            var regex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
-            return regex.test(email);
+            var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+            return re.test(String(email).toLowerCase());
         }
 
         $(function () {
             var email_input_el = $("#email_input");
-            var email_label_el = $("#email_label");
+            var email_helper_el = $("#email_helper");
 
             email_input_el.on('keyup input', function () {
                 email_input_el.removeClass('invalid');
                 email_input_el.removeClass('valid');
 
                 toggle_button();
-
-
                 var email_val = email_input_el.val();
 
                 if (email_val.length > 0) {
@@ -126,15 +125,21 @@ include 'inc/header.php'; ?>
                         toggle_button();
                     } else {
                         email_input_el.addClass('invalid');
-                        email_label_el.attr('data-error', "Invalid email");
+                        email_helper_el.attr('data-error', "Invalid email");
                     }
                 }
                 else {
                     email_input_el.addClass('invalid');
-                    email_label_el.attr('data-error', "Email is required");
+                    email_helper_el.attr('data-error', "Cannot be empty");
                 }
 
             });
         });
+
+        $(document).ready(function () {
+            M.AutoInit();
+        });
+
     </script>
+    <script src='https://www.google.com/recaptcha/api.js'></script>
 <?php include 'inc/footer.php' ?>

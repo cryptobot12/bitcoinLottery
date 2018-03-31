@@ -208,6 +208,11 @@ ul.browser-default li {
     margin-top: 2em;
 }
 
+[type="checkbox"]:checked+span:not(.lever):before {
+    border-right: 2px solid #ff8f00 !important;
+    border-bottom: 2px solid #ff8f00 !important;
+}
+
 .pagination {
     margin-top: 1.5em;
 }

@@ -1,3 +1,7 @@
+$(document).ready(function () {
+    M.AutoInit();
+});
+
 function togglePasswordResetButton() {
 
     var new_password_input = $("#new_password");
