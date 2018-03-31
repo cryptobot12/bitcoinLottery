@@ -108,11 +108,11 @@ include 'inc/header.php';
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <!-- Compiled and minified JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
-    <script src='https://www.google.com/recaptcha/api.js'></script>
     <script>
         function submitTicket() {
             $("#login").submit();
 
         }
     </script>
+    <script src='https://www.google.com/recaptcha/api.js'></script>
 <?php include 'inc/footer.php' ?>

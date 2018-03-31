@@ -131,7 +131,7 @@ if ($logged_in) {
 
                     //Content
                     $mail->CharSet = 'UTF-8';
-                    $mail->Subject = 'Support Ticket #' . $ticket_id;
+                    $mail->Subject = '[BitcoinPVP Support] Ticket #' . $ticket_id;
                     $mail->Body = '<div style="width: 700px; margin: 0 auto;">
     <div style="background: black"><img src="http://www.bitcoinpvp.net/img/nav-logo.png" height="40"></div>
 

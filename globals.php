@@ -11,3 +11,4 @@ $dbname = "lottery";
 $dbuser = "root";
 $dbpass = "luck5720297God*";
 $base_dir = "http://localhost/bitcoinLottery/";
+$support_base_dir = "http://localhost/bitcoinLottery/support/";
