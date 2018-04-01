@@ -82,11 +82,12 @@ if ($captcha_success->success) {
                         $hashed_user_id = hash('sha256', $user_id . $salt);
                         //CREATE CONFIRMATION CODE
                         $confirmation_code = bin2hex(random_bytes(32));
+                        $hashed_confirmation_code = password_hash($confirmation_code, PASSWORD_DEFAULT);
 
                         $stmt = $conn->prepare('INSERT INTO email_update(user_id, new_email,hashed_user_id, validator, expires)
                   VALUES(:user_id, :new_email, :hashed_user_id, :validator, DATE_ADD(NOW(), INTERVAL 24 HOUR))');
                         $stmt->execute(array('user_id' => $user_id, 'new_email' => $new_email, 'hashed_user_id' => $hashed_user_id,
-                            'validator' => $confirmation_code));
+                            'validator' => $hashed_confirmation_code));
 
                         /* Send email with code here */
 

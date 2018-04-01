@@ -41,5 +41,5 @@ if ($logged_in) {
 
 }
 
-header("Location: ../" . $last_url);
+header("Location: " . $base_dir . $last_url);
 die();
