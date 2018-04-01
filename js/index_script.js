@@ -1,9 +1,3 @@
-$(function () {
-
-    $('.modal').modal();
-
-});
-
 //Resize chat input
 $(document).ready(function () {
     M.AutoInit();

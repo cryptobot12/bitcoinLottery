@@ -11,11 +11,23 @@ include "globals.php";
 include "function.php";
 include "inc/login_checker.php";
 
-$_SESSION['last_url'] = 'game_info.php';
+$_SESSION['last_url'] = 'game_info';
 
-function gameInfoLink($game, $page = 1, $n = 2, $f = 2, $ff = 2, $fi = 1, $se = 2, $th = 3)
+function gameInfoLink($game, $page = 1, $n = 2, $f = 2, $ff = 2, $arrayOrd, $first)
 {
-    echo "game_info.php?game_id=$game&p=$page&n=$n&f=$f&ff=$ff&fi=$fi&se=$se&th=$th";
+    global $base_dir;
+
+    $pos = array_search($first, $arrayOrd);
+    array_splice($arrayOrd, $pos, 1);
+    array_unshift($arrayOrd, $first);
+
+    $link = $base_dir . "game-info/$game/" . $page . $n . $f . $ff;
+
+    foreach ($arrayOrd as $i) {
+        $link .= $i;
+    }
+
+    echo $link;
 }
 
 if (isset($_GET['n']) && !empty($_GET['n'])) {
@@ -39,26 +51,14 @@ if (isset($_GET['ff']) && !empty($_GET['ff'])) {
     $ffAsc = 2;
 }
 
-if (isset($_GET['fi']) && !empty($_GET['fi'])) {
-    $first = htmlspecialchars($_GET['fi']);
-    filterOnlyNumber($first, 1, 3, 1);
+if (!empty($_GET['ord'])) {
+    $order = $_GET['ord'];
+    filterArray($order, 3);
 } else {
-    $first = 1;
+    $order = array(1, 2, 3);
 }
 
-if (isset($_GET['se']) && !empty($_GET['se'])) {
-    $second = htmlspecialchars($_GET['se']);
-    filterOnlyNumber($second, 2, 3, 1);
-} else {
-    $second = 2;
-}
-
-if (isset($_GET['th']) && !empty($_GET['th'])) {
-    $third = htmlspecialchars($_GET['th']);
-    filterOnlyNumber($third, 3, 3, 1);
-} else {
-    $third = 3;
-}
+$rowsPerPage = 20;
 
 try {
     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $dbuser, $dbpass);
@@ -109,20 +109,19 @@ try {
         else
             $ffOrd = 'DESC';
 
-        if ($first == 1 && $second == 2 && $third == 3)
-            $lastPart = 'nxf.number_id ' . $nuOrd . ', nxf.frequency ' . $fOrd . ', fxft.fxf ' . $ffOrd;
-        else if ($first == 1 && $second == 3 && $third == 2)
-            $lastPart = 'nxf.number_id ' . $nuOrd . ', fxft.fxf ' . $ffOrd . ', nxf.frequency ' . $fOrd;
-        else if ($first == 2 && $second == 1 && $third == 3)
-            $lastPart = 'nxf.frequency ' . $fOrd . ', nxf.number_id ' . $nuOrd . ', fxft.fxf ' . $ffOrd;
-        else if ($first == 2 && $second == 3 && $third == 1)
-            $lastPart = 'nxf.frequency ' . $fOrd . ', fxft.fxf ' . $ffOrd . ', nxf.number_id ' . $nuOrd;
-        else if ($first == 3 && $second == 2 && $third == 1)
-            $lastPart = 'fxft.fxf ' . $ffOrd . ', nxf.frequency ' . $fOrd . ', nxf.number_id ' . $nuOrd;
-        else if ($first == 3 && $second == 1 && $third == 2)
-            $lastPart = 'fxft.fxf ' . $ffOrd . ', nxf.number_id ' . $nuOrd . ', nxf.frequency ' . $fOrd;
-        else
-            $lastPart = 'nxf.number_id ' . $nuOrd . ', nxf.frequency ' . $fOrd . ', fxft.fxf ' . $ffOrd;
+        $lastPart = '';
+
+        for ($i = 0; $i <= 3; $i++) {
+            if ($order[$i] == 1)
+                $lastPart = $lastPart . "nxf.number_id " . $nuOrd;
+            if ($order[$i] == 2)
+                $lastPart = $lastPart . "nxf.frequency " . $fOrd;
+            if ($order[$i] == 3)
+                $lastPart = $lastPart . "fxft.fxf " . $ffOrd;
+
+            if ($i < 2)
+                $lastPart = $lastPart . ", ";
+        }
 
         $statement = 'SELECT nxf.number_id AS number_id, nxf.frequency AS frequency, fxft.fxf AS fxf
                                     FROM (SELECT number_id, COUNT(number_id) AS frequency FROM numberxuser WHERE game_id = :game_id1
@@ -134,7 +133,7 @@ try {
                                     GROUP BY number_id) AS sometable
                                     GROUP BY frequency) AS fxft
                                     ON fxft.frequency = nxf.frequency
-                                    ORDER BY ' . $lastPart . ' LIMIT 20 OFFSET :offs';
+                                    ORDER BY ' . $lastPart . ' LIMIT :the_limit OFFSET :offs';
 
         //Selecting game information
         $stmt = $conn->prepare('SELECT amount, winner_number, date_format(game_date, \'%M %D, %Y %h:%i %p\') AS time FROM game 
@@ -161,67 +160,29 @@ try {
         //Selecting numbers information
         $stmt = $conn->prepare($statement);
 
-        $stmt->execute(array('game_id1' => $game_id, 'game_id2' => $game_id, 'offs' => (($page - 1) * 20)));
+        $stmt->execute(array('game_id1' => $game_id, 'game_id2' => $game_id, 'the_limit' => $rowsPerPage, 'offs' => (($page - 1) * 20)));
         $rowTable = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     }
 
 } catch (PDOException $e) {
     echo "Connection failed: " . $e->getMessage();
-} ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Bitcoin</title>
-    <!--    Jquery -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+}
 
-    <!-- Compiled and minified CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/css/materialize.min.css">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <!-- Compiled and minified JavaScript -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/js/materialize.min.js"></script>
-    <script src="js/autobahn.js"></script>
-    <script src="js/game_info_script.js"></script>
-    <script>
-        var currentGame = <?php echo $game_id; ?>;
-        $(function () {
+$title = "Game Info - BitcoinPVP";
 
-            var searchGame = $("#search_game");
-            searchGame.on('keypress', function (e) {
-                if (e.which === 13) {
-
-                    var valid = $.isNumeric(searchGame.val());
-                    if (valid)
-                        window.location.href = 'game_info.php?game_id=' + searchGame.val() +
-                        <?php echo "'&p=$page&n=$nAsc&f=$fAsc&ff=$ffAsc&fi=$first&se=$second&th=$third'"?>;
-                }
-            });
-        });
-    </script>
-
-
-    <link href="css/style.css" rel="stylesheet">
-
-    <!--Let browser know website is optimized for mobile-->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-</head>
-<body>
-<header>
-    <?php include "inc/header.php"; ?>
-    <div class="row top-buffer-15">
-        <div class="col s4 offset-s4">
-            <div class="input-field col s12">
-                <i class="material-icons prefix">search</i>
-                <input id="search_game" class="validate" type="number" ">
-                <label for="search_game">Game number</label>
-            </div>
-        </div>
-    </div>
-</header>
+include "inc/header.php"; ?>
 <main class="valign-wrapper">
     <div class="container">
+        <div class="row top-buffer-15">
+            <div class="col s4 offset-s4">
+                <div class="input-field col s12">
+                    <i class="material-icons prefix">search</i>
+                    <input id="search_game" class="validate" type="number" ">
+                    <label for="search_game">Game number</label>
+                </div>
+            </div>
+        </div>
         <?php if ($current_game != $game_id) : ?>
             <div class="row">
                 <h3><b>Game #<?php echo $game_id ?></b></h3>
@@ -229,84 +190,38 @@ try {
                 <h5><b>Jackpot: </b><?php echo($amount / 100); ?> bits</h5>
                 <div>
                     <b class="h5Span">Winner number: </b>
-                    <div class="chip"><?php echo $winner_number; ?></div>
+                    <div class="chip yellow"><b><?php echo $winner_number; ?></b></div>
                 </div>
             </div>
             <div class="row">
                 <div class="col l10 offset-l1 m10 offset-m1 s12">
+                    <div class="row"></div>
                     <table class="highlight">
                         <thead>
                         <tr>
                             <th><?php if ($nAsc == 2) : ?>
-                                    <a href="<?php
-                                    if ($first != 1) {
-                                        if ($second == 1)
-                                            gameInfoLink($game_id, $page, 1, $fAsc, $ffAsc, 1, $first, $third);
-                                        else
-                                            gameInfoLink($game_id, $page, 1, $fAsc, $ffAsc, 1, $first, $second);
-                                    } else
-                                        gameInfoLink($game_id, $page, 1, $fAsc, $ffAsc, $first, $second, $third);
-                                    ?>">
+                                    <a href="<?php gameInfoLink($game_id, $page, 1, $fAsc, $ffAsc, $order, 1); ?>">
                                         Number<i class="tiny material-icons sorter">arrow_drop_down</i></a>
                                 <?php else: ?>
-                                    <a href="<?php
-                                    if ($first != 1) {
-                                        if ($second == 1)
-                                            gameInfoLink($game_id, $page, 2, $fAsc, $ffAsc, 1, $first, $third);
-                                        else
-                                            gameInfoLink($game_id, $page, 2, $fAsc, $ffAsc, 1, $first, $second);
-                                    } else
-                                        gameInfoLink($game_id, $page, 2, $fAsc, $ffAsc, $first, $second, $third);
-                                    ?>">
+                                    <a href="<?php gameInfoLink($game_id, $page, 2, $fAsc, $ffAsc, $order, 1); ?>">
                                         Number<i class="tiny material-icons sorter">arrow_drop_up</i></a>
                                 <?php endif; ?>
                             </th>
                             <th><?php if ($fAsc == 2) : ?>
-                                    <a href="<?php
-                                    if ($first != 2) {
-                                        if ($second == 2)
-                                            gameInfoLink($game_id, $page, $nAsc, 1, $ffAsc, 2, $first, $third);
-                                        else
-                                            gameInfoLink($game_id, $page, $nAsc, 1, $ffAsc, 2, $first, $second);
-                                    } else
-                                        gameInfoLink($game_id, $page, $nAsc, 1, $ffAsc, $first, $second, $third);
-                                    ?>">
+                                    <a href="<?php gameInfoLink($game_id, $page, $nAsc, 1, $ffAsc, $order, 2); ?>">
                                         Frequency<i class="tiny material-icons sorter">arrow_drop_down</i></a>
                                 <?php else: ?>
-                                    <a href="<?php
-                                    if ($first != 2) {
-                                        if ($second == 2)
-                                            gameInfoLink($game_id, $page, $nAsc, 2, $ffAsc, 2, $first, $third);
-                                        else
-                                            gameInfoLink($game_id, $page, $nAsc, 2, $ffAsc, 2, $first, $second);
-                                    } else
-                                        gameInfoLink($game_id, $page, $nAsc, 2, $ffAsc, $first, $second, $third);
-                                    ?>">
+                                    <a href="<?php gameInfoLink($game_id, $page, $nAsc, 2, $ffAsc, $order, 2); ?>">
                                         Frequency<i class="tiny material-icons sorter">arrow_drop_up</i></a>
                                 <?php endif; ?>
                             </th>
                             <th><?php if ($ffAsc == 2) : ?>
-                                    <a href="<?php
-                                    if ($first != 3) {
-                                        if ($second == 3)
-                                            gameInfoLink($game_id, $page, $nAsc, $fAsc, 1, 3, $first, $third);
-                                        else
-                                            gameInfoLink($game_id, $page, $nAsc, $fAsc, 1, 3, $first, $second);
-                                    } else
-                                        gameInfoLink($game_id, $page, $nAsc, $fAsc, 1, $first, $second, $third);
-                                    ?>">
-                                        Frequency of frequency<i class="tiny material-icons sorter">arrow_drop_down</i></a>
+                                    <a href="<?php gameInfoLink($game_id, $page, $nAsc, $fAsc, 1, $order, 3); ?>">
+                                        f(Frequency)<i
+                                                class="tiny material-icons sorter">arrow_drop_down</i></a>
                                 <?php else: ?>
-                                    <a href="<?php
-                                    if ($first != 3) {
-                                        if ($second == 3)
-                                            gameInfoLink($game_id, $page, $nAsc, $fAsc, 2, 3, $first, $third);
-                                        else
-                                            gameInfoLink($game_id, $page, $nAsc, $fAsc, 2, 3, $first, $second);
-                                    } else
-                                        gameInfoLink($game_id, $page, $nAsc, $fAsc, 2, $first, $second, $third);
-                                    ?>">
-                                        Frequency of frequency<i
+                                    <a href="<?php gameInfoLink($game_id, $page, $nAsc, $fAsc, 2, $order, 3); ?>">
+                                        f(Frequency)<i
                                                 class="tiny material-icons sorter">arrow_drop_up</i></a>
                                 <?php endif; ?>
                             </th>
@@ -320,7 +235,7 @@ try {
                                 echo '<tr class="win">';
                             else
                                 echo '<tr>';
-                            echo '<td><div class="chip">' . $item['number_id'] . '</div></td>' .
+                            echo '<td><div class="chip yellow no-marg-bot"><b>' . $item['number_id'] . '</b></div></td>' .
                                 '<td>' . $item['frequency'] . '</td>' .
                                 '<td>' . $item['fxf'] . '</td>' .
                                 '<td><a href="#!" onclick="showList(' . $item['number_id'] . ');">See players</a></td>
@@ -333,13 +248,10 @@ try {
                 <!-- Modal Structure -->
                 <div id="modal1" class="modal">
                     <div class="modal-content">
-                        <div class="h5Span">Number
-                            <div id="numberSelected" class="chip"></div>
+                        <div class="modal-title-np">
+                            <b>Number: </b><div id="numberSelected" class="chip yellow"></div>
                         </div>
-                        <hr>
-                        <ul class="browser-default discList" id="playersList">
-
-                        </ul>
+                        <div id="playersList"></div>
                     </div>
                     <div class="modal-footer">
                         <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Close</a>
@@ -359,7 +271,7 @@ try {
                                 echo 'disabled';
                             ?>"><a href="<?php
                                 if ($page > 1)
-                                    gameInfoLink($game_id, $page - 1, $nAsc, $fAsc, $ffAsc, $first, $second, $third);
+                                    gameInfoLink($game_id, $page - 1, $nAsc, $fAsc, $ffAsc, $order, $order[0]);
                                 else
                                     echo '#!';
                                 ?>">
@@ -372,7 +284,7 @@ try {
                                         echo 'active';
                                     else
                                         echo 'waves-effect'; ?>"><a
-                                                href="<?php gameInfoLink($game_id, $i, $nAsc, $fAsc, $ffAsc, $first, $second, $third); ?>">
+                                                href="<?php gameInfoLink($game_id, $i, $nAsc, $fAsc, $ffAsc, $order, $order[0]); ?>">
                                             <?php echo $i; ?></a></li>
                                 <?php endfor;
                             } else {
@@ -382,7 +294,7 @@ try {
                                             echo 'active';
                                         else
                                             echo 'waves-effect'; ?>"><a
-                                                    href="<?php gameInfoLink($game_id, $i, $nAsc, $fAsc, $ffAsc, $first, $second, $third); ?>">
+                                                    href="<?php gameInfoLink($game_id, $i, $nAsc, $fAsc, $ffAsc, $order, $order[0]); ?>">
                                                 <?php echo $i; ?></a></li>
                                     <?php endfor;
                                     echo '<li>...</li>'; ?>
@@ -390,7 +302,7 @@ try {
                                         echo 'active';
                                     else
                                         echo 'waves-effect'; ?>"><a
-                                                href="<?php gameInfoLink($game_id, $pageCount, $nAsc, $fAsc, $ffAsc, $first, $second, $third); ?>">
+                                                href="<?php gameInfoLink($game_id, $pageCount, $nAsc, $fAsc, $ffAsc, $order, $order[0]); ?>">
                                             <?php echo $pageCount; ?></a></li>
                                     <?php
                                 } else { ?>
@@ -398,7 +310,7 @@ try {
                                         echo 'active';
                                     else
                                         echo 'waves-effect'; ?>"><a
-                                                href="<?php gameInfoLink($game_id, 1, $nAsc, $fAsc, $ffAsc, $first, $second, $third); ?>">
+                                                href="<?php gameInfoLink($game_id, 1, $nAsc, $fAsc, $ffAsc, $order, $order[0]); ?>">
                                             <?php echo 1; ?></a></li>
                                     <?php
                                     echo '<li>...</li>';
@@ -408,7 +320,7 @@ try {
                                                 echo 'active';
                                             else
                                                 echo 'waves-effect'; ?>"><a
-                                                        href="<?php gameInfoLink($game_id, $i, $nAsc, $fAsc, $ffAsc, $first, $second, $third); ?>">
+                                                        href="<?php gameInfoLink($game_id, $i, $nAsc, $fAsc, $ffAsc, $order, $order[0]); ?>">
                                                     <?php echo $i; ?></a></li>
                                         <?php endfor;
                                         echo '<li>...</li>'; ?>
@@ -416,7 +328,7 @@ try {
                                             echo 'active';
                                         else
                                             echo 'waves-effect'; ?>"><a
-                                                    href="<?php gameInfoLink($game_id, $pageCount, $nAsc, $fAsc, $ffAsc, $first, $second, $third); ?>">
+                                                    href="<?php gameInfoLink($game_id, $pageCount, $nAsc, $fAsc, $ffAsc, $order, $order[0]); ?>">
                                                 <?php echo $pageCount; ?></a></li>
                                         <?php
                                     } else {
@@ -425,7 +337,7 @@ try {
                                                 echo 'active';
                                             else
                                                 echo 'waves-effect'; ?>"><a
-                                                        href="<?php gameInfoLink($game_id, $i, $nAsc, $fAsc, $ffAsc, $first, $second, $third); ?>">
+                                                        href="<?php gameInfoLink($game_id, $i, $nAsc, $fAsc, $ffAsc, $order, $order[0]); ?>">
                                                     <?php echo $i; ?></a></li>
                                         <?php endfor;
                                     }
@@ -440,7 +352,7 @@ try {
                                 echo 'disabled';
                             ?>"><a href="<?php
                                 if ($page < $pageCount)
-                                    gameInfoLink($game_id, $page + 1, $nAsc, $fAsc, $ffAsc, $first, $second, $third);
+                                    gameInfoLink($game_id, $page + 1, $nAsc, $fAsc, $ffAsc, $order, $order[0]);
                                 else
                                     echo '#!';
                                 ?>">
@@ -453,12 +365,44 @@ try {
         <?php else : ?>
             <div class="row centerWrap">
                 <div class="centeredDiv">
-                    <span class="h5Span"><i class="material-icons left">error</i>This game is currently being played</span>
+                    <span class="h5Span"><i
+                                class="material-icons left">error</i>This game is currently being played</span>
                 </div>
             </div>
         <?php endif; ?>
     </div>
 </main>
+<!--    Jquery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<!-- Compiled and minified JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/js/materialize.min.js"></script>
+<script src="<?php echo $base_dir; ?>js/game-info-script.js"></script>
+<script>
+    var base_dir = "<?php echo $base_dir; ?>";
+    var game_id = <?php echo $game_id; ?>;
+    $(function () {
+
+        var searchGame = $("#search_game");
+        searchGame.on('keypress', function (e) {
+            if (e.which === 13) {
+
+                var valid = $.isNumeric(searchGame.val());
+                if (valid)
+                    window.location.href = '<?php echo $base_dir; ?>game-info/' + searchGame.val() +
+                        '/<?php echo $page . $nAsc . $fAsc . $ffAsc;
+
+                            foreach ($order as $i) {
+                                echo $i;
+                            } ?>';
+            }
+        });
+    });
+
+    $(document).ready(function () {
+        M.AutoInit();
+
+    });
+</script>
 <?php include "inc/footer.php"; ?>
 
 

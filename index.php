@@ -400,7 +400,7 @@ include 'inc/header.php' ?>
                         <?php foreach ($game_history_table as $item): ?>
                             <tr>
                                 <td>
-                                    <a href="game_info.php?game_id=<?php echo $item["game_id"] ?>"
+                                    <a href="game-info.php?game_id=<?php echo $item["game_id"] ?>"
                                        target="_blank"><?php echo $item["game_id"] ?></a>
                                 </td>
                                 <td><?php echo $item['amount'] / 100; ?> bits</td>

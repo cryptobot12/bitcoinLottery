@@ -53,9 +53,9 @@ if ($logged_in) {
 
     <!--    //    Stats structure-->
     <ul id="statsDropdown" class="dropdown-content">
-        <li><a href="<?php echo $base_dir; ?>user_stats"><i class="material-icons left">person</i>User stats</a></li>
-        <li><a href="<?php echo $base_dir; ?>game_info"><i class="material-icons left">assignment</i>Game Info</a></li>
-        <li><a href="<?php echo $base_dir; ?>games_history"><i class="material-icons left">access_time</i>Games History</a>
+        <li><a href="<?php echo $base_dir; ?>user-stats"><i class="material-icons left">person</i>User stats</a></li>
+        <li><a href="<?php echo $base_dir; ?>game-info"><i class="material-icons left">assignment</i>Game Info</a></li>
+        <li><a href="<?php echo $base_dir; ?>games-history"><i class="material-icons left">access_time</i>Games History</a>
         </li>
         <li><a href="<?php echo $base_dir; ?>stats"><i class="material-icons left">assessment</i>Server Stats</a></li>
     </ul>

@@ -23,10 +23,8 @@ nav ul a {
 
 }
 
-.chip {
-    background-color: #ffeb3b;
-    color: black;
-    margin-bottom: 0;
+.modal {
+    width: 500px;
 }
 
 .small-chip {
@@ -136,6 +134,15 @@ main {
     margin: .82rem 0 .656rem 0;
 }
 
+.modal-title-np {
+    font-size: 1.64rem;
+    line-height: 178%;
+}
+
+#playersList {
+    width: 85%;
+    margin: 1em auto 0;
+}
 .h3Span {
     font-size: 2.92rem;
     line-height: 110%;
@@ -241,6 +248,14 @@ ul.browser-default li {
     color: black !important;
 }
 
+.fill-height-container {
+    display:flex;
+    flex-direction:column;
+}
+
+.fill-height {
+    flex: 1;
+}
 #chat-space {
     height: 30vh;
 }

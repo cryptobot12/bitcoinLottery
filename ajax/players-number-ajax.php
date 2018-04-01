@@ -7,8 +7,8 @@
  */
 
 include "../globals.php";
-$game = htmlspecialchars($_POST['game']);
-$number = htmlspecialchars($_POST['number']);
+$game = htmlspecialchars($_GET['game']);
+$number = htmlspecialchars($_GET['number']);
 
 try {
     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $dbuser, $dbpass);
