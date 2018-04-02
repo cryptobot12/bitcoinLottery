@@ -143,6 +143,7 @@ main {
     width: 85%;
     margin: 1em auto 0;
 }
+
 .h3Span {
     font-size: 2.92rem;
     line-height: 110%;
@@ -182,8 +183,8 @@ table.highlight tbody tr.win:hover {
 }
 
 table.highlight tbody tr.lose:hover {
-     background-color: #ffb4aa !important;
- }
+    background-color: #ffb4aa !important;
+}
 
 table.highlight tbody tr.close:hover {
     background-color: #ffe7c1 !important;
@@ -215,7 +216,7 @@ ul.browser-default li {
     margin-top: 2em;
 }
 
-[type="checkbox"]:checked+span:not(.lever):before {
+[type="checkbox"]:checked + span:not(.lever):before {
     border-right: 2px solid #ff8f00 !important;
     border-bottom: 2px solid #ff8f00 !important;
 }
@@ -232,7 +233,7 @@ ul.browser-default li {
     border-left: 5px solid #9cdcae;
 }
 
-.blockquote-error{
+.blockquote-error {
     border-left: 5px solid #dc574f;
 }
 
@@ -249,13 +250,14 @@ ul.browser-default li {
 }
 
 .fill-height-container {
-    display:flex;
-    flex-direction:column;
+    display: flex;
+    flex-direction: column;
 }
 
 .fill-height {
     flex: 1;
 }
+
 #chat-space {
     height: 30vh;
 }
@@ -273,8 +275,6 @@ ul.browser-default li {
     word-wrap: break-word;
     overflow-x: hidden;
 }
-
-
 
 .input-chat {
     display: inline-block;
@@ -325,6 +325,7 @@ ul.browser-default li {
 .input-field input[type=email]:focus + label {
     color: #ff8f00 !important;
 }
+
 /* label underline focus color */
 .input-field input[type=email]:focus {
     border-bottom: 1px solid #ff8f00 !important;
@@ -335,6 +336,7 @@ ul.browser-default li {
 .input-field input[type=password]:focus + label {
     color: #ff8f00 !important;
 }
+
 /* label underline focus color */
 .input-field input[type=password]:focus {
     border-bottom: 1px solid #ff8f00 !important;
@@ -345,6 +347,7 @@ ul.browser-default li {
 .input-field input[type=text]:focus + label {
     color: #ff8f00 !important;
 }
+
 /* label underline focus color */
 .input-field input[type=text]:focus {
     border-bottom: 1px solid #ff8f00 !important;
@@ -355,6 +358,7 @@ ul.browser-default li {
 .input-field input[type=number]:focus + label {
     color: #ff8f00 !important;
 }
+
 /* label underline focus color */
 .input-field input[type=number]:focus {
     border-bottom: 1px solid #ff8f00 !important;
@@ -365,6 +369,7 @@ ul.browser-default li {
 .input-field textarea:focus + label {
     color: #ff8f00 !important;
 }
+
 /* label underline focus color */
 .input-field textarea:focus {
     border-bottom: 1px solid #ff8f00 !important;
@@ -376,14 +381,13 @@ input[type=text]:focus {
     box-shadow: 0 1px 0 0 #ff8f00 !important;
 }
 
-
 /* icon prefix focus color */
 .input-field .prefix.active {
     color: #ff8f00 !important;
 }
 
 ul.pagination li.active {
-    background-color: #ffa000  !important;
+    background-color: #ffa000 !important;
 }
 
 .alt-container {
@@ -391,13 +395,27 @@ ul.pagination li.active {
     max-width: 1600px;
     width: 90%;
 }
-@media only screen and (min-width: 601px)
+
+.brand-logo img {
+    height: 64px;
+}
+
+@media only screen and (max-width: 601px) {
+    .brand-logo img {
+        height: 56px;
+    }
+}
+
+@media only screen and (min-width: 601px) {
     .container {
         width: 85%;
     }
-    @media only screen and (min-width: 993px)
-        .container {
-            width: 70%;
-        }
+}
+
+@media only screen and (min-width: 993px) {
+    .container {
+        width: 70%;
+    }
+}
 
 
