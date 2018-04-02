@@ -69,7 +69,7 @@ if ($logged_in) {
             <a href="#" data-target="slide-out" class="sidenav-trigger show-on-medium-and-down"><i
                         class="material-icons">menu</i></a>
             <a href="<?php echo $base_dir; ?>" class="brand-logo"><img
-                        src="<?php /*echo $base_dir; */?>img/nav-logo.png"></a>
+                        src="<?php echo $base_dir; ?>img/nav-logo.png"></a>
             <ul id="nav-mobile" class="right hide-on-med-and-down nav-letters">
                 <li><a href="<?php echo $base_dir; ?>help"><i class="material-icons left">help</i>Help</a></li>
 
