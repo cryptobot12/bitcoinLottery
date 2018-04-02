@@ -7,7 +7,7 @@ session_start();
  * Time: 7:23 PM
  */
 
-include "../connect.php";
+include "../globals.php";
 $username = htmlspecialchars($_POST['username']);
 $password = htmlspecialchars($_POST['password']);
 $remember_me = (!empty($_POST['remember_me']) ? true : false);
@@ -85,19 +85,24 @@ if ($captcha_success->success) {
                 }
 
                 if (!empty($_SESSION['last_url']))
-                    header("Location: ../" . $_SESSION['last_url']);
+                    header("Location: " . $base_dir . $_SESSION['last_url']);
                 else
-                    header("Location: ../index.php");
+                    header("Location: " . $base_dir);
                 die();
             } else {
 
                 $_SESSION['login_error'] = 3;
-                header("Location: ../login.php");
+                $_SESSION['username_input'] = $username;
+                $_SESSION['remember_me_input'] = $remember_me;
+
+                header("Location: " . $base_dir ."login");
                 die();
             }
         } else {
             $_SESSION['login_error'] = 2;
-            header("Location: ../login.php");
+            $_SESSION['username_input'] = $username;
+            $_SESSION['remember_me_input'] = $remember_me;
+            header("Location: " . $base_dir ."login");
             die();
         }
 
@@ -109,6 +114,8 @@ if ($captcha_success->success) {
 
 } else {
     $_SESSION['login_error'] = 1;
-    header("Location: ../login.php");
+    $_SESSION['username_input'] = $username;
+    $_SESSION['remember_me_input'] = $remember_me;
+    header("Location: " . $base_dir ."login");
     die();
 }

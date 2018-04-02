@@ -8,7 +8,7 @@
 
 session_start();
 
-include '../connect.php';
+include '../globals.php';
 include '../inc/login_checker.php';
 
 $last_url = $_SESSION['last_url'];
@@ -41,5 +41,5 @@ if ($logged_in) {
 
 }
 
-header("Location: ../" . $last_url);
+header("Location: " . $base_dir . $last_url);
 die();

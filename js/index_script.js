@@ -1,11 +1,6 @@
-$(function () {
-
-    $('.modal').modal();
-
-});
-
 //Resize chat input
 $(document).ready(function () {
+    M.AutoInit();
 
     //chat
     var chat_send = $("#chat-send");
@@ -168,7 +163,7 @@ $(function () {
 
     var numbers_textarea_input = $("#numbers_textarea_small");
     var textarea_button = $("#textarea_button_small");
-    numbers_textarea_input.on('keyup', function () {
+    numbers_textarea_input.on('keyup input', function () {
 
         if (numbers_textarea_input.val().length !== 0) {
             var array = numbers_textarea_input.val().match(/[^\d\s]/g);

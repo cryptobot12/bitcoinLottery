@@ -11,19 +11,19 @@
         <div class="row">
             <div class="col l6 s12">
                 <h5 class="black-text">License</h5>
-                <p class="black-text text-lighten-4">Peruvian license N48D1489A-ADS4</p>
+                <p class="black-text text-lighten-4">Peruvian License N48D1489A-ADS4</p>
+                <p class="black-text">JavaScript is required</p>
             </div>
             <div class="col l4 offset-l2 s12">
                 <h5 class="black-text">Useful Links</h5>
                 <ul>
-                    <li><a class="black-text text-lighten-3" href="help.php">Help</a></li>
-                    <li><a class="black-text text-lighten-3" href="rank.php">Ranking</a></li>
-                    <li><a class="black-text text-lighten-3" href="stats.php">Server Stats</a></li>
-                    <li><a class="black-text text-lighten-3" href="game_info.php">Game Info</a></li>
-                    <li><a class="black-text text-lighten-3" href="games_history.php">Games history</a></li>
-                    <li><a class="black-text text-lighten-3" href="user_stats.php">User stats</a></li>
-                    <li><a class="black-text text-lighten-3" href="#!">Guide</a></li>
-                    <li><a class="black-text text-lighten-3" href="registration.php">Registration</a></li>
+                    <li><a class="black-text text-lighten-3" href="<?php echo $base_dir; ?>help">Help</a></li>
+                    <li><a class="black-text text-lighten-3" href="<?php echo $base_dir; ?>rank">Ranking</a></li>
+                    <li><a class="black-text text-lighten-3" href="<?php echo $base_dir; ?>stats">Server Stats</a></li>
+                    <li><a class="black-text text-lighten-3" href="<?php echo $base_dir; ?>game_info">Game Info</a></li>
+                    <li><a class="black-text text-lighten-3" href="<?php echo $base_dir; ?>games_history">Games history</a></li>
+                    <li><a class="black-text text-lighten-3" href="<?php echo $base_dir; ?>user_stats">User Stats</a></li>
+                    <li><a class="black-text text-lighten-3" href="<?php echo $base_dir; ?>registration">Registration</a></li>
                 </ul>
             </div>
         </div>
@@ -34,3 +34,5 @@
         </div>
     </div>
 </footer>
+</body>
+</html>

@@ -8,20 +8,29 @@
  */
 session_start();
 
-include "connect.php";
+include "globals.php";
 include "inc/login_checker.php";
 
-$_SESSION['last_url'] = 'games_history.php';
+$_SESSION['last_url'] = 'games-history';
 
 $rowPerPage = 20;
 
 function gamesHistoryLink($page = 1, $gaAsc = 1, $jaAsc = 1, $nuAsc = 1, $arrayOrd, $first)
 {
+    global $base_dir;
+
     $pos = array_search($first, $arrayOrd);
     array_splice($arrayOrd, $pos, 1);
     array_unshift($arrayOrd, $first);
 
-    echo "games_history.php?p=$page&ga=$gaAsc&ja=$jaAsc&nu=$nuAsc&ord[]=$arrayOrd[0]&ord[]=$arrayOrd[1]&ord[]=$arrayOrd[2]";
+    $link = $base_dir . "games-history/$page/" . $gaAsc . $jaAsc . $nuAsc;
+
+
+    foreach ($arrayOrd as $i) {
+        $link .= $i;
+    }
+
+    echo $link;
 }
 
 include "function.php";
@@ -74,7 +83,7 @@ try {
         $page = 1;
 
     //Creating the statement according to get parameters
-    $statement = 'SELECT game_id, date_format(timedate, \'%h:%i %p\') AS time, winner_number, amount FROM game
+    $statement = 'SELECT game_id, date_format(game_date, \'%M %D, %Y %h:%i %p\') AS time, winner_number, amount FROM game
                                       WHERE amount > 0
                                       ORDER BY ';
 
@@ -118,36 +127,12 @@ try {
     echo "Connection failed: " . $e->getMessage();
 }
 
-?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Bitcoin</title>
-    <!--    Jquery -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-
-    <!-- Compiled and minified CSS -->
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <!-- Compiled and minified JavaScript -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
-    <script src="js/autobahn.js"></script>
-
-    <link href="css/style.css" rel="stylesheet">
-
-    <!--Let browser know website is optimized for mobile-->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-</head>
-<body>
-<header>
-    <?php include "inc/header.php" ?>
-</header>
+$title = "Games History - BitcoinPVP";
+include "inc/header.php" ?>
 <main>
     <div class="container">
         <div class="row top-buffer-30">
-            <h3>Games history</h3>
+            <h3>Games History</h3>
             <div class="col l10 offset-l1 m10 offset-m1 s12">
                 <table class="highlight">
                     <thead>
@@ -185,16 +170,16 @@ try {
                                     else
                                         echo 'arrow_drop_up';
                                     ?></i></a></th>
-                        <th>Time</th>
+                        <th>Date</th>
                     </tr>
                     </thead>
                     <tbody>
                     <?php
                     foreach ($rowTable as $item) {
                         echo "<tr>
-                <td><a href=\"game_info.php?game_id=" . $item['game_id'] . "\" target=\"_self\">" . $item['game_id'] . "</a></td>" .
+                <td><a href=\"game-info.php?game_id=" . $item['game_id'] . "\" target=\"_self\">" . $item['game_id'] . "</a></td>" .
                             "<td>" . ($item['amount'] / 100) . " bits</td>" .
-                            "<td><div class='chip'>" . $item['winner_number'] . "</div></td>" .
+                            "<td><div class='chip yellow no-marg-bot'>" . $item['winner_number'] . "</div></td>" .
                             "<td>" . $item['time'] . "</td>" .
                             "</tr>";
                     }
@@ -206,33 +191,23 @@ try {
         <div class="row centerWrap">
             <div class="centeredDiv">
                 <?php if ($pageCount > 1): ?>
-                <ul class="pagination">
-                    <!--                        Go left (pagination) -->
-                    <li class="<?php
-                    if ($page > 1)
-                        echo 'waves-effect';
-                    else
-                        echo 'disabled';
-                    ?>"><a href="<?php
+                    <ul class="pagination">
+                        <!--                        Go left (pagination) -->
+                        <li class="<?php
                         if ($page > 1)
-                            gamesHistoryLink($page + 1, $gaAsc, $jaAsc, $nuAsc, $order, $order[0]);
+                            echo 'waves-effect';
                         else
-                            echo '#!';
-                        ?>"><i class="material-icons">chevron_left</i></a></li>
-                    <!--Pages-->
-                    <?php
-                    if ($pageCount <= 15) {
-                        for ($i = 1; $i <= $pageCount; $i++) : ?>
-                            <li class="<?php if ($page == $i)
-                                echo 'active';
+                            echo 'disabled';
+                        ?>"><a href="<?php
+                            if ($page > 1)
+                                gamesHistoryLink($page + 1, $gaAsc, $jaAsc, $nuAsc, $order, $order[0]);
                             else
-                                echo 'waves-effect'; ?>"><a
-                                        href="<?php gamesHistoryLink($i, $gaAsc, $jaAsc, $nuAsc, $order, $order[0]); ?>">
-                                    <?php echo $i; ?></a></li>
-                        <?php endfor;
-                    } else {
-                        if ($page <= 8) {
-                            for ($i = 1; $i <= 14; $i++) :?>
+                                echo '#!';
+                            ?>"><i class="material-icons">chevron_left</i></a></li>
+                        <!--Pages-->
+                        <?php
+                        if ($pageCount <= 15) {
+                            for ($i = 1; $i <= $pageCount; $i++) : ?>
                                 <li class="<?php if ($page == $i)
                                     echo 'active';
                                 else
@@ -240,25 +215,9 @@ try {
                                             href="<?php gamesHistoryLink($i, $gaAsc, $jaAsc, $nuAsc, $order, $order[0]); ?>">
                                         <?php echo $i; ?></a></li>
                             <?php endfor;
-                            echo '<li>...</li>'; ?>
-                            <li class="<?php if ($page == $pageCount)
-                                echo 'active';
-                            else
-                                echo 'waves-effect'; ?>"><a
-                                        href="<?php gamesHistoryLink($i, $gaAsc, $jaAsc, $nuAsc, $order, $order[0]); ?>">
-                                    <?php echo $pageCount; ?></a></li>
-                            <?php
-                        } else { ?>
-                            <li class="<?php if ($page == 1)
-                                echo 'active';
-                            else
-                                echo 'waves-effect'; ?>"><a
-                                        href="<?php gamesHistoryLink($i, $gaAsc, $jaAsc, $nuAsc, $order, $order[0]); ?>">
-                                    <?php echo 1; ?></a></li>
-                            <?php
-                            echo '<li>...</li>';
-                            if ($pageCount - $page > 7) {
-                                for ($i = $page - 6; $i <= $page + 6; $i++) :?>
+                        } else {
+                            if ($page <= 8) {
+                                for ($i = 1; $i <= 14; $i++) :?>
                                     <li class="<?php if ($page == $i)
                                         echo 'active';
                                     else
@@ -274,37 +233,71 @@ try {
                                             href="<?php gamesHistoryLink($i, $gaAsc, $jaAsc, $nuAsc, $order, $order[0]); ?>">
                                         <?php echo $pageCount; ?></a></li>
                                 <?php
-                            } else {
-                                for ($i = $pageCount - 13; $i <= $pageCount; $i++) :?>
-                                    <li class="<?php if ($page == $i)
+                            } else { ?>
+                                <li class="<?php if ($page == 1)
+                                    echo 'active';
+                                else
+                                    echo 'waves-effect'; ?>"><a
+                                            href="<?php gamesHistoryLink($i, $gaAsc, $jaAsc, $nuAsc, $order, $order[0]); ?>">
+                                        <?php echo 1; ?></a></li>
+                                <?php
+                                echo '<li>...</li>';
+                                if ($pageCount - $page > 7) {
+                                    for ($i = $page - 6; $i <= $page + 6; $i++) :?>
+                                        <li class="<?php if ($page == $i)
+                                            echo 'active';
+                                        else
+                                            echo 'waves-effect'; ?>"><a
+                                                    href="<?php gamesHistoryLink($i, $gaAsc, $jaAsc, $nuAsc, $order, $order[0]); ?>">
+                                                <?php echo $i; ?></a></li>
+                                    <?php endfor;
+                                    echo '<li>...</li>'; ?>
+                                    <li class="<?php if ($page == $pageCount)
                                         echo 'active';
                                     else
                                         echo 'waves-effect'; ?>"><a
                                                 href="<?php gamesHistoryLink($i, $gaAsc, $jaAsc, $nuAsc, $order, $order[0]); ?>">
-                                            <?php echo $i; ?></a></li>
-                                <?php endfor;
+                                            <?php echo $pageCount; ?></a></li>
+                                    <?php
+                                } else {
+                                    for ($i = $pageCount - 13; $i <= $pageCount; $i++) :?>
+                                        <li class="<?php if ($page == $i)
+                                            echo 'active';
+                                        else
+                                            echo 'waves-effect'; ?>"><a
+                                                    href="<?php gamesHistoryLink($i, $gaAsc, $jaAsc, $nuAsc, $order, $order[0]); ?>">
+                                                <?php echo $i; ?></a></li>
+                                    <?php endfor;
+                                }
                             }
-                        }
 
-                    } ?>
-                    <!--                        Go right (pagination) -->
-                    <li class="<?php
-                    if ($page < $pageCount)
-                        echo 'waves-effect';
-                    else
-                        echo 'disabled';
-                    ?>"><a href="<?php
+                        } ?>
+                        <!--                        Go right (pagination) -->
+                        <li class="<?php
                         if ($page < $pageCount)
-                            gamesHistoryLink($page + 1, $gaAsc, $jaAsc, $nuAsc, $order, $order[0]);
+                            echo 'waves-effect';
                         else
-                            echo '#!';
-                        ?>"><i class="material-icons">chevron_right</i></a></li>
-                </ul>
+                            echo 'disabled';
+                        ?>"><a href="<?php
+                            if ($page < $pageCount)
+                                gamesHistoryLink($page + 1, $gaAsc, $jaAsc, $nuAsc, $order, $order[0]);
+                            else
+                                echo '#!';
+                            ?>"><i class="material-icons">chevron_right</i></a></li>
+                    </ul>
                 <?php endif; ?>
             </div>
         </div>
     </div>
 </main>
+<!--    Jquery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<!-- Compiled and minified JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/js/materialize.min.js"></script>
+<script>
+    $(document).ready(function () {
+        M.AutoInit();
+    });
+</script>
 <?php include "inc/footer.php"; ?>
-</body>
-</html>
+

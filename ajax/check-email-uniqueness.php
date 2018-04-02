@@ -7,7 +7,7 @@
  */
 session_start();
 
-include "../connect.php";
+include "../globals.php";
 
 $email = strtolower($_POST['email']);
 

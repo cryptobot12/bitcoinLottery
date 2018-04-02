@@ -7,13 +7,13 @@
  */
 session_start();
 
-$rowPerPage = 25;
+$rowPerPage = 20;
 
-include "connect.php";
+include "globals.php";
 include "function.php";
 include "inc/login_checker.php";
 
-$_SESSION['last_url'] = 'rank.php';
+$_SESSION['last_url'] = 'rank';
 
 function rankLink($page = 1, $raAsc = 1, $gaAsc = 1, $arrayOrd, $first)
 {
@@ -21,7 +21,13 @@ function rankLink($page = 1, $raAsc = 1, $gaAsc = 1, $arrayOrd, $first)
     array_splice($arrayOrd, $pos, 1);
     array_unshift($arrayOrd, $first);
 
-    echo "rank.php?p=$page&ra=$raAsc&ga=$gaAsc&ord[]=$arrayOrd[0]&ord[]=$arrayOrd[1]";
+    $link = "rank/" . $page . "/" . $raAsc . $gaAsc;
+
+    foreach ($arrayOrd as $i){
+        $link .= $i;
+    }
+
+    echo $link;
 }
 
 if (isset($_GET['ra']) && !empty($_GET['ra'])) {
@@ -45,7 +51,6 @@ if (isset($_GET['ord']) && !empty($_GET['ord'])) {
     $order = array(1, 2);
 }
 
-
 try {
 
     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $dbuser, $dbpass);
@@ -53,7 +58,7 @@ try {
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 
-    if (!(isset($_GET['user']) && !empty($_GET['user']))) {
+    if (empty($_GET['user'])) {
         $stmt = $conn->prepare('SELECT COUNT(username) AS userCount
                         FROM user');
         $stmt->execute();
@@ -76,28 +81,15 @@ try {
         else
             $raString = "rank DESC";
 
-        $statement = 'SELECT
-                      rank,
-                      user.username,
-                      user.net_profit,
-                      user.games_played
-                    FROM user INNER JOIN
-                      (SELECT
-                        user.user_id,
-                      CASE
-                      WHEN @prevRank = net_profit
-                        THEN @curRank
-                      WHEN @prevRank := net_profit
-                        THEN @curRank := @curRank + 1
-                      END AS rank,
-                      net_profit
-                    FROM user,
-                      (SELECT
-                         @curRank := 0,
-                         @prevRank := NULL) r
-                    ORDER BY net_profit DESC) AS r1
-                    ON user.user_id = r1.user_id
-                    ORDER BY ';
+        $statement = 'SELECT  username, net_profit, games_played, FIND_IN_SET( net_profit, (
+                SELECT GROUP_CONCAT( net_profit
+                ORDER BY net_profit DESC )
+                FROM user 
+                 WHERE user.games_played <> 0)
+                ) AS rank
+                FROM user
+                WHERE user.games_played <> 0
+                ORDER BY ';
 
         for ($i = 0; $i <= 1; $i++) {
             if ($order[$i] == 1)
@@ -114,29 +106,16 @@ try {
         $stmt = $conn->prepare($statement);
         $stmt->execute(array('rows' => $rowPerPage, 'the_offset' => (($page - 1) * $rowPerPage)));
         $rowTable = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
     } else {
-        $statement = 'SELECT
-                      rank,
-                      user.username,
-                      user.net_profit,
-                      user.games_played
-                    FROM user INNER JOIN
-                      (SELECT
-                        user.user_id,
-                      CASE
-                      WHEN @prevRank = net_profit
-                        THEN @curRank
-                      WHEN @prevRank := net_profit
-                        THEN @curRank := @curRank + 1
-                      END AS rank,
-                      net_profit
-                    FROM user,
-                      (SELECT
-                         @curRank := 0,
-                         @prevRank := NULL) r
-                    ORDER BY net_profit DESC) AS r1
-                    ON user.user_id = r1.user_id
-                    WHERE user.username = :username';
+        $statement = 'SELECT  username, net_profit, games_played, FIND_IN_SET( net_profit, (
+                SELECT GROUP_CONCAT( net_profit
+                ORDER BY net_profit DESC )
+                FROM user 
+                 WHERE user.games_played <> 0)
+                ) AS rank
+                FROM user
+                WHERE user.username = :username';
 
         $stmt = $conn->prepare($statement);
         $stmt->execute(array('username' => htmlspecialchars($_GET['user'])));
@@ -147,63 +126,28 @@ try {
 } catch (PDOException $e) {
     echo "Connection failed: " . $e->getMessage();
 }
-?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Bitcoin</title>
-    <!--    Jquery -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-
-    <!-- Compiled and minified CSS -->
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <!-- Compiled and minified JavaScript -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
-    <script src="js/autobahn.js"></script>
-    <script>
-        $(function () {
-
-            var searchUser = $("#search_user");
-            searchUser.on('keypress', function (e) {
-                if (e.which === 13) {
-                    window.location.href = 'rank.php?user=' + searchUser.val();
-                }
-            });
-        });
-    </script>
-
-    <link href="css/style.css" rel="stylesheet">
-
-    <!--Let browser know website is optimized for mobile-->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-</head>
-<body>
-<header>
-    <?php include "inc/header.php" ?>
-    <div class="row top-buffer-15">
-        <div class="col s4 offset-s4">
-            <div class="input-field col s12">
-                <i class="material-icons prefix">search</i>
-                <input id="search_user" class="validate" type="text" ">
-                <label for="search_user">Username</label>
+$title = "Ranking - BitcoinPVP";
+include "inc/header.php"; ?>
+<main>
+    <div class="container">
+        <div class="row top-buffer-15">
+            <div class="col l4 offset-l4 m8 offset-m2 s12">
+                <div class="input-field col s12">
+                    <i class="material-icons prefix">search</i>
+                    <input id="search_user" class="validate" type="text" ">
+                    <label for="search_user">Username</label>
+                </div>
             </div>
         </div>
     </div>
-</header>
-<main class="<?php
-if (isset($_GET['user']) && !empty($_GET['user']) && (!isset($rowTable['username'])))
-    echo 'valign-wrapper'; ?>">
     <div class="container">
-        <?php if (!(isset($_GET['user']) && !empty($_GET['user']))) : ?>
+        <?php if (empty($_GET['user'])) : ?>
             <div class="row">
                 <div class="col l10 offset-l1 m10 offset-m1 s12">
                     <table class="highlight">
                         <thead>
                         <tr>
-                            <th><a href="<?php
+                            <th><a href="<?php echo $base_dir;
                                 if ($raAsc == 2)
                                     rankLink($page, 1, $gaAsc, $order, 1);
                                 else
@@ -216,7 +160,7 @@ if (isset($_GET['user']) && !empty($_GET['user']) && (!isset($rowTable['username
                                         ?></i></a></th>
                             <th>User</th>
                             <th>Net Profit</th>
-                            <th><a href="<?php
+                            <th><a href="<?php echo $base_dir;
                                 if ($gaAsc == 2)
                                     rankLink($page, $raAsc, 1, $order, 2);
                                 else
@@ -234,8 +178,17 @@ if (isset($_GET['user']) && !empty($_GET['user']) && (!isset($rowTable['username
                         foreach ($rowTable as $item) {
                             echo "<tr>
             <td><b>" . $item['rank'] . "</b></td>
-                <td><a href='user_stats.php?user=" . $item['username'] . "'>" . $item['username'] . "</a></td>" .
-                                "<td>" . $item['net_profit'] / 100 . " bits</td>" .
+                <td><a href='" . $base_dir . "user-stats/" . $item['username'] . "'>" . $item['username'] . "</a></td>" .
+                                "<td><span class='";
+
+                            if ($item['net_profit'] > 0)
+                                echo "win-text";
+                            elseif ($item['net_profit'] == 0)
+                                echo "neutral-text";
+                            else
+                                echo "lose-text";
+
+                            echo "'>" . $item['net_profit'] / 100 . " bits</span></td>" .
                                 "<td>" . $item['games_played'] . "</td>" .
                                 "</tr>";
                         } ?>
@@ -254,9 +207,10 @@ if (isset($_GET['user']) && !empty($_GET['user']) && (!isset($rowTable['username
                             else
                                 echo 'disabled';
                             ?>"><a href="<?php
-                                if ($page > 1)
+                                if ($page > 1) {
+                                    echo $base_dir;
                                     rankLink($page - 1, $raAsc, $gaAsc, $order, $order[0]);
-                                else
+                                } else
                                     echo '#!';
                                 ?>">
                                     <i class="material-icons">chevron_left</i></a></li>
@@ -268,7 +222,8 @@ if (isset($_GET['user']) && !empty($_GET['user']) && (!isset($rowTable['username
                                         echo 'active';
                                     else
                                         echo 'waves-effect'; ?>"><a
-                                                href="<?php rankLink($i, $raAsc, $gaAsc, $order, $order[0]); ?>">
+                                                href="<?php echo $base_dir;
+                                                rankLink($i, $raAsc, $gaAsc, $order, $order[0]); ?>">
                                             <?php echo $i; ?></a></li>
                                 <?php endfor;
                             } else {
@@ -278,7 +233,8 @@ if (isset($_GET['user']) && !empty($_GET['user']) && (!isset($rowTable['username
                                             echo 'active';
                                         else
                                             echo 'waves-effect'; ?>"><a
-                                                    href="<?php rankLink($i, $raAsc, $gaAsc, $order, $order[0]); ?>">
+                                                    href="<?php echo $base_dir;
+                                                    rankLink($i, $raAsc, $gaAsc, $order, $order[0]); ?>">
                                                 <?php echo $i; ?></a></li>
                                     <?php endfor;
                                     echo '<li>...</li>'; ?>
@@ -286,7 +242,8 @@ if (isset($_GET['user']) && !empty($_GET['user']) && (!isset($rowTable['username
                                         echo 'active';
                                     else
                                         echo 'waves-effect'; ?>"><a
-                                                href="<?php rankLink($i, $raAsc, $gaAsc, $order, $order[0]); ?>">
+                                                href="<?php echo $base_dir;
+                                                rankLink($i, $raAsc, $gaAsc, $order, $order[0]); ?>">
                                             <?php echo $pageCount; ?></a></li>
                                     <?php
                                 } else { ?>
@@ -294,7 +251,8 @@ if (isset($_GET['user']) && !empty($_GET['user']) && (!isset($rowTable['username
                                         echo 'active';
                                     else
                                         echo 'waves-effect'; ?>"><a
-                                                href="<?php rankLink($i, $raAsc, $gaAsc, $order, $order[0]); ?>">
+                                                href="<?php echo $base_dir;
+                                                rankLink($i, $raAsc, $gaAsc, $order, $order[0]); ?>">
                                             <?php echo 1; ?></a></li>
                                     <?php
                                     echo '<li>...</li>';
@@ -304,7 +262,8 @@ if (isset($_GET['user']) && !empty($_GET['user']) && (!isset($rowTable['username
                                                 echo 'active';
                                             else
                                                 echo 'waves-effect'; ?>"><a
-                                                        href="<?php rankLink($i, $raAsc, $gaAsc, $order, $order[0]); ?>">
+                                                        href="<?php echo $base_dir;
+                                                        rankLink($i, $raAsc, $gaAsc, $order, $order[0]); ?>">
                                                     <?php echo $i; ?></a></li>
                                         <?php endfor;
                                         echo '<li>...</li>'; ?>
@@ -312,7 +271,8 @@ if (isset($_GET['user']) && !empty($_GET['user']) && (!isset($rowTable['username
                                             echo 'active';
                                         else
                                             echo 'waves-effect'; ?>"><a
-                                                    href="<?php rankLink($i, $raAsc, $gaAsc, $order, $order[0]); ?>">
+                                                    href="<?php echo $base_dir;
+                                                    rankLink($i, $raAsc, $gaAsc, $order, $order[0]); ?>">
                                                 <?php echo $pageCount; ?></a></li>
                                         <?php
                                     } else {
@@ -321,7 +281,8 @@ if (isset($_GET['user']) && !empty($_GET['user']) && (!isset($rowTable['username
                                                 echo 'active';
                                             else
                                                 echo 'waves-effect'; ?>"><a
-                                                        href="<?php rankLink($i, $raAsc, $gaAsc, $order, $order[0]); ?>">
+                                                        href="<?php echo $base_dir;
+                                                        rankLink($i, $raAsc, $gaAsc, $order, $order[0]); ?>">
                                                     <?php echo $i; ?></a></li>
                                         <?php endfor;
                                     }
@@ -335,9 +296,10 @@ if (isset($_GET['user']) && !empty($_GET['user']) && (!isset($rowTable['username
                             else
                                 echo 'disabled';
                             ?>"><a href="<?php
-                                if ($page < $pageCount)
+                                if ($page < $pageCount) {
+                                    echo $base_dir;
                                     rankLink($page + 1, $raAsc, $gaAsc, $order, $order[0]);
-                                else
+                                } else
                                     echo '#!';
                                 ?>">
                                     <i class="material-icons">chevron_right</i></a></li>
@@ -360,9 +322,14 @@ if (isset($_GET['user']) && !empty($_GET['user']) && (!isset($rowTable['username
                             </thead>
                             <tbody>
                             <?php
-                            echo "<tr>
-            <td><b>" . $rowTable['rank'] . "</b></td>
-                <td><a href='user_stats.php?user=" . $rowTable['username'] . "'>" . $rowTable['username'] . "</a></td>" .
+                            echo "<tr><td><b>";
+                            if ($rowTable['rank'] != 0)
+                                echo $rowTable['rank'];
+                            else
+                                echo "Unranked";
+
+                            echo "</b></td>
+                <td><a href='" . $base_dir . "user-stats/" . $rowTable['username'] . "'>" . $rowTable['username'] . "</a></td>" .
                                 "<td>" . $rowTable['net_profit'] / 100 . " bits</td>" .
                                 "<td>" . $rowTable['games_played'] . "</td>" .
                                 "</tr>";
@@ -371,14 +338,41 @@ if (isset($_GET['user']) && !empty($_GET['user']) && (!isset($rowTable['username
                         </table>
                     </div>
                 <?php else: ?>
-                    <h3 class="center-align"><i class="medium material-icons vmid">error</i> User
-                        '<?php echo htmlspecialchars($_GET['user']); ?>'
-                        does not exist.</h3>
-                <?php endif; ?>
+                <div class="row"></div>
+                <div class="row"></div>
+                <div class="row"></div>
+                <div class="row centerWrap">
+                    <div class="centeredDiv">
+                        <span class="h5Span"><i class="material-icons left">error</i> User
+                        '<?php echo htmlspecialchars($_GET['user']); ?>' does not exist.</span>
+                        <?php endif; ?>
+                    </div>
+                </div>
             </div>
         <?php endif; ?>
     </div>
 </main>
+<!--    Jquery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<!-- Compiled and minified JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/js/materialize.min.js"></script>
+<script>
+    $(function () {
+
+        var searchUser = $("#search_user");
+        searchUser.on('keypress', function (e) {
+            if (e.which === 13) {
+                window.location.href = '<?php echo $base_dir; ?>rank/user/' + searchUser.val();
+            }
+        });
+    });
+
+    $(document).ready(function () {
+        M.AutoInit();
+
+    });
+
+</script>
 <?php include "inc/footer.php"; ?>
-</body>
-</html>
+
+

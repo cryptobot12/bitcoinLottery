@@ -19,6 +19,7 @@ function filterOnlyNumber(&$number, $default, $max, $min)
 
 function filterArray(&$array, $size)
 {
+    $array = str_split($array);
     $array = array_unique($array);
 
 
@@ -39,7 +40,9 @@ function filterArray(&$array, $size)
             }
         }
     }
+
 }
+
 
 function hide_mail($email) {
 

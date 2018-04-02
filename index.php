@@ -9,7 +9,7 @@ session_start();
  *
  */
 
-include "connect.php";
+include "globals.php";
 include "inc/login_checker.php";
 
 $_SESSION['last_url'] = 'index.php';
@@ -113,38 +113,13 @@ try {
 } catch (PDOException $e) {
     echo "Connection failed: " . $e->getMessage();
 }
-?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Bitcoin</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <!-- Compiled and minified CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <!-- Compiled and minified JavaScript -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
-    <script src="js/autobahn.js"></script>
-    <script>
-        var numbersGlobal = <?php
-            if ($logged_in) {
-                echo json_encode($arrayOfNumbers);
-            }?>;
-    </script>
-    <script src="js/index_script.js"></script>
 
-    <link href="css/style.css" rel="stylesheet">
+$title = "BitcoinPVP";
 
-    <!--Let browser know website is optimized for mobile-->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-</head>
-<body>
-<header>
-    <?php include 'inc/header.php' ?>
-</header>
+include 'inc/header.php' ?>
 <main>
     <div class="alt-container">
+        <div class="row"></div>
         <div class="row">
             <div class="col l4 m6 s12">
                 <!--            Jackpot card   -->
@@ -165,7 +140,7 @@ try {
                         <span class="card-title"><b>Last Game</b></span>
                         <div id="last_game_med">
                             <p>
-                                <a id="game_link_med" href="game_info.php?game_id=<?php echo $last_game; ?>"
+                                <a id="game_link_med" href="game-info.php?game_id=<?php echo $last_game; ?>"
                                    target="_blank">Game #<span
                                             id="last_game_number_med"><?php echo $last_game; ?></span></a>
                             </p>
@@ -425,7 +400,7 @@ try {
                         <?php foreach ($game_history_table as $item): ?>
                             <tr>
                                 <td>
-                                    <a href="game_info.php?game_id=<?php echo $item["game_id"] ?>"
+                                    <a href="game-info.php?game_id=<?php echo $item["game_id"] ?>"
                                        target="_blank"><?php echo $item["game_id"] ?></a>
                                 </td>
                                 <td><?php echo $item['amount'] / 100; ?> bits</td>
@@ -444,6 +419,17 @@ try {
     </div>
 
 </main>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<!-- Compiled and minified JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/js/materialize.min.js"></script>
+<script src="js/autobahn.js"></script>
+<script>
+    var numbersGlobal = <?php
+        if ($logged_in) {
+            echo json_encode($arrayOfNumbers);
+        }?>;
+</script>
+<script src="js/index_script.js"></script>
 <?php include "inc/footer.php"; ?>
-</body>
-</html>
+
+

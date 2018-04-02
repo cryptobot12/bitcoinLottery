@@ -6,7 +6,7 @@
  * Time: 12:25 AM
  */
 
-include "../connect.php";
+include "../globals.php";
 include "../inc/login_checker.php";
 
 $chat_message = htmlspecialchars($_POST['message']);

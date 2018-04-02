@@ -7,36 +7,11 @@
  */
 session_start();
 
-include "connect.php";
+include "globals.php";
 include "inc/login_checker.php";
-?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>BitcoinPVP - Help</title>
-    <!-- Jquery -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
-    <!-- Compiled and minified CSS -->
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <!-- Compiled and minified JavaScript -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
-
-    <!-- Custom scripts -->
-
-    <!-- Custom style -->
-    <link href="css/style.css" rel="stylesheet">
-
-    <!--Let browser know website is optimized for mobile-->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-</head>
-<body>
-<header>
-    <?php include 'inc/header.php'; ?>
-</header>
+$title = "Help - BitcoinPVP";
+include 'inc/header.php'; ?>
 <main class="valign-wrapper">
     <div class="container">
         <div class="row top-buffer-30">
@@ -52,7 +27,9 @@ include "inc/login_checker.php";
                                 <a href="#is-there">Is there any fee for playing?</a><br>
                                 <a href="#how-do">How do I deposit bits?</a><br>
                                 <a href="#how-long">How long do deposits take to be credited?</a><br>
-                                <a href="#how-can">How can I contact the support team?</a>
+                                <a href="#how-do-i">How do I transfer bits to other wallets?</a><br>
+                                <a href="#how-can">How can I contact the support team?</a><br>
+                                <a href="#do-you">Do you have a mobile app for iPhone or Android?</a>
                             </div>
                         </div>
                     </div>
@@ -67,35 +44,28 @@ include "inc/login_checker.php";
                 </div>
                 <div class="row" id="how-to">
                     <h5>How to play?</h5>
-                    <p> Each round, you have the opportunity to buy a number. You can buy up to 30 numbers per play, you
-                        can
-                        play limitless times each round. Each number costs 100 bits. Each round lasts a minute. After
-                        each
-                        round
-                        the winner will be selected based on the frequency of the numbers that the players
-                        bought.<br><br>
-                        The least frequent frequency of a number will be selected as long as the frequency is below 30.
-                        If
-                        two
-                        frequencies are the same, the lowest number will be selected. This means that there can be at
-                        the
-                        most
-                        30 winners per round.<br><br>
+                    <p> Each round, you have the opportunity to buy a number. You can buy up to 25 numbers per play, you
+                        can play limitless times each round. Each number costs 100 bits. Each round lasts a minute.
+                        After each round the winner will be selected based on the frequency of the numbers that the
+                        players bought.<br><br>
+                        The frequency that repeats the least will be selected as long as the frequency is below 10.
+                        If two or more frequencies repeat the same amount of times, the one that contains the lowest
+                        number will be selected. This means that there can be at the most 10 winners per round.<br><br>
                         <b>Examples:</b>
                     <p>The frequency column represents how many times a number was bought. The frequency of number's
                         frequency
                         column represents how many times a frequency value repeats. This column determines the winner
                         number.
-                        The lowest value in the frequency of frequency column whose frequency value is below 30 and has
+                        The lowest value in the frequency of frequency column whose frequency value is below 10 and has
                         the
                         lowest number determines the winner number.</p>
                     <div class="row">
                         <div class="legend red"></div>
-                        <span><b>Not below 30</b></span><br>
+                        <span><b>f(Frequency) not below 10</b></span><br>
                         <div class="legend amber"></div>
-                        <span><b>Below 30</b></span><br>
+                        <span><b>f(Frequency) below 10</b></span><br>
                         <div class="legend green"></div>
-                        <span><b>Lowest frequency of frequency's number and lowest number</b></span>
+                        <span><b>Lowest f(Frequency) and lowest number</b></span>
                     </div>
                     <div class="row">
                         <div class="col l4 m6 s12">
@@ -104,7 +74,7 @@ include "inc/login_checker.php";
                                 <tr>
                                     <th>Number</th>
                                     <th>Frequency</th>
-                                    <th>Frequency of number's frequency</th>
+                                    <th>f(Frequency)</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -168,7 +138,7 @@ include "inc/login_checker.php";
                                 </tr>
                                 <tr class="win green-text">
                                     <td>35</td>
-                                    <td>15</td>
+                                    <td>10</td>
                                     <td>1</td>
                                 </tr>
                                 </tbody>
@@ -180,7 +150,7 @@ include "inc/login_checker.php";
                                 <tr>
                                     <th>Number</th>
                                     <th>Frequency</th>
-                                    <th>Frequency of number's frequency</th>
+                                    <th>f(Frequency)</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -256,7 +226,7 @@ include "inc/login_checker.php";
                                 <tr>
                                     <th>Number</th>
                                     <th>Frequency</th>
-                                    <th>Frequency of number's frequency</th>
+                                    <th>f(Frequency)</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -338,17 +308,19 @@ include "inc/login_checker.php";
                 </div>
                 <div class="row" id="is-there">
                     <h5>Is there any fee for playing?</h5>
-                    <p>We take 5% of the cost of each number to pay the mining fees of the microtransactions, and to
-                        keep
-                        our
-                        servers running.</p>
+                    <p>We take 5% of the cost of each number to pay the mining fees of the microtransactions, to
+                        keep our servers running, and for our profit.</p>
                 </div>
                 <div class="row" id="how-do">
                     <h5>How do I deposit bits?</h5>
-                    <p>Each user account has a bitcoin wallet address associated with it. You must deposit your bits to
+                    <p>Each user account has a bitcoin wallet address associated with it. You must deposit bitcoin to
                         this
-                        address. You can find your bitcoin wallet address in your account management page.</p>
-                    <a href="account.php">Go to your account</a>
+                        address. You can find your bitcoin wallet address in your account management page. If you do not
+                        have any bitcoins, we can recommend <a href="https://localbitcoins.com/">LocalBitcoins.com</a> ,
+                        which lists traders in your area willing to sell (or buy) bitcoins. You can also search online
+                        to see if there are any bitcoin ATMs near you. And remember, you can withdraw directly to your
+                        BitcoinPVP bitcoin address.</p>
+                    <a href="<?php echo $base_dir;?>account">Go to your account</a>
                 </div>
                 <div class="row" id="how-long">
                     <h5>How long do deposits take to be credited?</h5>
@@ -359,18 +331,39 @@ include "inc/login_checker.php";
                         include in
                         your transaction.</p>
                 </div>
+                <div class="row" id="how-do-i">
+                    <h5>How do I transfer bits to other wallets?</h5>
+                    <p>You can transfer bits to any bitcoin wallet or other BitcoinPVP players through your account management page.</p>
+                    <a href="<?php echo $base_dir;?>account">Go to your account</a>
+                </div>
                 <div class="row" id="how-can">
                     <h5>How can I contact the support team?</h5>
-                    <p>For the moment, only registered users can contact the support team. You will have to go to the
+                    <p>You can send an email to <a>support@bitcoinpvp.net</a> or if you are registered you can go to the
                         account
                         management page to send a ticket.</p>
-                    <a href="account.php">Go to your account</a>
+                    <a href="<?php echo $base_dir;?>account">Go to your account</a>
+                </div>
+                <div class="row" id="do-you">
+                    <h5>Do you have a mobile app for iPhone or Android?</h5>
+                    <p>We do not have an iOS or Android app.</p>
+
+                    <p>However, our website is fully optimized to run from your mobile browser, so you can fully
+                        participate from any device. </p>
                 </div>
             </div>
         </div>
     </div>
 </main>
+<!-- Jquery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<!-- Compiled and minified JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/js/materialize.min.js"></script>
+<script>
+    $(document).ready(function () {
+        M.AutoInit();
+    });
+</script>
 <?php include 'inc/footer.php' ?>
-</body>
-</html>
+
+
 

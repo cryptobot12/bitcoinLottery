@@ -7,49 +7,28 @@
  */
 session_start();
 
-include 'connect.php';
+include 'globals.php';
 include 'inc/login_checker.php';
 
-?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>BitcoinPVP</title>
-    <!-- Jquery -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+if (empty($_SESSION['account_management_success'])) {
+    header("Location: " . $base_dir . "lost");
+    die();
+}
+$title = "Success - BitcoinPVP";
 
-    <!-- Compiled and minified CSS -->
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <!-- Compiled and minified JavaScript -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
-
-    <!-- Custom scripts -->
-
-    <!-- Custom style -->
-    <link href="css/style.css" rel="stylesheet">
-
-    <!--Let browser know website is optimized for mobile-->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-</head>
-<body>
-<header>
-    <?php include 'inc/header.php'; ?>
-</header>z
+include 'inc/header.php'; ?>
 <main class="valign-wrapper">
     <div class="container">
         <div class="row centerWrap">
             <div class="centeredDiv">
-                <span class="h5Span"><i class="material-icons left">error</i><?php
+                <span class="h5Span"><i class="material-icons left">check</i><?php
 
                     switch ($_SESSION['account_management_success']) {
                         case 1:
                             echo "Email successfully updated.";
                             break;
                         case 2:
-                            echo "Password successfully updated.";
+                            echo "Your password has been changed.";
                             break;
                         case 3:
                             echo "Your withdrawal is being processed.";
@@ -67,8 +46,17 @@ include 'inc/login_checker.php';
         </div>
     </div>
 </main>
+<!-- Jquery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<!-- Compiled and minified JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/js/materialize.min.js"></script>
+<script>
+    $(document).ready(function () {
+        M.AutoInit();
+    });
+</script>
 <?php include 'inc/footer.php';
 unset($_SESSION['account_management_success']);
 ?>
-</body>
-</html>
+
+
