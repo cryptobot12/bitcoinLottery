@@ -24,3 +24,5 @@ RewriteCond %{REQUEST_URI} !(\.php|\.js|\.css|\.gif|\.jpg|\.jpeg|\.png|\.bmp)$ [
 RewriteCond %{REQUEST_URI} [^/]$
 # Rewrite the request with a .php extension. L means this is the 'Last' rule
 RewriteRule ^(.*)$ $1.php [L]
+
+ErrorDocument 404 http://localhost/bitcoinLottery/lost

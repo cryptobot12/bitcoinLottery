@@ -35,51 +35,17 @@ try {
 } catch (PDOException $e) {
     echo "Connection failed: " . $e->getMessage();
 }
+
+$title = "Stats - BitcoinPVP";
+include "inc/header.php";
 ?>
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Bitcoin</title>
-    <!--    Jquery -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-
-    <!-- Compiled and minified CSS -->
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/css/materialize.min.css">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <!-- Compiled and minified JavaScript -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/js/materialize.min.js"></script>
-    <script src="js/autobahn.js"></script>
-    <script>
-        $(function () {
-
-            var searchUser = $("#search_user");
-            searchUser.on('keypress', function (e) {
-                if (e.which === 13) {
-                    window.location.href = 'user_stats.php?user=' + searchUser.val();
-                }
-            });
-        });
-    </script>
-
-    <link href="css/style.css" rel="stylesheet">
-
-    <!--Let browser know website is optimized for mobile-->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-</head>
-<body>
-<header>
-    <?php include "inc/header.php"; ?>
-</header>
 <main>
     <div class="row top-buffer-15">
         <div class="col l4 offset-l4 m8 offset-m2 s12">
-            <div class="card z-depth-5">
+            <div class="card">
                 <div class="card-content">
-                    <h3>Server stats</h3>
-                    <table class="striped">
+                    <h3>Server Stats</h3>
+                    <table class="highlight" >
                         <tbody>
                         <tr>
                             <th>Deposits</th>
@@ -102,10 +68,6 @@ try {
                             <td><?php echo $gross_profit; ?> bits</td>
                         </tr>
                         <tr>
-                            <th>Our Profit</th>
-                            <td><?php echo $our_profit; ?> bits</td>
-                        </tr>
-                        <tr>
                             <th>Biggest Jackpot</th>
                             <td><?php echo $max_jackpot; ?> bits</td>
                         </tr>
@@ -121,10 +83,6 @@ try {
                             <th>Games Played</th>
                             <td><?php echo $games_played; ?></td>
                         </tr>
-                        <tr>
-                            <th>Total Plays</th>
-                            <td><?php echo $total_plays; ?></td>
-                        </tr>
                         </tbody>
                     </table>
                 </div>
@@ -132,5 +90,23 @@ try {
         </div>
     </div>
 </main>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<!-- Compiled and minified JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/js/materialize.min.js"></script>
+<script>
+    $(function () {
+
+        var searchUser = $("#search_user");
+        searchUser.on('keypress', function (e) {
+            if (e.which === 13) {
+                window.location.href = 'user_stats.php?user=' + searchUser.val();
+            }
+        });
+    });
+
+    $(document).ready(function () {
+        M.AutoInit();
+    });
+</script>
 <?php include "inc/footer.php"; ?>
 

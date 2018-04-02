@@ -46,14 +46,17 @@ if ($logged_in) {
     <?php if (!empty($username)) : ?>
         <ul id="profileDropdown" class="dropdown-content">
             <li><a href="<?php echo $base_dir; ?>account"><i class="material-icons left">build</i>Account</a></li>
-            <li><a href="<?php echo $base_dir; ?>actions/logout"><i class="material-icons left">exit_to_app</i>Logout</a>
+            <li><a href="<?php echo $base_dir; ?>actions/logout"><i
+                            class="material-icons left">exit_to_app</i>Logout</a>
             </li>
         </ul>
     <?php endif; ?>
 
     <!--    //    Stats structure-->
     <ul id="statsDropdown" class="dropdown-content">
-        <li><a href="<?php echo $base_dir; ?>user-stats"><i class="material-icons left">person</i>User stats</a></li>
+        <li><a href="<?php echo $base_dir; ?>rank"><i class="material-icons left">assistant_photo</i>Ranking</a>
+        </li>
+        <li><a href="<?php echo $base_dir; ?>user-stats"><i class="material-icons left">person</i>User Stats</a></li>
         <li><a href="<?php echo $base_dir; ?>game-info"><i class="material-icons left">assignment</i>Game Info</a></li>
         <li><a href="<?php echo $base_dir; ?>games-history"><i class="material-icons left">access_time</i>Games History</a>
         </li>
@@ -63,12 +66,13 @@ if ($logged_in) {
 
     <nav id="nav-top">
         <div class="nav-wrapper black darken-3">
-            <a href="<?php echo $base_dir; ?>" class="brand-logo left"><img
-                        src="<?php echo $base_dir; ?>img/nav-logo.png" height="56"></a>
-            <ul id="nav-mobile" class="right .hide-on-small-only nav-letters">
-                <li class=""><a href="<?php echo $base_dir; ?>help"><i class="material-icons left">help</i>Help</a></li>
-                <li class=""><a href="<?php echo $base_dir; ?>rank"><i class="material-icons left">assistant_photo</i>Ranking</a>
-                </li>
+            <a href="#" data-target="slide-out" class="sidenav-trigger show-on-medium-and-down"><i
+                        class="material-icons">menu</i></a>
+            <a href="<?php echo $base_dir; ?>" class="brand-logo"><img
+                        src="<?php /*echo $base_dir; */?>img/nav-logo.png"></a>
+            <ul id="nav-mobile" class="right hide-on-med-and-down nav-letters">
+                <li><a href="<?php echo $base_dir; ?>help"><i class="material-icons left">help</i>Help</a></li>
+
                 <li><a class="dropdown-trigger" href="#" data-target="statsDropdown">
                         <i class="material-icons left">trending_up</i>Stats<i
                                 class="material-icons right">arrow_drop_down</i></a></li>
@@ -82,11 +86,52 @@ if ($logged_in) {
                                     class="material-icons right">arrow_drop_down</i></a>
                     </li>
                 <?php else: ?>
-                    <li><a href="<?php echo $base_dir; ?>registration">Register</a></li>
-                    <li><a href="<?php echo $base_dir; ?>login">Login</a></li>
+                    <li><a href="<?php echo $base_dir; ?>registration">Register<i
+                                    class="material-icons right white-text">person_add</i></a></li>
+                    <li><a href="<?php echo $base_dir; ?>login">Login<i
+                                    class="material-icons right white-text">navigate_next</i></a></li>
                 <?php endif; ?>
 
             </ul>
         </div>
     </nav>
+
+    <ul id="slide-out" class="sidenav">
+        <?php if (!empty($username)) : ?>
+            <li class="black"><a class="white-text"><i class="material-icons white-text">account_balance_wallet</i>
+                    Balance: <span id="my_balance"><?php echo $balance; ?></span> bits</a></li>
+
+            <li>
+                <a class="subheader"><b>Welcome, <?php echo $username; ?></b></a>
+            </li>
+            <li><a href="<?php echo $base_dir; ?>account"><i
+                            class="material-icons">build</i>Account</a></li>
+            <li><a href="<?php echo $base_dir; ?>actions/logout"><i
+                            class="material-icons">exit_to_app</i>Logout</a></li>
+            <li>
+                <div class="divider"></div>
+            </li>
+        <?php else: ?>
+            <li class="black"><a class="white-text" href="<?php echo $base_dir; ?>registration"><i
+                            class="material-icons white-text">person_add</i>Register</a></li>
+            <li class="black"><a class="white-text" href="<?php echo $base_dir; ?>login"><i
+                            class="material-icons white-text">navigate_next</i>Login</a></li>
+        <?php endif; ?>
+        <li><a class="waves-effect" href="<?php echo $base_dir; ?>rank"><i
+                        class="material-icons">assistant_photo</i>Ranking</a></li>
+        <li><a class="waves-effect" href="<?php echo $base_dir; ?>user-stats"><i class="material-icons">person</i>User
+                Stats</a></li>
+        <li><a class="waves-effect" href="<?php echo $base_dir; ?>game-info"><i
+                        class="material-icons">assignment</i>Game Info</a></li>
+        <li><a class="waves-effect" href="<?php echo $base_dir; ?>games-history"><i
+                        class="material-icons">access_time</i>Games
+                History</a></li>
+        <li><a class="waves-effect" href="<?php echo $base_dir; ?>stats"><i class="material-icons">assessment</i>Server
+                Stats</a></li>
+        <li>
+            <div class="divider"></div>
+        </li>
+        <li><a class="waves-effect" href="<?php echo $base_dir; ?>help"><i class="material-icons">help</i>Help</a>
+        </li>
+    </ul>
 </header>

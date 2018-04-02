@@ -14,6 +14,7 @@ if (empty($_SESSION['account_management_success'])) {
     header("Location: " . $base_dir . "lost");
     die();
 }
+$title = "Success - BitcoinPVP";
 
 include 'inc/header.php'; ?>
 <main class="valign-wrapper">

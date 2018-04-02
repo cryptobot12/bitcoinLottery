@@ -11,7 +11,7 @@
         <div class="row">
             <div class="col l6 s12">
                 <h5 class="black-text">License</h5>
-                <p class="black-text text-lighten-4">Peruvian license N48D1489A-ADS4</p>
+                <p class="black-text text-lighten-4">Peruvian License N48D1489A-ADS4</p>
                 <p class="black-text">JavaScript is required</p>
             </div>
             <div class="col l4 offset-l2 s12">
@@ -23,7 +23,6 @@
                     <li><a class="black-text text-lighten-3" href="<?php echo $base_dir; ?>game_info">Game Info</a></li>
                     <li><a class="black-text text-lighten-3" href="<?php echo $base_dir; ?>games_history">Games history</a></li>
                     <li><a class="black-text text-lighten-3" href="<?php echo $base_dir; ?>user_stats">User Stats</a></li>
-                    <li><a class="black-text text-lighten-3" href="<?php echo $base_dir; ?>help">Guide</a></li>
                     <li><a class="black-text text-lighten-3" href="<?php echo $base_dir; ?>registration">Registration</a></li>
                 </ul>
             </div>
