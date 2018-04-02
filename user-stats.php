@@ -22,8 +22,8 @@ function userStatsLink($user, $page = 1, $gaAsc = 1, $beAsc = 2, $prAsc = 2, $ja
     array_splice($arrayOrd, $pos, 1);
     array_unshift($arrayOrd, $first);
 
-    $link = $base_dir . "user-stats/" . $user . "/" . $page . $gaAsc . $beAsc . $prAsc . $jaAsc;
-    foreach ($arrayOrd as $i){
+    $link = $base_dir . "user-stats/" . $user . "/" . $page . "/" . $gaAsc . $beAsc . $prAsc . $jaAsc;
+    foreach ($arrayOrd as $i) {
         $link .= $i;
     }
 

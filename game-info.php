@@ -21,7 +21,7 @@ function gameInfoLink($game, $page = 1, $n = 2, $f = 2, $ff = 2, $arrayOrd, $fir
     array_splice($arrayOrd, $pos, 1);
     array_unshift($arrayOrd, $first);
 
-    $link = $base_dir . "game-info/$game/" . $page . $n . $f . $ff;
+    $link = $base_dir . "game-info/$game/" . $page . "/" . $n . $f . $ff;
 
     foreach ($arrayOrd as $i) {
         $link .= $i;

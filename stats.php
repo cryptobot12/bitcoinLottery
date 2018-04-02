@@ -10,7 +10,7 @@ session_start();
 include "globals.php";
 include "inc/login_checker.php";
 
-$_SESSION['last_url'] = 'stats.php';
+$_SESSION['last_url'] = 'stats';
 
 try {
 
@@ -19,8 +19,8 @@ try {
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 
-    $stmt = $conn->prepare('SELECT deposits, withdrawals, net, games_played, gross_profit, our_profit,
-                                      max_jackpot, total_users, total_plays FROM stats');
+    $stmt = $conn->prepare('SELECT deposits, withdrawals, net, games_played, gross_profit,
+                                      max_jackpot, total_users FROM stats');
     $stmt->execute();
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -29,10 +29,8 @@ try {
     $net = $result['net'] / 100;
     $games_played = $result['games_played'];
     $gross_profit = $result['gross_profit'] / 100;
-    $our_profit = $result['our_profit'] / 100;
     $max_jackpot = $result['max_jackpot'] / 100;
     $total_users = $result['total_users'];
-    $total_plays = $result['total_plays'];
 
 } catch (PDOException $e) {
     echo "Connection failed: " . $e->getMessage();

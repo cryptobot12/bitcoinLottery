@@ -8,11 +8,12 @@ RewriteRule ^actions/update-email/([^/]+)/([^/]+)/?$ actions/update-email.php?se
 RewriteRule ^support/respond-ticket/([^/]+)/([^/]+)/?$ support/respond-ticket.php?ticket=$1&val=$2 [L,QSA]
 RewriteRule ^account/([^/])([^/])([^/])/?$ account.php?p=$1&pw=$2&pt=$3 [L,QSA]
 RewriteRule ^confirm-email/([^/]+)/([^/]+)/?$ actions/confirm-email?sel=$1&val=$2 [L,QSA]
-RewriteRule ^rank/([^/])([^/])([^/])([^/]{2})/?$ rank.php?p=$1&ra=$2&ga=$3&ord=$4 [L,QSA]
+RewriteRule ^rank/([^/]+)/([^/])([^/])([^/]{2})/?$ rank.php?p=$1&ra=$2&ga=$3&ord=$4 [L,QSA]
 RewriteRule ^rank/user/([^/]+)/?$ rank.php?user=$1 [L,QSA]
 RewriteRule ^user-stats/([^/]+)/?$ user-stats.php?user=$1 [L,QSA]
-RewriteRule ^user-stats/([^/]+)/([^/])([^/])([^/])([^/])([^/])([^/]{4})/?$ user-stats.php?user=$1&p=$2&ga=$3&be=$4&pr=$5&ja=$6&ord=$7 [L,QSA]
-RewriteRule ^game-info/([^/]+)/([^/])([^/])([^/])([^/])([^/]{3})/?$ game-info.php?game_id=$1&p=$2&n=$3&f=$4&ff=$5&ord=$6 [L,QSA]
+RewriteRule ^user-stats/([^/]+)/([^/]+)/([^/])([^/])([^/])([^/])([^/]{4})/?$ user-stats.php?user=$1&p=$2&ga=$3&be=$4&pr=$5&ja=$6&ord=$7 [L,QSA]
+RewriteRule ^game-info/([^/]+)/([^/]+)/([^/])([^/])([^/])([^/]{3})/?$ game-info.php?game_id=$1&p=$2&n=$3&f=$4&ff=$5&ord=$6 [L,QSA]
+RewriteRule ^games-history/([^/]+)/([^/])([^/])([^/])([^/]{3})/?$ games-history.php?p=$1&ga=$2&ja=$3&nu=$4&ord=$5 [L,QSA]
 
 RewriteCond %{REQUEST_URI} [/]$
 RewriteRule ^([^/]*)[/]$ $1 [L,R]

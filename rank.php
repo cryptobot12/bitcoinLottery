@@ -7,7 +7,7 @@
  */
 session_start();
 
-$rowPerPage = 25;
+$rowPerPage = 20;
 
 include "globals.php";
 include "function.php";
@@ -21,7 +21,7 @@ function rankLink($page = 1, $raAsc = 1, $gaAsc = 1, $arrayOrd, $first)
     array_splice($arrayOrd, $pos, 1);
     array_unshift($arrayOrd, $first);
 
-    $link = "rank/" . $page . $raAsc . $gaAsc;
+    $link = "rank/" . $page . "/" . $raAsc . $gaAsc;
 
     foreach ($arrayOrd as $i){
         $link .= $i;
