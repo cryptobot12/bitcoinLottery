@@ -177,7 +177,7 @@ include "inc/header.php" ?>
                     <?php
                     foreach ($rowTable as $item) {
                         echo "<tr>
-                <td><a href=\"game-info.php?game_id=" . $item['game_id'] . "\" target=\"_self\">" . $item['game_id'] . "</a></td>" .
+                <td><a href=\"" . $base_dir . "game-info/" . $item['game_id'] . "\" target=\"_self\">" . $item['game_id'] . "</a></td>" .
                             "<td>" . ($item['amount'] / 100) . " bits</td>" .
                             "<td><div class='chip yellow no-marg-bot'>" . $item['winner_number'] . "</div></td>" .
                             "<td>" . $item['time'] . "</td>" .

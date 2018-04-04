@@ -46,7 +46,7 @@ try {
         $stmt->execute();
 
         //Update number of players
-        echo "Increasing number of players...<br>";
+        echo "Updating number of players in current game...<br>";
         $stmt = $conn->prepare('UPDATE game SET number_of_players = :number_of_players
                                           WHERE game_id = :game_id');
         $stmt->execute(array('number_of_players' => $players_in_current_game, 'game_id' => $current_game));

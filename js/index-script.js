@@ -6,14 +6,15 @@ $(document).ready(function () {
     var chat_send = $("#chat-send");
     var chat_space = $("#chat-space");
     var input_chat = $("#input-chat");
+    var chat_input_line = $("#chat-input-line");
 
     var chat_space_width = chat_space.width();
+    var chat_input_line_width = chat_input_line.width();
     var chat_send_margin = chat_send.css("marginLeft");
     var chat_send_pl = chat_send.css("paddingLeft");
     var chat_send_pr = chat_send.css("paddingRight");
 
-    var new_width_for_input = parseFloat(chat_space_width) - parseFloat(chat_send_margin) -
-        parseFloat(chat_send_pl) - parseFloat(chat_send_pr) - window.innerWidth * 0.01;
+    var new_width_for_input = parseFloat(chat_input_line_width) - parseFloat(chat_send_pl) - parseFloat(chat_send_pr) - 4;
 
 
     var nav_top = $("#nav-top");
@@ -21,7 +22,6 @@ $(document).ready(function () {
 
     var chat_messages = $("#chat-messages");
     var chat_card_content = $("#chat-card-content");
-    var chat_input_line = $("#chat-input-line");
 
 
     var new_height_for_chat_messages = window.innerHeight - parseFloat(nav_top.height()) - parseFloat(play_med_col.height()) -
@@ -37,6 +37,22 @@ $(document).ready(function () {
     }
     input_chat.width(new_width_for_input);
 
+    var play_med_card = $("#play_med_card");
+    var numbers_card_med = $("#numbers_card_med");
+
+    var play_med_card_height = play_med_card.height();
+    numbers_card_med.height(play_med_card_height);
+
+    //NUMBERS RESIZE
+
+    var count_numbers_med = $("#count_numbers_med");
+    var number_list_div = $("#numbers_list_med");
+    var card_numbers_content = $("#card-numbers-content");
+
+    number_list_div.height(parseFloat(numbers_card_med.height()) - parseFloat(card_numbers_content.css("paddingTop")) -
+        parseFloat(card_numbers_content.css("paddingBottom")) - parseFloat(count_numbers_med.height()) - parseFloat(count_numbers_med.css("marginBottom")));
+
+
 });
 
 $(window).resize(function () {
@@ -45,14 +61,15 @@ $(window).resize(function () {
     var chat_send = $("#chat-send");
     var chat_space = $("#chat-space");
     var input_chat = $("#input-chat");
+    var chat_input_line = $("#chat-input-line");
 
     var chat_space_width = chat_space.width();
+    var chat_input_line_width = chat_input_line.width();
     var chat_send_margin = chat_send.css("marginLeft");
     var chat_send_pl = chat_send.css("paddingLeft");
     var chat_send_pr = chat_send.css("paddingRight");
 
-    var new_width_for_input = parseFloat(chat_space_width) - parseFloat(chat_send_margin) -
-        parseFloat(chat_send_pl) - parseFloat(chat_send_pr) - window.innerWidth * 0.01;
+    var new_width_for_input = parseFloat(chat_input_line_width) - parseFloat(chat_send_pl) - parseFloat(chat_send_pr) - 4;
 
 
     var nav_top = $("#nav-top");
@@ -60,22 +77,10 @@ $(window).resize(function () {
 
     var chat_messages = $("#chat-messages");
     var chat_card_content = $("#chat-card-content");
-    var chat_input_line = $("#chat-input-line");
-
-
-    console.log("-----");
-    console.log(window.innerHeight);
-    console.log(parseFloat(nav_top.height()));
-    console.log(parseFloat(play_med_col.height()));
-    console.log(parseFloat(chat_card_content.css("paddingTop")) * 2);
-    console.log(parseFloat(chat_input_line.height()));
-    console.log(parseFloat(chat_input_line.css("marginTop")));
-    console.log(parseFloat(chat_input_line.css("marginBottom")));
-    console.log("------");
 
     var new_height_for_chat_messages = window.innerHeight - parseFloat(nav_top.height()) - parseFloat(play_med_col.height()) -
         parseFloat(chat_card_content.css("paddingTop")) * 2 - parseFloat(chat_input_line.height()) * 1.7 - parseFloat(chat_input_line.css("marginTop")) -
-        parseFloat(chat_input_line.css("marginBottom"));
+        parseFloat(chat_input_line.css("marginBottom")) - 15;
 
 
     if (new_height_for_chat_messages > 150) {
@@ -88,6 +93,21 @@ $(window).resize(function () {
     }
 
     input_chat.width(new_width_for_input);
+
+    var play_med_card = $("#play_med_card");
+    var numbers_card_med = $("#numbers_card_med");
+
+    var play_med_card_height = play_med_card.height();
+    numbers_card_med.height(play_med_card_height);
+
+    //NUMBERS RESIZE
+
+    var count_numbers_med = $("#count_numbers_med");
+    var number_list_div = $("#numbers_list_med");
+    var card_numbers_content = $("#card-numbers-content");
+
+    number_list_div.height(parseFloat(numbers_card_med.height()) - parseFloat(card_numbers_content.css("paddingTop")) -
+        parseFloat(card_numbers_content.css("paddingBottom")) - parseFloat(count_numbers_med.height()) - parseFloat(count_numbers_med.css("marginBottom")));
 });
 
 
@@ -468,7 +488,7 @@ function send_message() {
 
 
     $.ajax({
-        url: 'ajax/send_message.php',
+        url: 'ajax/send_message',
         success: function (result) {
             if (result === 'tmm') {
                 var chat_list = $("#chat-messages");
@@ -556,12 +576,12 @@ function add_numbers_to_confirm_med(array) {
     var count = array.length;
 
     if (count === 1)
-        countConfirm.html("&nbsp;&nbsp;&nbsp;&nbsp;" + count + " number selected (" + (count * 100) + " bits)");
+        countConfirm.html(count + " number selected (" + (count * 100) + " bits)");
     else
-        countConfirm.html("&nbsp;&nbsp;&nbsp;&nbsp;" + count + " numbers selected (" + (count * 100) + " bits)");
+        countConfirm.html(count + " numbers selected (" + (count * 100) + " bits)");
 
     $.each(array, function (index, value) {
-        toAppend = '<div class="chip">' + value + '</div>';
+        toAppend = '<div class="chip yellow">' + value + '</div>';
         numbersList.append(toAppend);
     });
 
@@ -779,7 +799,7 @@ var conn = new ab.Session('ws://localhost:8080',
 
                 $("#jackpot_number").html(data.jackpot);
                 $("#last_game_number_med").html(data.last_game_number);
-                $("#game_link_med").attr("href", "game_info.php?game_id=" + data.last_game_number);
+                $("#game_link_med").attr("href", "http://localhost/bitcoinLottery/game_info/" + data.last_game_number);
                 $("#last_winner_number_med").html(data.last_winner_number);
                 $("#last_jackpot_med").html(data.last_jackpot);
 
@@ -815,11 +835,11 @@ var conn = new ab.Session('ws://localhost:8080',
                 var gameHistoryTableSmall = $("#game_history_table_small");
 
                 $.each(data.games, function (index, value) {
-                    gameHistoryTableMed.append('<tr><td><a href="game_info.php?game_id=' + value['game_id'] + '" target="_blank">' + value['game_id'] + '</a></td><td>' +
+                    gameHistoryTableMed.append('<tr><td><a href="http://localhost/bitcoinLottery/game_info/' + value['game_id'] + '" target="_blank">' + value['game_id'] + '</a></td><td>' +
                         value['amount'] + ' bits</td><td><div class="chip">' + value['winner_number'] + '</div></td><td>' +
                         value['timedate'] + '</td></tr>');
 
-                    gameHistoryTableSmall.append('<tr><td><a href="game_info.php?game_id=' + value['game_id'] + '" target="_blank">' + value['game_id'] + '</a></td><td>' +
+                    gameHistoryTableSmall.append('<tr><td><a href="http://localhost/bitcoinLottery/game_info/' + value['game_id'] + '" target="_blank">' + value['game_id'] + '</a></td><td>' +
                         value['amount'] + ' bits</td><td><div class="chip">' + value['winner_number'] + '</div></td><td>' +
                         value['timedate'] + '</td></tr>');
 
@@ -853,7 +873,7 @@ var conn = new ab.Session('ws://localhost:8080',
 /* Ajax request to update numbers and balance */
 function updateBalanceAndNumbers() {
     $.ajax({
-        url: "ajax/balance_numbers_ajax.php", success: function (result) {
+        url: "ajax/balance_numbers_ajax", success: function (result) {
             var response = JSON.parse(result);
             $("#my_balance").html(response['balance']);
             var numbers_list_small = $("#numbers_list_small");
@@ -894,6 +914,8 @@ function updateBalanceAndNumbers() {
                 numbers_card_medium.addClass('scale-in');
             }
             else {
+                $("#count_numbers_small").html("<b>No numbers yet</b>");
+                $("#count_numbers_med").html("<b>No numbers yet</b>");
                 numbers_card_small.removeClass('scale-in');
                 numbers_card_small.addClass('scale-out');
                 numbers_card_medium.removeClass('scale-out');
@@ -911,7 +933,7 @@ function bet(arrayOfNumbers) {
 
     var my_numbers = JSON.stringify(arrayOfNumbers);
     $.ajax({
-        url: "ajax/play.php", success: function (result) {
+        url: "ajax/play", success: function (result) {
             var response = JSON.parse(result);
 
             $("#my_balance").html(response['balance']);
@@ -944,8 +966,8 @@ function bet(arrayOfNumbers) {
             numbersGlobal = [];
             $.each(response['numbers'], function (index, value) {
                 numbersGlobal.push(parseInt(value));
-                numbers_list_med.append('<div class="chip small-chip">' + value + '</div>');
-                numbers_list_small.append('<div class="chip small-chip">' + value + '</div>');
+                numbers_list_med.append('<div class="chip small-chip yellow"><b>' + value + '</b></div>');
+                numbers_list_small.append('<div class="chip small-chip yellow"><b>' + value + '</b></div>');
             });
 
 

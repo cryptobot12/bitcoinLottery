@@ -262,7 +262,7 @@ include 'inc/header.php'; ?>
                             ?>">
 
                                 <td>
-                                    <a href="<?php echo "game_info.php?game=" . $item['game_id']; ?>"><?php echo $item['game_id']; ?></a>
+                                    <a href="<?php echo $base_dir . "game-info/" . $item['game_id']; ?>"><?php echo $item['game_id']; ?></a>
                                 </td>
                                 <td><?php echo $item['bet'] / 100; ?> bits</td>
                                 <td><?php

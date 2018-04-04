@@ -13,6 +13,7 @@ RewriteRule ^rank/user/([^/]+)/?$ rank.php?user=$1 [L,QSA]
 RewriteRule ^user-stats/([^/]+)/?$ user-stats.php?user=$1 [L,QSA]
 RewriteRule ^user-stats/([^/]+)/([^/]+)/([^/])([^/])([^/])([^/])([^/]{4})/?$ user-stats.php?user=$1&p=$2&ga=$3&be=$4&pr=$5&ja=$6&ord=$7 [L,QSA]
 RewriteRule ^game-info/([^/]+)/([^/]+)/([^/])([^/])([^/])([^/]{3})/?$ game-info.php?game_id=$1&p=$2&n=$3&f=$4&ff=$5&ord=$6 [L,QSA]
+RewriteRule ^game-info/([^/]+)/?$ game-info.php?game_id=$1 [L,QSA]
 RewriteRule ^games-history/([^/]+)/([^/])([^/])([^/])([^/]{3})/?$ games-history.php?p=$1&ga=$2&ja=$3&nu=$4&ord=$5 [L,QSA]
 
 RewriteCond %{REQUEST_URI} [/]$

@@ -11,7 +11,7 @@ include "globals.php";
 include "function.php";
 include "inc/login_checker.php";
 
-$_SESSION['last_url'] = 'game_info';
+$_SESSION['last_url'] = 'game-info';
 
 function gameInfoLink($game, $page = 1, $n = 2, $f = 2, $ff = 2, $arrayOrd, $first)
 {
@@ -246,10 +246,11 @@ include "inc/header.php"; ?>
                     </table>
                 </div>
                 <!-- Modal Structure -->
-                <div id="modal1" class="modal">
+                <div id="modal1" class="modal modal-fixed-footer">
                     <div class="modal-content">
                         <div class="modal-title-np">
-                            <b>Number: </b><div id="numberSelected" class="chip yellow"></div>
+                            <b>Number: </b>
+                            <div id="numberSelected" class="chip yellow"></div>
                         </div>
                         <div id="playersList"></div>
                     </div>
@@ -388,12 +389,7 @@ include "inc/header.php"; ?>
 
                 var valid = $.isNumeric(searchGame.val());
                 if (valid)
-                    window.location.href = '<?php echo $base_dir; ?>game-info/' + searchGame.val() +
-                        '/<?php echo $page . $nAsc . $fAsc . $ffAsc;
-
-                            foreach ($order as $i) {
-                                echo $i;
-                            } ?>';
+                    window.location.href = '<?php echo $base_dir; ?>game-info/' + searchGame.val();
             }
         });
     });

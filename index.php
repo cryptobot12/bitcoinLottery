@@ -120,17 +120,26 @@ include 'inc/header.php' ?>
 <main>
     <div class="alt-container">
         <div class="row"></div>
+        <div class="hide-on-large-only">
+            <div class="row">
+                <div class="col m12 s12">
+                    <div class="card-panel amber lighten-1 hoverable">
+                        <h5 class="center-align" id="jackpot"><b>Jackpot: </b><span
+                                    id="jackpot_number"><?php echo $jackpot; ?></span> bits
+                        </h5>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="row">
             <div class="col l4 m6 s12">
                 <!--            Jackpot card   -->
-                <div id="jackpot_card" class="card z-depth-1 amber lighten-1">
+                <div id="jackpot_card" class="card z-depth-1 amber lighten-1 hide-on-med-and-down hoverable">
                     <div class="card-content">
                         <span class="card-title"><b>Jackpot</b></span>
-                        <h3 class="center-align" id="jackpot"><span
+                        <p class="center-align h3Size" id="jackpot"><span
                                     id="jackpot_number"><?php echo $jackpot; ?></span> bits
-                        </h3>
-                        <p class="center-align" style="font-weight: lighter; font-size: 16px;"
-                           id="time"><?php include 'timer.php'; ?></p>
+                        </p>
                     </div>
                 </div>
 
@@ -140,13 +149,13 @@ include 'inc/header.php' ?>
                         <span class="card-title"><b>Last Game</b></span>
                         <div id="last_game_med">
                             <p>
-                                <a id="game_link_med" href="game-info.php?game_id=<?php echo $last_game; ?>"
+                                <a id="game_link_med" href="<?php echo $base_dir; ?>game-info/<?php echo $last_game; ?>"
                                    target="_blank">Game #<span
                                             id="last_game_number_med"><?php echo $last_game; ?></span></a>
                             </p>
                             <div><b>Winner number: </b>
-                                <div class="chip">
-                                    <span id="last_winner_number_med"><?php echo $last_winner_number; ?></span>
+                                <div class="chip yellow">
+                                    <span id="last_winner_number_med"><b><?php echo $last_winner_number; ?></b></span>
                                 </div>
                             </div>
                             <p>
@@ -213,143 +222,151 @@ include 'inc/header.php' ?>
             <div class="col l8 m6 hide-on-small">
                 <?php if ($logged_in): ?>
                     <!--            Play card    -->
-                    <div class="col s6" id="play_med_col">
-                        <div class="card z-depth-1">
-                            <div class="card-content">
-                                <div class="row">
-                                    <ul class="tabs">
-                                        <li class="tab col s4 green-text"><a href="#textarea_div_med">Text</a></li>
-                                        <li class="tab col s4"><a href="#random_div_med">Random</a></li>
-                                        <li class="tab col s4"><a href="#sequence_div_med">Sequence</a></li>
-                                    </ul>
+                    <div class="col l6 m12" id="play_med_col">
+                        <div class="card z-depth-1" id="play_med_card">
+                            <div class="card-tabs">
+                                <ul class="tabs tabs-fixed-width">
+                                    <li class="tab"><a class="active" href="#textarea_div_med">Text</a></li>
+                                    <li class="tab"><a href="#random_div_med">Random</a></li>
+                                    <li class="tab"><a href="#sequence_div_med">Sequence</a></li>
+                                    <li class="tab hide-on-large-only"><a href="#numbers_div_med">Numbers</a></li>
+                                </ul>
+                            </div>
 
-                                    <!--       Text Area Input          -->
-                                    <div id="textarea_div_med" class="col s12">
-                                        <blockquote class="blockquote-green w900">
-                                            Each number costs 50 bits.
-                                            Only 200 numbers allowed. Numbers
-                                            must be
-                                            between 1 and 50000.
-                                        </blockquote>
-                                        <div class="input-field col s12">
-                                            <label for="field"></label>
-                                            <textarea id="numbers_textarea_med" class="materialize-textarea"
-                                                      placeholder="Type your numbers separated by spaces."></textarea>
-                                            <label for="numbers_textarea_med"></label>
-                                        </div>
-                                        <p class="center-align">
-                                            <a class="waves-effect waves-light btn disabled modal-trigger"
-                                               id="textarea_button_med"
-                                               href="#confirm_numbers_modal_med">Bet</a>
-                                        </p>
+                            <div class="card-content top-pad-play">
+                                <!--       Text Area Input          -->
+                                <div id="textarea_div_med">
+                                    <blockquote class="blockquote-orange w900">
+                                        Each number costs 50 bits.
+                                        Only 25 numbers per play allowed. Numbers
+                                        must be
+                                        between 1 and 50000.
+                                    </blockquote>
+                                    <div class="input-field col s12">
+                                        <textarea id="numbers_textarea_med" class="materialize-textarea"></textarea>
+                                        <label for="numbers_textarea_med"></label>
+                                        <span class="helper-text" data-error="Invalid numbers">Type your numbers separated by spaces.</span>
                                     </div>
+                                    <p class="center-align">
+                                        <a class="waves-effect waves-light btn disabled modal-trigger amber darken-3"
+                                           id="textarea_button_med"
+                                           href="#confirm_numbers_modal_med">Bet</a>
+                                    </p>
+                                </div>
 
-                                    <!--   Random Input    -->
-                                    <div id="random_div_med" class="col s12">
-                                        <blockquote class="blockquote-green w900">
-                                            Each number costs 50 bits.
-                                            Only 200 numbers allowed. Numbers
-                                            must be
-                                            between 1 and 50000.
-                                        </blockquote>
-                                        <div class="row top-buffer-15">
-                                            <div class="input-field col s4">
-                                                <input placeholder="Start" id="start_random_med" type="number"
-                                                       class="valid"
-                                                       value="1">
-                                                <label for="start_random_med">Start range</label>
-                                            </div>
-                                            <div class="input-field col s4">
-                                                <input placeholder="End" id="end_random_med" type="number"
-                                                       class="valid"
-                                                       value="200">
-                                                <label for="end_random_med">End range</label>
-                                            </div>
-                                            <div class="input-field col s4">
-                                                <input placeholder="How many numbers?" id="how_many_numbers_med"
-                                                       type="number"
-                                                       class="valid" value="25">
-                                                <label for="how_many_numbers_med">How many numbers?</label>
-                                            </div>
-                                        </div>
-                                        <p class="center-align">
-                                            <a class="waves-effect waves-light btn" id="random_button_med">Bet</a>
-                                        </p>
+                                <!--   Random Input    -->
+                                <div id="random_div_med">
+                                    <blockquote class="blockquote-orange w900">
+                                        Each number costs 50 bits.
+                                        Only 25 numbers per play allowed. Numbers
+                                        must be
+                                        between 1 and 50000.
+                                    </blockquote>
+                                    <div class="input-field col s4">
+                                        <input placeholder="Start" id="start_random_med" type="number"
+                                               class="valid"
+                                               value="1">
+                                        <label for="start_random_med">Start range</label>
                                     </div>
+                                    <div class="input-field col s4">
+                                        <input placeholder="End" id="end_random_med" type="number"
+                                               class="valid"
+                                               value="200">
+                                        <label for="end_random_med">End range</label>
+                                    </div>
+                                    <div class="input-field col s4">
+                                        <input placeholder="How many numbers?" id="how_many_numbers_med"
+                                               type="number"
+                                               class="valid" value="25">
+                                        <label for="how_many_numbers_med">Quantity</label>
+                                    </div>
+                                    <p class="center-align">
+                                        <a class="waves-effect waves-light btn amber darken-3" id="random_button_med">Bet</a>
+                                    </p>
+                                </div>
 
-                                    <!--     Sequence Input                       -->
-                                    <div id="sequence_div_med" class="col s12">
-                                        <blockquote class="blockquote-green w900">
-                                            Each number costs 50 bits.
-                                            Only 200 numbers allowed. Numbers
-                                            must be
-                                            between 1 and 50000.
-                                        </blockquote>
-                                        <div class="row top-buffer-15">
-                                            <div class="input-field col s4">
-                                                <input placeholder="Start number" id="start_sequence_med"
-                                                       type="number"
-                                                       class="valid"
-                                                       value="1">
-                                                <label for="start_sequence_med">Start range</label>
-                                            </div>
-                                            <div class="input-field col s4">
-                                                <input placeholder="End number" id="end_sequence_med" type="number"
-                                                       class="valid"
-                                                       value="25">
-                                                <label for="end_sequence_med">End range</label>
-                                            </div>
-                                        </div>
-                                        <p class="center-align">
-                                            <a class="waves-effect waves-light btn" id="sequence_button_med">Bet</a>
-                                        </p>
+                                <!--     Sequence Input                       -->
+                                <div id="sequence_div_med">
+                                    <blockquote class="blockquote-orange w900">
+                                        Each number costs 50 bits.
+                                        Only 25 numbers per play allowed. Numbers
+                                        must be
+                                        between 1 and 50000.
+                                    </blockquote>
+                                    <div class="input-field col m5 s6 offset-m1">
+                                        <input placeholder="Start number" id="start_sequence_med"
+                                               type="number"
+                                               class="valid"
+                                               value="1">
+                                        <label for="start_sequence_med">Start Range</label>
                                     </div>
+                                    <div class="input-field col m5 s6">
+                                        <input placeholder="End number" id="end_sequence_med" type="number"
+                                               class="valid"
+                                               value="25">
+                                        <label for="end_sequence_med">End Range</label>
+                                    </div>
+                                    <p class="center-align">
+                                        <a class="waves-effect waves-light btn amber darken-3" id="sequence_button_med">Bet</a>
+                                    </p>
+                                </div>
 
-                                    <!-- Modal Structure -->
-                                    <div id="confirm_numbers_modal_med" class="modal">
-                                        <div class="modal-content">
-                                            <h4>Check your numbers<span class="subText"
-                                                                        id="count_numbers_confirm_med">&nbsp;&nbsp;&nbsp;&nbsp;0 numbers (100 bits)</span><br>
-                                                <span class="balance-alert hidden" id="insufficient_balance_med">&nbsp;&nbsp;Insufficient balance</span>
-                                            </h4>
-                                            <div id="confirmation_numbers_med"></div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <a id="play_button_med"
-                                               class="modal-action modal-close waves-effect waves-green btn-flat">Confirm</a>
-                                            <a href="#!"
-                                               class="modal-action modal-close waves-effect waves-green btn-flat">Cancel</a>
-                                        </div>
+                                <div id="numbers_div_med">
+                                    <span id="count_numbers_small"
+                                          class="card-title"><b><?php echo $numbers_title; ?></b></span>
+                                    <div id="numbers_list_small" class="overflowable">
+                                        <?php
+                                        foreach ($numbers_list_result as $item) {
+                                            echo '<div class="chip small-chip yellow"><b>' . $item['number_id'] . '</b></div>';
+                                        }
+                                        ?>
                                     </div>
+                                </div>
+                            </div>
+
+                            <!-- Modal Structure -->
+                            <div id="confirm_numbers_modal_med" class="modal modal-fixed-footer">
+                                <div class="modal-content">
+                                    <h4>Check your numbers</h4>
+                                    <p><span class="subText"
+                                             id="count_numbers_confirm_med">0 numbers (0 bits)</span><br>
+                                        <span class="balance-alert hidden" id="insufficient_balance_med">Insufficient balance</span>
+                                    </p>
+                                    <div id="confirmation_numbers_med"></div>
+                                </div>
+                                <div class="modal-footer">
+                                    <a id="play_button_med"
+                                       class="modal-action modal-close waves-effect waves-orange btn-flat">Confirm</a>
+                                    <a href="#!"
+                                       class="modal-action modal-close waves-effect waves-orange btn-flat">Cancel</a>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="col s6">
+                    <div class="col l6 hide-on-med-and-down">
                         <!--            Numbers card  -->
-                        <div id="numbers_card_med" class="scale-transition">
-                            <div class="card z-depth-1">
-                                <div class="card-content">
+                        <div id="numbers_card_med" class="card z-depth-1">
+                            <div class="card-content" id="card-numbers-content">
                                 <span id="count_numbers_med"
                                       class="card-title"><b><?php echo $numbers_title; ?></b></span>
-                                    <div id="numbers_list_med">
-                                        <?php
-                                        foreach ($numbers_list_result as $item) {
-                                            echo '<div class="chip small-chip">' . $item['number_id'] . '</div>';
-                                        }
-                                        ?>
-                                    </div>
+                                <div id="numbers_list_med" class="overflowable">
+                                    <?php
+                                    foreach ($numbers_list_result as $item) {
+                                        echo '<div class="chip small-chip yellow"><b>' . $item['number_id'] . '</b></div>';
+                                    }
+                                    ?>
                                 </div>
                             </div>
                         </div>
                     </div>
                 <?php else: ?>
                     <div class="card-panel">
-                        <p class="center-align"><a class="waves-effect waves-light btn" href="login.php">Login
+                        <p class="center-align"><a class="waves-effect waves-light btn"
+                                                   href="<?php echo $base_dir; ?>login">Login
                                 to
                                 play</a><br>
-                            <a href="registration.php">or register</a></p>
+                            <a href="<?php echo $base_dir; ?>registration">or register</a></p>
                     </div>
                 <?php endif; ?>
 
@@ -368,7 +385,7 @@ include 'inc/header.php' ?>
                                        type="text"
                                        maxlength="180">
                                 <button
-                                        class="btn amber darken-3" id="chat-send"><i class="material-icons">send</i>
+                                        class="btn amber darken-3 btn-no-marg" id="chat-send"><i class="material-icons">send</i>
                                 </button>
                             </div>
                         </div>
@@ -387,7 +404,7 @@ include 'inc/header.php' ?>
             <div class="card z-depth-1">
                 <div class="card-content">
                     <span class="card-title"><b>Game history</b></span>
-                    <table id="game_history_table_large" class="bordered">
+                    <table id="game_history_table_large" class="highlight">
                         <thead>
                         <tr>
                             <th>Game #</th>
@@ -400,12 +417,12 @@ include 'inc/header.php' ?>
                         <?php foreach ($game_history_table as $item): ?>
                             <tr>
                                 <td>
-                                    <a href="game-info.php?game_id=<?php echo $item["game_id"] ?>"
+                                    <a href="<?php echo $base_dir; ?>game-info/<?php echo $item["game_id"] ?>"
                                        target="_blank"><?php echo $item["game_id"] ?></a>
                                 </td>
                                 <td><?php echo $item['amount'] / 100; ?> bits</td>
                                 <td>
-                                    <div class='chip'><?php echo $item['winner_number']; ?></div>
+                                    <div class='chip yellow'><?php echo $item['winner_number']; ?></div>
                                 </td>
                                 <td><?php echo $item['time']; ?></td>
                             </tr>
@@ -429,7 +446,7 @@ include 'inc/header.php' ?>
             echo json_encode($arrayOfNumbers);
         }?>;
 </script>
-<script src="js/index_script.js"></script>
+<script src="js/index-script.js"></script>
 <?php include "inc/footer.php"; ?>
 
 

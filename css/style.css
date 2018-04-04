@@ -71,17 +71,23 @@ nav ul a {
 }
 
 .tabs .indicator {
-    background-color: green;
+    background-color: #ff8f00;
 }
 
 .tabs .tab a {
-    color: #9cdcae;
+    color: #bdbdbd;
 }
 
-.tabs .tab a:hover, .tabs .tab a.active {
+.tabs .tab a:hover, .tabs .tab a.active, .tabs .tab a.active:focus {
     background-color: transparent;
-    color: green;
+    color: black;
 }
+
+.tabs .tab a.active:focus {
+    background-color: #fff8e1;
+    color: black;
+}
+
 
 .subText {
     color: darkgrey;
@@ -194,10 +200,6 @@ table.highlight tbody tr.close:hover {
     vertical-align: bottom;
 }
 
-#playersList {
-    column-count: 5;
-}
-
 ul.browser-default li {
     list-style-position: inside;
 }
@@ -229,8 +231,31 @@ ul.browser-default li {
     font-weight: 900;
 }
 
+.h3Size{
+    font-size: 2.5em;
+}
+
 .blockquote-green {
     border-left: 5px solid #9cdcae;
+}
+
+.no-pad-toporbot {
+    padding-bottom: 0 !important;
+    padding-top: 0 !important;
+}
+
+.top-pad-play {
+    padding-top: 0.5em !important;
+}
+
+.blockquote-orange {
+    border-left: 5px solid  #ffe082;
+}
+
+.btn-no-marg {
+    margin-top: 5px;
+    margin-left: 0 !important;
+    padding-right: 28px;
 }
 
 .blockquote-error {
@@ -274,6 +299,13 @@ ul.browser-default li {
     height: 30vh;
     word-wrap: break-word;
     overflow-x: hidden;
+}
+
+.overflowable {
+    overflow-y: hidden;
+}
+.overflowable:hover {
+    overflow-y: scroll;
 }
 
 .input-chat {
