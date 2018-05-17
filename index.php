@@ -33,13 +33,9 @@ try {
     //Getting jackpot
     $jackpot = ($stmt->fetchColumn() * 9500 + $bonus) / 100;
 
-    $stmt = $conn->prepare('SELECT message, username FROM chat LIMIT 60');
+    $stmt = $conn->prepare('SELECT message, username, sentat FROM chat LIMIT 60');
     $stmt->execute();
     $messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    $chat_append = "";
-    foreach ($messages as $item) {
-        $chat_append .= "<li><b>" . $item['username'] . ": </b>" . $item['message'] . "</li>";
-    }
 
     //Counting numbers
     if ($logged_in) {
@@ -78,6 +74,7 @@ try {
 
     // Selecting game history
     $stmt = $conn->prepare('SELECT game_id, date_format(game_date, \'%h:%i %p\') AS time, winner_number, amount, number_of_players FROM game
+                                      WHERE number_of_players <> 0
                                       ORDER BY game_id DESC, game_date DESC LIMIT 20');
     $stmt->execute();
     $game_history_table = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -97,8 +94,7 @@ try {
      INNER JOIN gamexuser AS gu
      ON u.user_id = gu.user_id
      WHERE gu.game_id = :game_id
-     ORDER BY win DESC, profit DESC, bet DESC, username ASC 
-     LIMIT 20');
+     ORDER BY win DESC, profit DESC, bet DESC, username ASC');
 
     $stmt->execute(array('game_id' => $last_game));
     $players_row = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -118,8 +114,10 @@ $title = "BitcoinPVP";
 
 include 'inc/header.php' ?>
 <main>
-    <div class="alt-container">
-        <div class="row"></div>
+    <div class="container">
+        <div class="row">
+            <div class="col s12"></div>
+        </div>
         <div class="hide-on-large-only">
             <div class="row">
                 <div class="col m12 s12">
@@ -143,77 +141,116 @@ include 'inc/header.php' ?>
                     </div>
                 </div>
 
-                <!--        Last game card   -->
-                <div class="card z-depth-1">
-                    <div class="card-content">
-                        <span class="card-title"><b>Last Game</b></span>
+                <!--        Game INFO CARD  -->
+                <div class="card z-depth-1 hide-on-small-only" id="tables">
+                    <div class="card-tabs" id="table-tabs">
+                        <ul class="tabs tabs-fixed-width">
+                            <li class="tab"><a class="active" href="#last_game_med">Last Game</a></li>
+                            <li class="tab"><a href="#game_history_med">Game History</a></li>
+                        </ul>
+                    </div>
+                    <div class="card-content" id="game_info_card_content">
                         <div id="last_game_med">
-                            <p>
-                                <a id="game_link_med" href="<?php echo $base_dir; ?>game-info/<?php echo $last_game; ?>"
-                                   target="_blank">Game #<span
-                                            id="last_game_number_med"><?php echo $last_game; ?></span></a>
-                            </p>
-                            <div><b>Winner number: </b>
-                                <div class="chip yellow">
-                                    <span id="last_winner_number_med"><b><?php echo $last_winner_number; ?></b></span>
+                            <div id="last_game_header">
+                                <p>
+                                    <a id="game_link_med"
+                                       href="<?php echo $base_dir; ?>game-info/<?php echo $last_game; ?>"
+                                       target="_blank">Game #<span
+                                                id="last_game_number_med"><?php echo $last_game; ?></span></a>
+                                </p>
+                                <div><b>Winner number: </b>
+                                    <div class="chip yellow">
+                                        <span id="last_winner_number_med"><b><?php echo $last_winner_number; ?></b></span>
+                                    </div>
                                 </div>
-                            </div>
-                            <p>
-                                <b>Jackpot: </b><span id="last_jackpot_med">
+                                <p>
+                                    <b>Jackpot: </b><span id="last_jackpot_med">
                             <?php echo $last_jackpot; ?>
                             </span> bits
-                            </p>
-                            <table id="last_game_table_med" class="bordered">
+                                </p>
+                            </div>
+                            <div id="last_game_med_table_container" class="overflowable top-buffer-15">
+                                <table id="last_game_table_med" class="bordered">
+                                    <thead>
+                                    <tr>
+                                        <th>User</th>
+                                        <th>Bet</th>
+                                        <th>Profit</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <?php
+                                    foreach ($players_row as $item) :?>
+                                        <?php if ($item["win"] == 1): ?>
+                                            <tr class="win">
+                                                <td><?php echo $item['username']; ?></td>
+                                                <td><?php echo $item['bet'] / 100; ?> bits</td>
+                                                <td>
+                                                    <?php if ($item['profit'] > 0) : ?>
+                                                        <span class="win-text">+<?php echo $item['profit'] / 100; ?>
+                                                            bits</span>
+                                                    <?php elseif ($item['profit'] == 0): ?>
+                                                        <span class="neutral-text"><?php echo $item['profit'] / 100; ?>
+                                                            bits</span>
+                                                    <?php else: ?>
+                                                        <span class="lose-text"><?php echo $item['profit'] / 100; ?>
+                                                            bits</span>
+                                                    <?php endif; ?>
+                                                </td>
+                                            </tr>
+                                        <?php else: ?>
+                                            <tr class="lose">
+                                                <td><?php echo $item['username']; ?></td>
+                                                <td><?php echo $item['bet'] / 100; ?> bits</td>
+                                                <td>
+                                                    <?php if ($item['profit'] > 0) : ?>
+                                                        <span class="win-text">+<?php echo $item['profit'] / 100; ?>
+                                                            bits</span>
+                                                    <?php elseif ($item['profit'] == 0): ?>
+                                                        <span class="neutral-text"><?php echo $item['profit'] / 100; ?>
+                                                            bits</span>
+                                                    <?php else: ?>
+                                                        <span class="lose-text"><?php echo $item['profit'] / 100; ?>
+                                                            bits</span>
+                                                    <?php endif; ?>
+                                                </td>
+                                            </tr>
+                                        <?php endif; ?>
+                                    <?php endforeach; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div id="game_history_med" class="overflowable">
+                            <table id="game_history_table_large" class="highlight">
                                 <thead>
                                 <tr>
-                                    <th>User</th>
-                                    <th>Bet</th>
-                                    <th>Profit</th>
+                                    <th>Game #</th>
+                                    <th>Jackpot</th>
+                                    <th>Number</th>
+                                    <th>Time</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <?php
-                                foreach ($players_row as $item) :?>
-                                    <?php if ($item["win"] == 1): ?>
-                                        <tr class="win">
-                                            <td><?php echo $item['username']; ?></td>
-                                            <td><?php echo $item['bet'] / 100; ?> bits</td>
-                                            <td>
-                                                <?php if ($item['profit'] > 0) : ?>
-                                                    <span class="win-text">+<?php echo $item['profit'] / 100; ?>
-                                                        bits</span>
-                                                <?php elseif ($item['profit'] == 0): ?>
-                                                    <span class="neutral-text"><?php echo $item['profit'] / 100; ?>
-                                                        bits</span>
-                                                <?php else: ?>
-                                                    <span class="lose-text"><?php echo $item['profit'] / 100; ?>
-                                                        bits</span>
-                                                <?php endif; ?>
-                                            </td>
-                                        </tr>
-                                    <?php else: ?>
-                                        <tr class="lose">
-                                            <td><?php echo $item['username']; ?></td>
-                                            <td><?php echo $item['bet'] / 100; ?> bits</td>
-                                            <td>
-                                                <?php if ($item['profit'] > 0) : ?>
-                                                    <span class="win-text">+<?php echo $item['profit'] / 100; ?>
-                                                        bits</span>
-                                                <?php elseif ($item['profit'] == 0): ?>
-                                                    <span class="neutral-text"><?php echo $item['profit'] / 100; ?>
-                                                        bits</span>
-                                                <?php else: ?>
-                                                    <span class="lose-text"><?php echo $item['profit'] / 100; ?>
-                                                        bits</span>
-                                                <?php endif; ?>
-                                            </td>
-                                        </tr>
-                                    <?php endif; ?>
+                                <?php foreach ($game_history_table as $item): ?>
+                                    <tr>
+                                        <td>
+                                            <a href="<?php echo $base_dir; ?>game-info/<?php echo $item["game_id"] ?>"
+                                               target="_blank"><?php echo $item["game_id"] ?></a>
+                                        </td>
+                                        <td><?php echo $item['amount'] / 100; ?> bits</td>
+                                        <td>
+                                            <div class='chip yellow'><?php echo $item['winner_number']; ?></div>
+                                        </td>
+                                        <td><?php echo $item['time']; ?></td>
+                                    </tr>
+
                                 <?php endforeach; ?>
                                 </tbody>
                             </table>
                         </div>
                     </div>
+
                 </div>
             </div>
 
@@ -225,10 +262,11 @@ include 'inc/header.php' ?>
                     <div class="col l6 m12" id="play_med_col">
                         <div class="card z-depth-1" id="play_med_card">
                             <div class="card-tabs">
-                                <ul class="tabs tabs-fixed-width">
-                                    <li class="tab"><a class="active" href="#textarea_div_med">Text</a></li>
-                                    <li class="tab"><a href="#random_div_med">Random</a></li>
-                                    <li class="tab"><a href="#sequence_div_med">Sequence</a></li>
+                                <ul id="play_tabs" class="tabs tabs-fixed-width">
+                                    <li class="tab"><a id="textarea_selector" class="active" href="#textarea_div_med">Text</a>
+                                    </li>
+                                    <li class="tab"><a id="random_selector" href="#random_div_med">Random</a></li>
+                                    <li class="tab"><a id="sequence_selector" href="#sequence_div_med">Sequence</a></li>
                                     <li class="tab hide-on-large-only"><a href="#numbers_div_med">Numbers</a></li>
                                 </ul>
                             </div>
@@ -311,6 +349,7 @@ include 'inc/header.php' ?>
                                     </p>
                                 </div>
 
+                                <!--Numbers Tab-->
                                 <div id="numbers_div_med">
                                     <span id="count_numbers_small"
                                           class="card-title"><b><?php echo $numbers_title; ?></b></span>
@@ -370,13 +409,13 @@ include 'inc/header.php' ?>
                     </div>
                 <?php endif; ?>
 
-                <div class="col s12">
+                <div class="col s12" id="chat-col">
                     <div class="card" id="chat-card">
                         <div class="card-content" id="chat-card-content">
                             <!-- Chat -->
                             <div id="chat-space">
                                 <ul id="chat-messages">
-                                    <?php echo $chat_append; ?>
+
                                     <li><b>Frank:</b> Welcome!</li>
                                 </ul>
                             </div>
@@ -394,56 +433,161 @@ include 'inc/header.php' ?>
             </div>
 
         </div>
+        <div class="row hide-on-med-and-up">
+            <div class="col s12">
+                <div class="col s12">
+                    <div class="card z-depth-1">
+                        <div class="card-tabs">
+                            <ul class="tabs tabs-fixed-width">
+                                <li class="tab"><a class="active" href="#last_game_small">Last Game</a></li>
+                                <li class="tab"><a href="#game_history_small">Game History</a></li>
+                            </ul>
+                        </div>
+                        <div class="card-content" id="game_info_card_content">
+                            <div id="last_game_small">
+                                <div id="last_game_header">
+                                    <p>
+                                        <a id="game_link_small"
+                                           href="<?php echo $base_dir; ?>game-info/<?php echo $last_game; ?>"
+                                           target="_blank">Game #<span
+                                                    id="last_game_number_small"><?php echo $last_game; ?></span></a>
+                                    </p>
+                                    <div><b>Winner number: </b>
+                                        <div class="chip yellow">
+                                            <span id="last_winner_number_small"><b><?php echo $last_winner_number; ?></b></span>
+                                        </div>
+                                    </div>
+                                    <p>
+                                        <b>Jackpot: </b><span id="last_jackpot_small">
+                            <?php echo $last_jackpot; ?>
+                            </span> bits
+                                    </p>
+                                </div>
+                                <div id="last_game_small_table_container" class="overflowable top-buffer-15">
+                                    <table id="last_game_table_small" class="bordered">
+                                        <thead>
+                                        <tr>
+                                            <th>User</th>
+                                            <th>Bet</th>
+                                            <th>Profit</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <?php
+                                        foreach ($players_row as $item) :?>
+                                            <?php if ($item["win"] == 1): ?>
+                                                <tr class="win">
+                                                    <td><?php echo $item['username']; ?></td>
+                                                    <td><?php echo $item['bet'] / 100; ?> bits</td>
+                                                    <td>
+                                                        <?php if ($item['profit'] > 0) : ?>
+                                                            <span class="win-text">+<?php echo $item['profit'] / 100; ?>
+                                                                bits</span>
+                                                        <?php elseif ($item['profit'] == 0): ?>
+                                                            <span class="neutral-text"><?php echo $item['profit'] / 100; ?>
+                                                                bits</span>
+                                                        <?php else: ?>
+                                                            <span class="lose-text"><?php echo $item['profit'] / 100; ?>
+                                                                bits</span>
+                                                        <?php endif; ?>
+                                                    </td>
+                                                </tr>
+                                            <?php else: ?>
+                                                <tr class="lose">
+                                                    <td><?php echo $item['username']; ?></td>
+                                                    <td><?php echo $item['bet'] / 100; ?> bits</td>
+                                                    <td>
+                                                        <?php if ($item['profit'] > 0) : ?>
+                                                            <span class="win-text">+<?php echo $item['profit'] / 100; ?>
+                                                                bits</span>
+                                                        <?php elseif ($item['profit'] == 0): ?>
+                                                            <span class="neutral-text"><?php echo $item['profit'] / 100; ?>
+                                                                bits</span>
+                                                        <?php else: ?>
+                                                            <span class="lose-text"><?php echo $item['profit'] / 100; ?>
+                                                                bits</span>
+                                                        <?php endif; ?>
+                                                    </td>
+                                                </tr>
+                                            <?php endif; ?>
+                                        <?php endforeach; ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div id="game_history_small" class="overflowable">
+                                <table id="game_history_table_small" class="highlight">
+                                    <thead>
+                                    <tr>
+                                        <th>Game #</th>
+                                        <th>Jackpot</th>
+                                        <th>Number</th>
+                                        <th>Time</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <?php foreach ($game_history_table as $item): ?>
+                                        <tr>
+                                            <td>
+                                                <a href="<?php echo $base_dir; ?>game-info/<?php echo $item["game_id"] ?>"
+                                                   target="_blank"><?php echo $item["game_id"] ?></a>
+                                            </td>
+                                            <td><?php echo $item['amount'] / 100; ?> bits</td>
+                                            <td>
+                                                <div class='chip yellow'><?php echo $item['winner_number']; ?></div>
+                                            </td>
+                                            <td><?php echo $item['time']; ?></td>
+                                        </tr>
 
-    </div>
-
-    <!-- Large only-->
-    <div class="row hide-on-med-and-down">
-        <!-- Game history card-->
-        <div class="container">
-            <div class="card z-depth-1">
-                <div class="card-content">
-                    <span class="card-title"><b>Game history</b></span>
-                    <table id="game_history_table_large" class="highlight">
-                        <thead>
-                        <tr>
-                            <th>Game #</th>
-                            <th>Jackpot</th>
-                            <th>Number</th>
-                            <th>Time</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <?php foreach ($game_history_table as $item): ?>
-                            <tr>
-                                <td>
-                                    <a href="<?php echo $base_dir; ?>game-info/<?php echo $item["game_id"] ?>"
-                                       target="_blank"><?php echo $item["game_id"] ?></a>
-                                </td>
-                                <td><?php echo $item['amount'] / 100; ?> bits</td>
-                                <td>
-                                    <div class='chip yellow'><?php echo $item['winner_number']; ?></div>
-                                </td>
-                                <td><?php echo $item['time']; ?></td>
-                            </tr>
-
-                        <?php endforeach; ?>
-                        </tbody>
-                    </table>
+                                    <?php endforeach; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-
 </main>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <!-- Compiled and minified JavaScript -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/js/materialize.min.js"></script>
 <script src="js/autobahn.js"></script>
 <script>
+    var server_off_minutes = 360;
+    var offset = new Date().getTimezoneOffset();
+    var to = server_off_minutes - offset;
+    var times_array = [];
+    var users_array = [];
+    var messages_array = [];
+    <?php
+    $chat_append = "";
+    foreach ($messages as $item) {
+        echo "times_array.push(new Date('" . $item['sentat'] . "')); ";
+        echo "users_array.push('" . $item['username'] . "');";
+        echo "messages_array.push('" . $item['message'] . "');";
+    }
+
+    ?>
+    var chat_append = "";
+    for (var i = 0; i < times_array.length; i++) {
+        times_array[i].setMinutes(times_array[i].getMinutes() + to);
+        var minute = times_array[i].getMinutes();
+        if (minute < 10) {
+            minute = "0" + minute;
+        }
+        chat_append += "<li><b>" + users_array[i] + " (" + times_array[i].getHours() + ":" +
+            minute + "): </b>" + messages_array[i] + "</li>";
+    }
+
+    var chat_messages = $("#chat-messages");
+    chat_messages.prepend(chat_append);
     var numbersGlobal = <?php
         if ($logged_in) {
             echo json_encode($arrayOfNumbers);
+        } else {
+            echo "";
         }?>;
 </script>
 <script src="js/index-script.js"></script>

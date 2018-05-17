@@ -1,3 +1,5 @@
+var last_game_header_height = 0;
+
 //Resize chat input
 $(document).ready(function () {
     M.AutoInit();
@@ -8,9 +10,7 @@ $(document).ready(function () {
     var input_chat = $("#input-chat");
     var chat_input_line = $("#chat-input-line");
 
-    var chat_space_width = chat_space.width();
     var chat_input_line_width = chat_input_line.width();
-    var chat_send_margin = chat_send.css("marginLeft");
     var chat_send_pl = chat_send.css("paddingLeft");
     var chat_send_pr = chat_send.css("paddingRight");
 
@@ -51,6 +51,51 @@ $(document).ready(function () {
 
     number_list_div.height(parseFloat(numbers_card_med.height()) - parseFloat(card_numbers_content.css("paddingTop")) -
         parseFloat(card_numbers_content.css("paddingBottom")) - parseFloat(count_numbers_med.height()) - parseFloat(count_numbers_med.css("marginBottom")));
+
+    //NUMBERS TAB
+
+    var textarea_div_med = $("#textarea_div_med");
+    var numbers_list_small = $("#numbers_list_small");
+    numbers_list_small.height(0.91 * parseFloat(textarea_div_med.height()));
+
+    //TABLES RESIZE
+
+    var jackpot_card = $("#jackpot_card");
+    var chat_card = $("#chat-card");
+
+    var height_for_table_large = parseFloat(chat_card.height()) + parseFloat(chat_card.css("marginTop")) +
+        parseFloat(play_med_card.height()) + parseFloat(play_med_card.css("marginBottom")) -
+        parseFloat(jackpot_card.height()) - parseFloat(jackpot_card.css("marginBottom"));
+
+    var height_for_table_small = parseFloat(chat_card.height()) + parseFloat(chat_card.css("marginTop")) +
+        parseFloat(play_med_card.height()) + parseFloat(play_med_card.css("marginBottom"));
+
+    var table = $("#tables");
+    var game_info_card_content = $("#game_info_card_content");
+    var game_history_med = $("#game_history_med");
+    var table_tabs = $("#table-tabs");
+    var last_game_med = $("#last_game_med_table_container");
+    var last_game_header = $("#last_game_header");
+
+    if (last_game_header.height() !== 0)
+        last_game_header_height = last_game_header.height();
+
+    if ($(window).width() >= 993) {
+        table.css("max-height", height_for_table_large);
+        game_history_med.css("max-height", parseFloat(height_for_table_large) - parseFloat(table_tabs.height()) - parseFloat(game_info_card_content.css("paddingTop")) -
+            parseFloat(game_info_card_content.css("paddingBottom")) + "px");
+
+        last_game_med.css("max-height", parseFloat(height_for_table_large) - parseFloat(table_tabs.height()) - parseFloat(game_info_card_content.css("paddingTop")) -
+            parseFloat(game_info_card_content.css("paddingBottom")) - last_game_header_height - 20 + "px");
+
+    } else if ($(window).width() >= 601) {
+        table.css("max-height", height_for_table_small);
+        game_history_med.css("max-height", parseFloat(height_for_table_small) - parseFloat(table_tabs.height()) - parseFloat(game_info_card_content.css("paddingTop")) -
+            parseFloat(game_info_card_content.css("paddingBottom")) + "px");
+
+        last_game_med.css("max-height", parseFloat(height_for_table_small) - parseFloat(table_tabs.height()) - parseFloat(game_info_card_content.css("paddingTop")) -
+            parseFloat(game_info_card_content.css("paddingBottom")) - last_game_header_height - 20 + "px");
+    }
 
 
 });
@@ -108,6 +153,67 @@ $(window).resize(function () {
 
     number_list_div.height(parseFloat(numbers_card_med.height()) - parseFloat(card_numbers_content.css("paddingTop")) -
         parseFloat(card_numbers_content.css("paddingBottom")) - parseFloat(count_numbers_med.height()) - parseFloat(count_numbers_med.css("marginBottom")));
+
+
+    //NUMBERS TAB
+
+    var textarea_div_med = $("#textarea_div_med");
+    var numbers_list_small = $("#numbers_list_small");
+    numbers_list_small.height(0.91 * parseFloat(textarea_div_med.height()));
+
+    var textarea_selector = $("#textarea_selector");
+    var sequence_selector = $("#sequence_selector");
+    var random_selector = $("#random_selector");
+
+    var play_tabs = $('#play_tabs');
+    var play_tabs_controller = M.Tabs.getInstance(play_tabs);
+
+
+    if ($(window).width() >= 993) {
+        if (!textarea_selector.hasClass("active") && !sequence_selector.hasClass("active") && !random_selector.hasClass("active")) {
+            play_tabs_controller.select("textarea_div_med");
+        }
+    }
+
+    //TABLES RESIZE
+
+    var jackpot_card = $("#jackpot_card");
+    var chat_card = $("#chat-card");
+
+    var height_for_table_large = parseFloat(chat_card.height()) + parseFloat(chat_card.css("marginTop")) +
+        parseFloat(play_med_card.height()) + parseFloat(play_med_card.css("marginBottom")) -
+        parseFloat(jackpot_card.height()) - parseFloat(jackpot_card.css("marginBottom"));
+
+    var height_for_table_small = parseFloat(chat_card.height()) + parseFloat(chat_card.css("marginTop")) +
+        parseFloat(play_med_card.height()) + parseFloat(play_med_card.css("marginBottom"));
+
+    var table = $("#tables");
+    var game_info_card_content = $("#game_info_card_content");
+    var game_history_med = $("#game_history_med");
+    var table_tabs = $("#table-tabs");
+    var last_game_med = $("#last_game_med_table_container");
+    var last_game_header = $("#last_game_header");
+
+    if (last_game_header.height() !== 0)
+        last_game_header_height = last_game_header.height();
+
+    if ($(window).width() >= 993) {
+        table.css("max-height", height_for_table_large);
+        game_history_med.css("max-height", parseFloat(height_for_table_large) - parseFloat(table_tabs.height()) - parseFloat(game_info_card_content.css("paddingTop")) -
+            parseFloat(game_info_card_content.css("paddingBottom")) + "px");
+
+        last_game_med.css("max-height", parseFloat(height_for_table_large) - parseFloat(table_tabs.height()) - parseFloat(game_info_card_content.css("paddingTop")) -
+            parseFloat(game_info_card_content.css("paddingBottom")) - last_game_header_height - 20 + "px");
+
+    } else if ($(window).width() >= 601) {
+        table.css("max-height", height_for_table_small);
+        game_history_med.css("max-height", parseFloat(height_for_table_small) - parseFloat(table_tabs.height()) - parseFloat(game_info_card_content.css("paddingTop")) -
+            parseFloat(game_info_card_content.css("paddingBottom")) + "px");
+
+        last_game_med.css("max-height", parseFloat(height_for_table_small) - parseFloat(table_tabs.height()) - parseFloat(game_info_card_content.css("paddingTop")) -
+            parseFloat(game_info_card_content.css("paddingBottom")) - last_game_header_height - 20 + "px");
+    }
+
 });
 
 
@@ -787,8 +893,6 @@ var conn = new ab.Session('ws://localhost:8080',
     function () {
         conn.subscribe('all', function (topic, data) {
 
-            console.log('data.option = ' + data.option);
-
             if (data.option === 1) {
                 var jackpotNumber = $("#jackpot_number");
                 jackpotNumber.html(data.jackpot);
@@ -850,14 +954,15 @@ var conn = new ab.Session('ws://localhost:8080',
 
             if (data.option === 3) {
                 var chat_list = $("#chat-messages");
-                var time = new Date();
+                var time = new Date(data.sentat);
+                time.setMinutes(time.getMinutes() + to);
                 var hour = time.getHours();
                 var minute = time.getMinutes();
                 if (minute < 10) {
                     minute = "0" + minute;
                 }
 
-                var to_append = "<li><b>" + data.user + "(" + hour + ":" + minute + "): </b>" + data.chat_message + "</li>";
+                var to_append = "<li><b>" + data.user + " (" + hour + ":" + minute + "): </b>" + data.chat_message + "</li>";
                 chat_list.append(to_append);
 
                 chat_list.animate({scrollTop: chat_list.height()}, 0);

@@ -1,0 +1,734 @@
+CREATE DATABASE lottery;
+USE lottery;
+
+CREATE TABLE user
+(
+  user_id           BIGINT AUTO_INCREMENT PRIMARY KEY,
+  username          VARCHAR(19)  NOT NULL UNIQUE,
+  password          VARCHAR(255) NOT NULL,
+  email             VARCHAR(254) NOT NULL UNIQUE,
+  bit_address       VARCHAR(64)  NOT NULL UNIQUE,
+  balance           BIGINT       NOT NULL,
+  net_profit        BIGINT       NOT NULL,
+  games_played      BIGINT       NOT NULL,
+  registration_date DATETIME     NOT NULL,
+  enabled           BOOL         NOT NULL
+);
+
+CREATE INDEX rank_index
+  ON user (user_id);
+CREATE INDEX subrank_index
+  ON user (user_id, net_profit);
+
+CREATE TABLE email_update
+(
+  email_update_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  user_id         BIGINT       NOT NULL,
+  new_email       VARCHAR(254) NOT NULL UNIQUE,
+  hashed_user_id  VARCHAR(64)  NOT NULL,
+  validator       VARCHAR(64)  NOT NULL,
+  expires         DATETIME     NOT NULL,
+  FOREIGN KEY (user_id)
+  REFERENCES user (user_id)
+    ON DELETE CASCADE
+);
+
+CREATE TABLE email_confirmation
+(
+  email_confirmation_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  user_id               BIGINT       NOT NULL UNIQUE,
+  hashed_user_id        VARCHAR(64)  NOT NULL UNIQUE,
+  validator             VARCHAR(255) NOT NULL,
+  expires               DATETIME     NOT NULL,
+  last_send             DATETIME     NOT NULL,
+  FOREIGN KEY (user_id)
+  REFERENCES user (user_id)
+    ON DELETE CASCADE
+);
+
+CREATE TABLE password_reset
+(
+  password_reset_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  user_id           BIGINT      NOT NULL UNIQUE,
+  hashed_user_id    VARCHAR(64) NOT NULL UNIQUE,
+  validator         VARCHAR(64) NOT NULL,
+  expires           DATETIME    NOT NULL,
+  last_send         DATETIME    NOT NULL,
+  FOREIGN KEY (user_id)
+  REFERENCES user (user_id)
+    ON DELETE CASCADE
+);
+
+CREATE TABLE game
+(
+  game_id           BIGINT AUTO_INCREMENT PRIMARY KEY
+  ,
+  game_date         DATETIME NOT NULL
+  ,
+  winner_number     INT      NOT NULL
+  ,
+  amount            BIGINT   NOT NULL
+  ,
+  number_of_players INT      NOT NULL
+);
+
+CREATE TABLE gamexuser
+(
+  game_id BIGINT  NOT NULL
+  ,
+  user_id BIGINT  NOT NULL
+  ,
+  win     BOOLEAN NOT NULL
+  ,
+  bet     BIGINT  NOT NULL
+  ,
+  profit  BIGINT  NOT NULL
+  ,
+  PRIMARY KEY (game_id, user_id)
+  ,
+  FOREIGN KEY (game_id)
+  REFERENCES game (game_id)
+    ON DELETE CASCADE
+  ,
+  FOREIGN KEY (user_id)
+  REFERENCES user (user_id)
+    ON DELETE CASCADE
+);
+
+DROP TABLE chat;
+
+CREATE TABLE chat
+(
+  message_id BIGINT AUTO_INCREMENT PRIMARY KEY
+  ,
+  user_id    BIGINT       NOT NULL
+  ,
+  username   VARCHAR(19)  NOT NULL
+  ,
+  message    VARCHAR(180) NOT NULL
+  ,
+  sentat     DATETIME     NOT NULL
+  ,
+  FOREIGN KEY (user_id)
+  REFERENCES user (user_id)
+    ON DELETE CASCADE
+);
+
+CREATE TABLE numberxuser
+(
+  game_id   BIGINT NOT NULL
+  ,
+  number_id INT    NOT NULL
+  ,
+  user_id   BIGINT NOT NULL
+  ,
+  PRIMARY KEY (game_id, number_id, user_id)
+  ,
+  FOREIGN KEY (game_id)
+  REFERENCES game (game_id)
+    ON DELETE CASCADE
+  ,
+  FOREIGN KEY (user_id)
+  REFERENCES user (user_id)
+    ON DELETE CASCADE
+);
+
+CREATE TABLE stats
+(
+  stats_id     INT AUTO_INCREMENT PRIMARY KEY
+  ,
+  deposits     BIGINT NOT NULL
+  ,
+  withdrawals  BIGINT NOT NULL
+  ,
+  net          BIGINT NOT NULL
+  ,
+  games_played BIGINT NOT NULL
+  ,
+  gross_profit BIGINT NOT NULL
+  ,
+  max_jackpot  BIGINT NOT NULL
+  ,
+  total_users  BIGINT NOT NULL
+);
+
+CREATE TABLE deposit
+(
+  deposit_id   BIGINT AUTO_INCREMENT PRIMARY KEY
+  ,
+  user_id      BIGINT      NOT NULL
+  ,
+  hash         VARCHAR(64) NOT NULL
+  ,
+  deposit_date DATETIME    NOT NULL
+  ,
+  FOREIGN KEY (user_id)
+  REFERENCES user (user_id)
+    ON DELETE CASCADE
+  ,
+  amount       BIGINT      NOT NULL
+);
+
+ALTER TABLE withdrawal
+  MODIFY COLUMN request_date DATETIME NOT NULL;
+
+ALTER TABLE withdrawal
+  MODIFY COLUMN completed_on DATETIME;
+
+CREATE TABLE withdrawal
+(
+  withdrawal_id BIGINT AUTO_INCREMENT PRIMARY KEY
+  ,
+  user_id       BIGINT      NOT NULL
+  ,
+  hash          VARCHAR(64) NOT NULL
+  ,
+  request_date  DATETIME    NOT NULL
+  ,
+  completed_on  DATETIME
+  ,
+  amount        BIGINT      NOT NULL
+  ,
+  FOREIGN KEY (user_id)
+  REFERENCES user (user_id)
+    ON DELETE CASCADE
+);
+
+CREATE TABLE transfer
+(
+  transfer_id  BIGINT AUTO_INCREMENT PRIMARY KEY
+  ,
+  user_id      BIGINT      NOT NULL
+  ,
+  to_user      BIGINT      NOT NULL
+  ,
+  hash         VARCHAR(64) NOT NULL
+  ,
+  request_date DATE        NOT NULL
+  ,
+  completed_on DATE
+  ,
+  amount       BIGINT      NOT NULL
+  ,
+  FOREIGN KEY (user_id)
+  REFERENCES user (user_id)
+    ON DELETE CASCADE
+  ,
+  FOREIGN KEY (to_user)
+  REFERENCES user (user_id)
+    ON DELETE CASCADE
+);
+
+DROP TABLE support_team;
+CREATE TABLE support_team
+(
+  worker_id         BIGINT AUTO_INCREMENT PRIMARY KEY,
+  username          VARCHAR(19)  NOT NULL UNIQUE,
+  password          VARCHAR(255) NOT NULL,
+  email             VARCHAR(254) NOT NULL UNIQUE,
+  first_name        VARCHAR(30)  NOT NULL,
+  middle_name       VARCHAR(30)  NOT NULL,
+  last_name         VARCHAR(30)  NOT NULL,
+  registration_date DATETIME     NOT NULL,
+  enabled           BOOL         NOT NULL
+);
+
+DROP TABLE ticket;
+CREATE TABLE ticket
+(
+  ticket_id    BIGINT AUTO_INCREMENT PRIMARY KEY,
+  user_id      BIGINT        NOT NULL,
+  subject      VARCHAR(78),
+  content      VARCHAR(2000) NOT NULL,
+  submitted_on TIMESTAMP     NOT NULL,
+  validator    VARCHAR(72)   NOT NULL
+)
+  AUTO_INCREMENT = 10000;
+
+CREATE TABLE auth_token
+(
+  auth_token_id    BIGINT AUTO_INCREMENT PRIMARY KEY
+  ,
+  selector         CHAR(12)      NOT NULL UNIQUE
+  ,
+  hashed_validator CHAR(64)      NOT NULL
+  ,
+  user_id          BIGINT        NOT NULL
+  ,
+  user_agent       VARCHAR(8192) NOT NULL
+  ,
+  ip_address       VARCHAR(45)   NOT NULL
+  ,
+  expires          DATETIME      NOT NULL
+  ,
+  FOREIGN KEY (user_id)
+  REFERENCES user (user_id)
+    ON DELETE CASCADE
+);
+
+
+INSERT INTO stats VALUES (0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+INSERT INTO game (timedate, winner_number, amount) VALUES (CURRENT_TIMESTAMP, 0, 0);
+
+DROP TABLE numberxuser;
+
+SELECT COUNT(win) AS number_of_w
+FROM gamexuser
+WHERE game_id = 3 AND win = 1;
+
+SELECT
+  u.username,
+  COUNT(number_id) * 30 AS profit
+FROM user AS u
+  INNER JOIN gamexuser AS gu
+    ON u.user_id = gu.user_id
+  INNER JOIN numberxuser AS nu
+    ON u.user_id = nu.user_id
+       AND nu.user_id = gu.user_id
+       AND nu.game_id = gu.game_id
+WHERE gu.win = 0
+      AND gu.game_id = :game_id
+ORDER BY profit DESC;
+
+SELECT
+  u.username,
+  COUNT(nu.number_id) * 3000                     AS bet,
+  (:profit_winners - COUNT(nu.number_id) * 3000) AS profit
+FROM user AS u
+  INNER JOIN gamexuser AS gu
+    ON u.user_id = gu.user_id
+  INNER JOIN numberxuser AS nu
+    ON u.user_id = nu.user_id
+       AND nu.user_id = gu.user_id
+       AND nu.game_id = gu.game_id
+WHERE gu.win = 1
+      AND gu.game_id = :game_id
+GROUP BY u.username
+ORDER BY bet DESC;
+
+SELECT
+  game_id,
+  amount,
+  winner_number
+FROM game
+ORDER BY game_id DESC
+LIMIT 1, 1;
+
+SELECT COUNT(win) AS number_of_w
+FROM gamexuser
+WHERE game_id = :game_id
+      AND win = 1;
+
+SELECT COUNT(DISTINCT user_id) AS number_of_players
+FROM numberxuser
+WHERE game_id = :game_id;
+
+# Choosing min frequency
+SELECT
+  frequency,
+  COUNT(frequency) AS fxf
+FROM (
+       SELECT
+         number_id,
+         COUNT(number_id) AS frequency
+       FROM numberxuser
+       WHERE game_id = 23
+       GROUP BY number_id) AS fxf
+WHERE frequency <= 30
+GROUP BY frequency
+ORDER BY fxf ASC
+LIMIT 1;
+
+SELECT DISTINCT number_id
+FROM numberxuser
+WHERE game_id = 23
+ORDER BY number_id;
+
+SELECT
+  number_id,
+  COUNT(number_id) AS frequency
+FROM numberxuser
+WHERE game_id = 23
+GROUP BY number_id
+HAVING frequency = 1
+ORDER BY number_id ASC
+LIMIT 1;
+
+# Number of winners
+SELECT COUNT(user_id)
+FROM numberxuser
+WHERE number_id = 2
+      AND game_id = 23;
+
+SELECT
+  frequency,
+  COUNT(frequency) AS fxf
+FROM (
+       SELECT
+         number_id,
+         COUNT(number_id) AS frequency
+       FROM numberxuser
+       WHERE game_id = 23
+       GROUP BY number_id) AS fxf
+WHERE frequency <= 30
+GROUP BY frequency
+ORDER BY fxf ASC;
+
+SELECT
+  nxf.number_id,
+  nxf.frequency,
+  fxft.fxf
+FROM (SELECT
+        number_id,
+        COUNT(number_id) AS frequency
+      FROM numberxuser
+      WHERE game_id = 23
+      GROUP BY number_id) AS nxf
+  INNER JOIN
+  (SELECT
+     frequency,
+     COUNT(frequency) AS fxf
+   FROM (
+          SELECT
+            number_id,
+            COUNT(number_id) AS frequency
+          FROM numberxuser
+          WHERE game_id = 23
+          GROUP BY number_id) AS sometable
+   GROUP BY frequency) AS fxft
+    ON fxft.frequency = nxf.frequency;
+
+#Winner selector
+SELECT nxf.number_id
+FROM (SELECT
+        number_id,
+        COUNT(number_id) AS frequency
+      FROM numberxuser
+      WHERE game_id = 23
+      GROUP BY number_id
+      HAVING frequency <= 30) AS nxf
+  INNER JOIN
+  (SELECT
+     frequency,
+     COUNT(frequency) AS fxf
+   FROM (
+          SELECT
+            number_id,
+            COUNT(number_id) AS frequency
+          FROM numberxuser
+          WHERE game_id = 23
+          GROUP BY number_id
+          HAVING frequency <= 30) AS sometable
+   GROUP BY frequency) AS fxft
+    ON fxft.frequency = nxf.frequency
+ORDER BY fxft.fxf ASC, nxf.frequency ASC, nxf.number_id ASC
+LIMIT 1;
+
+#Game info
+SELECT
+  nxf.number_id AS number_id,
+  nxf.frequency AS frequency,
+  fxft.fxf      AS fxf
+FROM (SELECT
+        number_id,
+        COUNT(number_id) AS frequency
+      FROM numberxuser
+      WHERE game_id = :game_id
+      GROUP BY number_id) AS nxf
+  INNER JOIN
+  (SELECT
+     frequency,
+     COUNT(frequency) AS fxf
+   FROM (
+          SELECT
+            number_id,
+            COUNT(number_id) AS frequency
+          FROM numberxuser
+          WHERE game_id = :game_id
+          GROUP BY number_id) AS sometable
+   GROUP BY frequency) AS fxft
+    ON fxft.frequency = nxf.frequency;
+
+# Jackpot
+SELECT COUNT(*) AS jackpot
+FROM numberxuser
+WHERE game_id = :game_id;
+
+SELECT
+  number_id,
+  frequency,
+  COUNT(frequency) AS fxf
+FROM (
+       SELECT
+         number_id,
+         COUNT(number_id) AS frequency
+       FROM numberxuser
+       WHERE game_id = 25
+       GROUP BY number_id) AS fxf
+WHERE frequency <= 30
+GROUP BY frequency
+ORDER BY fxf ASC, frequency ASC, number_id ASC
+LIMIT 10;
+
+SELECT
+  number_id,
+  COUNT(number_id) AS frequency
+FROM numberxuser
+WHERE game_id = 25
+GROUP BY number_id;
+
+SELECT
+  number_id,
+  frequency             AS f1,
+  COUNT(data.frequency) AS fxf
+FROM (
+       SELECT
+         number_id,
+         COUNT(number_id) AS frequency
+       FROM numberxuser
+       WHERE game_id = 25
+       GROUP BY number_id) AS data
+WHERE frequency <= 30
+GROUP BY f1
+ORDER BY f1 DESC
+LIMIT 10;
+
+SELECT
+  number_id,
+  COUNT(number_id) AS frequency
+FROM numberxuser
+WHERE game_id = 25
+GROUP BY number_id
+HAVING frequency = 1;
+
+SELECT COUNT(DISTINCT number_id) AS count
+FROM numberxuser
+WHERE game_id = :game_id;
+
+/* Playersx number x game*/
+SELECT user.username
+FROM user
+  INNER JOIN
+  numberxuser
+    ON user.user_id = numberxuser.user_id
+WHERE numberxuser.number_id = :number
+      AND numberxuser.game_id = :game;
+
+/* User stats*/
+SELECT
+  gu.game_id,
+  gu.win,
+  COUNT(nu.number_id) * 5000 AS bet,
+  CASE
+  WHEN win = 1
+    THEN (rec.received - COUNT(nu.number_id) * 5000)
+  WHEN win = 0
+    THEN COUNT(nu.number_id) * -5000
+  END                        AS profit,
+  ga.amount
+FROM user AS u
+  INNER JOIN gamexuser AS gu
+    ON u.user_id = gu.user_id
+  INNER JOIN numberxuser AS nu
+    ON u.user_id = nu.user_id
+       AND nu.user_id = gu.user_id
+       AND nu.game_id = gu.game_id
+  INNER JOIN game AS ga
+    ON gu.game_id = ga.game_id
+  INNER JOIN
+  (SELECT
+     ceil(amount / COUNT(win)) AS received,
+     game.game_id              AS game_id
+   FROM gamexuser
+     INNER JOIN game
+       ON game.game_id = gamexuser.game_id
+   WHERE win = 1
+   GROUP BY game.game_id) AS rec
+    ON rec.game_id = gu.game_id
+WHERE u.username = :username
+GROUP BY gu.game_id
+ORDER BY game_id DESC
+LIMIT 50;
+
+/* Profit helper */
+SELECT
+  ceil(amount / COUNT(win)) AS received,
+  game.game_id
+FROM gamexuser
+  INNER JOIN game
+    ON game.game_id = gamexuser.game_id
+WHERE win = 1
+GROUP BY game.game_id;
+
+
+/* Updating net profit */
+
+SELECT CASE
+       WHEN win = 1
+         THEN (rec.received - COUNT(nu.number_id) * 5000)
+       WHEN win = 0
+         THEN COUNT(nu.number_id) * -5000
+       END
+FROM user AS u
+  INNER JOIN gamexuser AS gu
+    ON u.user_id = gu.user_id
+  INNER JOIN numberxuser AS nu
+    ON u.user_id = nu.user_id
+       AND nu.user_id = gu.user_id
+       AND nu.game_id = gu.game_id
+  INNER JOIN game AS ga
+    ON gu.game_id = ga.game_id
+  ,
+  (SELECT ceil(amount / COUNT(win)) AS received
+   FROM gamexuser
+     INNER JOIN game
+       ON game.game_id = gamexuser.game_id
+   WHERE game.game_id = 32 AND win = 1) AS rec
+WHERE u.username = :username
+LIMIT 50;
+
+/* Rank stuff */
+SELECT
+  rank,
+  user.username,
+  user.net_profit,
+  user.games_played
+FROM user
+  INNER JOIN
+  (SELECT
+     user.user_id,
+     CASE
+     WHEN @prevRank = net_profit
+       THEN @curRank
+     WHEN @prevRank := net_profit
+       THEN @curRank := @curRank + 1
+     END AS rank,
+     net_profit
+   FROM user,
+     (SELECT
+        @curRank := 0,
+        @prevRank := NULL) r
+   ORDER BY net_profit DESC) AS r1
+    ON user.user_id = r1.user_id
+ORDER BY rank ASC
+LIMIT 1 OFFSET 1;
+
+SELECT COUNT(email) AS email_count
+FROM user
+WHERE email = 'frinconmedina@gmail.com';
+
+SELECT
+  hash,
+  amount,
+  DATE_FORMAT(request_date, "%M %D, %Y") AS request_date,
+  DATE_FORMAT(completed_on, "%M %D, %Y") AS completed_on
+FROM withdrawal
+WHERE user_id = :user_id
+ORDER BY request_date DESC
+LIMIT :rows OFFSET :the_offset;
+
+/* Transfer table*/
+SELECT
+  u.username,
+  hash,
+  amount,
+  DATE_FORMAT(request_date, "%M %D, %Y") AS request_date,
+  DATE_FORMAT(completed_on, "%M %D, %Y") AS completed_on
+FROM transfer AS t
+  INNER JOIN user AS u
+    ON t.to_user = u.user_id
+WHERE t.user_id = :user_id;
+
+SELECT count(message_id)
+FROM chat
+WHERE DATE_FORMAT(CURRENT_TIMESTAMP, '%Y-%m-%d %H:%i') = DATE_FORMAT(sent_at, '%Y-%m-%d %H:%i');
+
+UPDATE gamexuser
+SET bet = bet + 10000 * 1
+WHERE user_id =;
+
+
+SELECT *
+FROM user AS u
+  INNER JOIN gamexuser AS gu ON u.user_id = gu.user_id
+  INNER JOIN numberxuser AS nu ON u.user_id = nu.user_id
+                                  AND gu.game_id = nu.game_id
+WHERE nu.number_id = :winner_number
+      AND gu.game_id = :game_id;
+
+SELECT
+  user_id,
+  expires,
+  current_timestamp AS now
+FROM password_reset
+WHERE hashed_user_id = 'd4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35'
+      AND validator = '7d58e0c89328e9ba1c1564ca5d29304bed6335cbf10ca5d1abf3a34990f3fd42';
+
+
+SELECT
+  user_id,
+  expires,
+  current_timestamp AS now
+FROM password_reset;
+
+
+SELECT
+  hash,
+  amount,
+  DATE_FORMAT(request_date, "%M %D, %Y") AS request_date,
+  DATE_FORMAT(completed_on, "%M %D, %Y") AS completed_on
+FROM withdrawal
+WHERE user_id = :user_id
+ORDER BY request_date DESC
+LIMIT :rows OFFSET 0;
+
+SELECT
+  r1.rank,
+  user.username,
+  user.net_profit,
+  user.games_played
+FROM user
+  INNER JOIN
+  (SELECT
+     user.user_id,
+     CASE
+     WHEN @prevRank = net_profit
+       THEN @curRank
+     WHEN @prevRank := net_profit
+       THEN @curRank := @curRank + 1
+     END AS rank,
+     net_profit
+   FROM user,
+     (SELECT
+        @curRank := 0,
+        @prevRank := NULL) r
+   ORDER BY net_profit DESC) AS r1
+    ON user.user_id = r1.user_id
+ORDER BY rank DESC
+LIMIT :rows OFFSET :the_offset;
+
+SELECT
+  username,
+  net_profit,
+  games_played,
+  FIND_IN_SET(net_profit, (
+    SELECT GROUP_CONCAT(net_profit
+                        ORDER BY net_profit DESC)
+    FROM user
+    WHERE user.games_played <> 0)
+  ) AS rank
+FROM user
+WHERE user.games_played <> 0
+ORDER BY rank ASC;
+
+SELECT
+  gu.game_id,
+  gu.win,
+  gu.bet,
+  gu.profit,
+  ga.amount
+FROM user AS u INNER JOIN gamexuser AS gu ON u.user_id = gu.user_id
+  INNER JOIN game AS ga ON gu.game_id = ga.game_id
+WHERE u.username = :username
+ORDER BY gu.game_id ASC, gu.bet DESC, gu.profit ASC, ga.amount ASC
+LIMIT :rows OFFSET :the_offset;

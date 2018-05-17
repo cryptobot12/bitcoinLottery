@@ -31,8 +31,14 @@ WHERE DATE_FORMAT(CURRENT_TIMESTAMP, '%Y-%m-%d %H:%i') = DATE_FORMAT(sentat, '%Y
 VALUES (:user_id, :username, :message, CURRENT_TIMESTAMP)');
             $stmt->execute(array('user_id' => $user_id,  'username' => $username, 'message' => $chat_message));
 
+            $stmt = $conn->prepare('SELECT sentat FROM chat WHERE message_id = LAST_INSERT_ID()');
+            $stmt->execute();
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            $sentat = $result['sentat'];
+
             //Broadcasting
-            $entryData = array('category' => 'all', 'option' => 3, 'user' => $username, 'chat_message' => $chat_message);
+            $entryData = array('category' => 'all', 'option' => 3, 'user' => $username, 'chat_message' => $chat_message,
+                'sentat' => $sentat);
 
             $context = new ZMQContext();
             $socket = $context->getSocket(ZMQ::SOCKET_PUSH, 'my pusher');
