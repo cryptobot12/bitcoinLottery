@@ -7,6 +7,8 @@
  */
 session_start();
 
+require '/home/luckiestguyever/PhpstormProjects/bitcoinLottery/vendor/autoload.php';
+
 include "globals.php";
 include "function.php";
 include "inc/login_checker.php";

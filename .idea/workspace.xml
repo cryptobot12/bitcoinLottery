@@ -3,14 +3,174 @@
   <component name="AnalysisUIOptions">
     <option name="SCOPE_TYPE" value="3" />
   </component>
+  <component name="BookmarkManager">
+    <bookmark url="file://$PROJECT_DIR$/js/account-script.js" line="17" mnemonic="0" />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="10750175-c39d-40d2-8ef4-4cd797eab4f9" name="Default" comment="Working on index page.">
-      <change beforePath="" afterPath="$PROJECT_DIR$/database" />
+    <list default="true" id="10750175-c39d-40d2-8ef4-4cd797eab4f9" name="Default" comment="CODING DONE!">
+      <change beforePath="" afterPath="$PROJECT_DIR$/ajax/check-balance.php" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/ajax/validate-address.php" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/js/jquery-dateformat.min.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/secure_php/timer.php" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test_bitcoin.php" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/vendor/nbobtc/bitcoind-php/.gitattributes" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/vendor/nbobtc/bitcoind-php/.gitignore" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/vendor/nbobtc/bitcoind-php/.travis.yml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/vendor/nbobtc/bitcoind-php/Berksfile" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/vendor/nbobtc/bitcoind-php/Berksfile.lock" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/vendor/nbobtc/bitcoind-php/CHANGELOG.md" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/vendor/nbobtc/bitcoind-php/CONTRIBUTING.md" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/vendor/nbobtc/bitcoind-php/LICENSE" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/vendor/nbobtc/bitcoind-php/README.md" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/vendor/nbobtc/bitcoind-php/Vagrantfile" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/vendor/nbobtc/bitcoind-php/composer.json" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/vendor/nbobtc/bitcoind-php/phpdoc.dist.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/vendor/nbobtc/bitcoind-php/src/Command/Command.php" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/vendor/nbobtc/bitcoind-php/src/Command/CommandInterface.php" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/vendor/nbobtc/bitcoind-php/src/Http/Client.php" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/vendor/nbobtc/bitcoind-php/src/Http/ClientInterface.php" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/vendor/nbobtc/bitcoind-php/src/Http/Driver/CurlDriver.php" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/vendor/nbobtc/bitcoind-php/src/Http/Driver/DriverInterface.php" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/vendor/nbobtc/bitcoind-php/src/Http/Message/Message.php" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/vendor/nbobtc/bitcoind-php/src/Http/Message/Request.php" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/vendor/nbobtc/bitcoind-php/src/Http/Message/Response.php" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/vendor/nbobtc/bitcoind-php/src/Http/Message/Streamable.php" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/vendor/nbobtc/bitcoind-php/src/Http/Message/Uri.php" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/vendor/nbobtc/bitcoind-php/tests/Command/CommandTest.php" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/vendor/nbobtc/bitcoind-php/tests/Http/ClientTest.php" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/vendor/nbobtc/bitcoind-php/tests/Http/Driver/CurlDriverTest.php" />
+      <change beforePath="$PROJECT_DIR$/.idea/bitcoinLottery.iml" afterPath="$PROJECT_DIR$/.idea/bitcoinLottery.iml" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/b3dc9176-6000-443b-af66-3359e87cd0c1.xml" afterPath="$PROJECT_DIR$/.idea/dataSources/b3dc9176-6000-443b-af66-3359e87cd0c1.xml" />
+      <change beforePath="$PROJECT_DIR$/.idea/php.xml" afterPath="$PROJECT_DIR$/.idea/php.xml" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/ajax/send_message.php" afterPath="$PROJECT_DIR$/ajax/send_message.php" />
+      <change beforePath="$PROJECT_DIR$/account.php" afterPath="$PROJECT_DIR$/account.php" />
+      <change beforePath="$PROJECT_DIR$/actions/loading-registration.php" afterPath="$PROJECT_DIR$/actions/loading-registration.php" />
+      <change beforePath="$PROJECT_DIR$/actions/transfer.php" afterPath="$PROJECT_DIR$/actions/transfer.php" />
+      <change beforePath="$PROJECT_DIR$/actions/withdraw.php" afterPath="$PROJECT_DIR$/actions/withdraw.php" />
+      <change beforePath="$PROJECT_DIR$/ajax/balance_numbers_ajax.php" afterPath="$PROJECT_DIR$/ajax/balance-numbers-ajax.php" />
+      <change beforePath="$PROJECT_DIR$/ajax/play.php" afterPath="$PROJECT_DIR$/ajax/play.php" />
+      <change beforePath="$PROJECT_DIR$/composer.json" afterPath="$PROJECT_DIR$/composer.json" />
+      <change beforePath="$PROJECT_DIR$/composer.lock" afterPath="$PROJECT_DIR$/composer.lock" />
       <change beforePath="$PROJECT_DIR$/css/style.css" afterPath="$PROJECT_DIR$/css/style.css" />
+      <change beforePath="$PROJECT_DIR$/database" afterPath="$PROJECT_DIR$/database" />
+      <change beforePath="$PROJECT_DIR$/inc/footer.php" afterPath="$PROJECT_DIR$/inc/footer.php" />
+      <change beforePath="$PROJECT_DIR$/inc/header.php" afterPath="$PROJECT_DIR$/inc/header.php" />
       <change beforePath="$PROJECT_DIR$/index.php" afterPath="$PROJECT_DIR$/index.php" />
+      <change beforePath="$PROJECT_DIR$/js/account-script.js" afterPath="$PROJECT_DIR$/js/account-script.js" />
+      <change beforePath="$PROJECT_DIR$/js/btcvalid.js" afterPath="" />
       <change beforePath="$PROJECT_DIR$/js/index-script.js" afterPath="$PROJECT_DIR$/js/index-script.js" />
+      <change beforePath="$PROJECT_DIR$/password-reset-email-send.php" afterPath="$PROJECT_DIR$/password-reset-email-send.php" />
+      <change beforePath="$PROJECT_DIR$/secure_php/end_game.php" afterPath="$PROJECT_DIR$/secure_php/end_game.php" />
+      <change beforePath="$PROJECT_DIR$/user-stats.php" afterPath="$PROJECT_DIR$/user-stats.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/composer/autoload_files.php" afterPath="$PROJECT_DIR$/vendor/composer/autoload_files.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/composer/autoload_psr4.php" afterPath="$PROJECT_DIR$/vendor/composer/autoload_psr4.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/composer/autoload_static.php" afterPath="$PROJECT_DIR$/vendor/composer/autoload_static.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/composer/installed.json" afterPath="$PROJECT_DIR$/vendor/composer/installed.json" />
+      <change beforePath="$PROJECT_DIR$/vendor/phpmailer/phpmailer/README.md" afterPath="$PROJECT_DIR$/vendor/phpmailer/phpmailer/README.md" />
+      <change beforePath="$PROJECT_DIR$/vendor/phpmailer/phpmailer/VERSION" afterPath="$PROJECT_DIR$/vendor/phpmailer/phpmailer/VERSION" />
+      <change beforePath="$PROJECT_DIR$/vendor/phpmailer/phpmailer/language/phpmailer.lang-es.php" afterPath="$PROJECT_DIR$/vendor/phpmailer/phpmailer/language/phpmailer.lang-es.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/phpmailer/phpmailer/src/PHPMailer.php" afterPath="$PROJECT_DIR$/vendor/phpmailer/phpmailer/src/PHPMailer.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/phpmailer/phpmailer/src/POP3.php" afterPath="$PROJECT_DIR$/vendor/phpmailer/phpmailer/src/POP3.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/phpmailer/phpmailer/src/SMTP.php" afterPath="$PROJECT_DIR$/vendor/phpmailer/phpmailer/src/SMTP.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/ratchet/rfc6455/.gitignore" afterPath="$PROJECT_DIR$/vendor/ratchet/rfc6455/.gitignore" />
+      <change beforePath="$PROJECT_DIR$/vendor/ratchet/rfc6455/.travis.yml" afterPath="$PROJECT_DIR$/vendor/ratchet/rfc6455/.travis.yml" />
+      <change beforePath="$PROJECT_DIR$/vendor/ratchet/rfc6455/LICENSE" afterPath="$PROJECT_DIR$/vendor/ratchet/rfc6455/LICENSE" />
+      <change beforePath="$PROJECT_DIR$/vendor/ratchet/rfc6455/README.md" afterPath="$PROJECT_DIR$/vendor/ratchet/rfc6455/README.md" />
+      <change beforePath="$PROJECT_DIR$/vendor/ratchet/rfc6455/composer.json" afterPath="$PROJECT_DIR$/vendor/ratchet/rfc6455/composer.json" />
+      <change beforePath="$PROJECT_DIR$/vendor/ratchet/rfc6455/phpunit.xml.dist" afterPath="$PROJECT_DIR$/vendor/ratchet/rfc6455/phpunit.xml.dist" />
+      <change beforePath="$PROJECT_DIR$/vendor/ratchet/rfc6455/src/Handshake/ClientNegotiator.php" afterPath="$PROJECT_DIR$/vendor/ratchet/rfc6455/src/Handshake/ClientNegotiator.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/ratchet/rfc6455/src/Handshake/NegotiatorInterface.php" afterPath="$PROJECT_DIR$/vendor/ratchet/rfc6455/src/Handshake/NegotiatorInterface.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/ratchet/rfc6455/src/Handshake/RequestVerifier.php" afterPath="$PROJECT_DIR$/vendor/ratchet/rfc6455/src/Handshake/RequestVerifier.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/ratchet/rfc6455/src/Handshake/ResponseVerifier.php" afterPath="$PROJECT_DIR$/vendor/ratchet/rfc6455/src/Handshake/ResponseVerifier.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/ratchet/rfc6455/src/Handshake/ServerNegotiator.php" afterPath="$PROJECT_DIR$/vendor/ratchet/rfc6455/src/Handshake/ServerNegotiator.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/ratchet/rfc6455/src/Messaging/CloseFrameChecker.php" afterPath="$PROJECT_DIR$/vendor/ratchet/rfc6455/src/Messaging/CloseFrameChecker.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/ratchet/rfc6455/src/Messaging/DataInterface.php" afterPath="$PROJECT_DIR$/vendor/ratchet/rfc6455/src/Messaging/DataInterface.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/ratchet/rfc6455/src/Messaging/Frame.php" afterPath="$PROJECT_DIR$/vendor/ratchet/rfc6455/src/Messaging/Frame.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/ratchet/rfc6455/src/Messaging/FrameInterface.php" afterPath="$PROJECT_DIR$/vendor/ratchet/rfc6455/src/Messaging/FrameInterface.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/ratchet/rfc6455/src/Messaging/Message.php" afterPath="$PROJECT_DIR$/vendor/ratchet/rfc6455/src/Messaging/Message.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/ratchet/rfc6455/src/Messaging/MessageBuffer.php" afterPath="$PROJECT_DIR$/vendor/ratchet/rfc6455/src/Messaging/MessageBuffer.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/ratchet/rfc6455/src/Messaging/MessageInterface.php" afterPath="$PROJECT_DIR$/vendor/ratchet/rfc6455/src/Messaging/MessageInterface.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/ratchet/rfc6455/tests/AbResultsTest.php" afterPath="$PROJECT_DIR$/vendor/ratchet/rfc6455/tests/AbResultsTest.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/ratchet/rfc6455/tests/ab/clientRunner.php" afterPath="$PROJECT_DIR$/vendor/ratchet/rfc6455/tests/ab/clientRunner.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/ratchet/rfc6455/tests/ab/fuzzingclient.json" afterPath="$PROJECT_DIR$/vendor/ratchet/rfc6455/tests/ab/fuzzingclient.json" />
+      <change beforePath="$PROJECT_DIR$/vendor/ratchet/rfc6455/tests/ab/fuzzingserver.json" afterPath="$PROJECT_DIR$/vendor/ratchet/rfc6455/tests/ab/fuzzingserver.json" />
+      <change beforePath="$PROJECT_DIR$/vendor/ratchet/rfc6455/tests/ab/run_ab_tests.sh" afterPath="$PROJECT_DIR$/vendor/ratchet/rfc6455/tests/ab/run_ab_tests.sh" />
+      <change beforePath="$PROJECT_DIR$/vendor/ratchet/rfc6455/tests/ab/startServer.php" afterPath="$PROJECT_DIR$/vendor/ratchet/rfc6455/tests/ab/startServer.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/ratchet/rfc6455/tests/bootstrap.php" afterPath="$PROJECT_DIR$/vendor/ratchet/rfc6455/tests/bootstrap.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/ratchet/rfc6455/tests/unit/Handshake/RequestVerifierTest.php" afterPath="$PROJECT_DIR$/vendor/ratchet/rfc6455/tests/unit/Handshake/RequestVerifierTest.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/ratchet/rfc6455/tests/unit/Handshake/ResponseVerifierTest.php" afterPath="$PROJECT_DIR$/vendor/ratchet/rfc6455/tests/unit/Handshake/ResponseVerifierTest.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/ratchet/rfc6455/tests/unit/Handshake/ServerNegotiatorTest.php" afterPath="$PROJECT_DIR$/vendor/ratchet/rfc6455/tests/unit/Handshake/ServerNegotiatorTest.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/ratchet/rfc6455/tests/unit/Messaging/FrameTest.php" afterPath="$PROJECT_DIR$/vendor/ratchet/rfc6455/tests/unit/Messaging/FrameTest.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/ratchet/rfc6455/tests/unit/Messaging/MessageBufferTest.php" afterPath="$PROJECT_DIR$/vendor/ratchet/rfc6455/tests/unit/Messaging/MessageBufferTest.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/ratchet/rfc6455/tests/unit/Messaging/MessageTest.php" afterPath="$PROJECT_DIR$/vendor/ratchet/rfc6455/tests/unit/Messaging/MessageTest.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/react/dns/.travis.yml" afterPath="$PROJECT_DIR$/vendor/react/dns/.travis.yml" />
+      <change beforePath="$PROJECT_DIR$/vendor/react/dns/CHANGELOG.md" afterPath="$PROJECT_DIR$/vendor/react/dns/CHANGELOG.md" />
+      <change beforePath="$PROJECT_DIR$/vendor/react/dns/README.md" afterPath="$PROJECT_DIR$/vendor/react/dns/README.md" />
+      <change beforePath="$PROJECT_DIR$/vendor/react/dns/composer.json" afterPath="$PROJECT_DIR$/vendor/react/dns/composer.json" />
+      <change beforePath="$PROJECT_DIR$/vendor/react/dns/examples/01-one.php" afterPath="$PROJECT_DIR$/vendor/react/dns/examples/01-one.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/react/dns/examples/02-concurrent.php" afterPath="$PROJECT_DIR$/vendor/react/dns/examples/02-concurrent.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/react/dns/examples/03-cached.php" afterPath="$PROJECT_DIR$/vendor/react/dns/examples/03-cached.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/react/dns/src/Config/Config.php" afterPath="$PROJECT_DIR$/vendor/react/dns/src/Config/Config.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/react/dns/src/Config/FilesystemFactory.php" afterPath="$PROJECT_DIR$/vendor/react/dns/src/Config/FilesystemFactory.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/react/dns/tests/Query/ExecutorTest.php" afterPath="$PROJECT_DIR$/vendor/react/dns/tests/Query/ExecutorTest.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/react/promise-timer/CHANGELOG.md" afterPath="$PROJECT_DIR$/vendor/react/promise-timer/CHANGELOG.md" />
+      <change beforePath="$PROJECT_DIR$/vendor/react/promise-timer/README.md" afterPath="$PROJECT_DIR$/vendor/react/promise-timer/README.md" />
+      <change beforePath="$PROJECT_DIR$/vendor/react/promise-timer/src/functions.php" afterPath="$PROJECT_DIR$/vendor/react/promise-timer/src/functions.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/react/socket/.travis.yml" afterPath="$PROJECT_DIR$/vendor/react/socket/.travis.yml" />
+      <change beforePath="$PROJECT_DIR$/vendor/react/socket/CHANGELOG.md" afterPath="$PROJECT_DIR$/vendor/react/socket/CHANGELOG.md" />
+      <change beforePath="$PROJECT_DIR$/vendor/react/socket/README.md" afterPath="$PROJECT_DIR$/vendor/react/socket/README.md" />
+      <change beforePath="$PROJECT_DIR$/vendor/react/socket/composer.json" afterPath="$PROJECT_DIR$/vendor/react/socket/composer.json" />
+      <change beforePath="$PROJECT_DIR$/vendor/react/socket/src/Connector.php" afterPath="$PROJECT_DIR$/vendor/react/socket/src/Connector.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/react/socket/src/DnsConnector.php" afterPath="$PROJECT_DIR$/vendor/react/socket/src/DnsConnector.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/react/socket/src/TcpConnector.php" afterPath="$PROJECT_DIR$/vendor/react/socket/src/TcpConnector.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/symfony/http-foundation/Cookie.php" afterPath="$PROJECT_DIR$/vendor/symfony/http-foundation/Cookie.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/symfony/http-foundation/File/File.php" afterPath="$PROJECT_DIR$/vendor/symfony/http-foundation/File/File.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/symfony/http-foundation/File/MimeType/FileBinaryMimeTypeGuesser.php" afterPath="$PROJECT_DIR$/vendor/symfony/http-foundation/File/MimeType/FileBinaryMimeTypeGuesser.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/symfony/http-foundation/File/MimeType/MimeTypeExtensionGuesser.php" afterPath="$PROJECT_DIR$/vendor/symfony/http-foundation/File/MimeType/MimeTypeExtensionGuesser.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/symfony/http-foundation/File/UploadedFile.php" afterPath="$PROJECT_DIR$/vendor/symfony/http-foundation/File/UploadedFile.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/symfony/http-foundation/Request.php" afterPath="$PROJECT_DIR$/vendor/symfony/http-foundation/Request.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/symfony/http-foundation/Response.php" afterPath="$PROJECT_DIR$/vendor/symfony/http-foundation/Response.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/symfony/http-foundation/Session/Storage/Handler/MemcachedSessionHandler.php" afterPath="$PROJECT_DIR$/vendor/symfony/http-foundation/Session/Storage/Handler/MemcachedSessionHandler.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/symfony/http-foundation/Session/Storage/Handler/PdoSessionHandler.php" afterPath="$PROJECT_DIR$/vendor/symfony/http-foundation/Session/Storage/Handler/PdoSessionHandler.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/symfony/http-foundation/Session/Storage/NativeSessionStorage.php" afterPath="$PROJECT_DIR$/vendor/symfony/http-foundation/Session/Storage/NativeSessionStorage.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/symfony/http-foundation/Tests/CookieTest.php" afterPath="$PROJECT_DIR$/vendor/symfony/http-foundation/Tests/CookieTest.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/symfony/http-foundation/Tests/RequestTest.php" afterPath="$PROJECT_DIR$/vendor/symfony/http-foundation/Tests/RequestTest.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/symfony/http-foundation/Tests/ResponseHeaderBagTest.php" afterPath="$PROJECT_DIR$/vendor/symfony/http-foundation/Tests/ResponseHeaderBagTest.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/symfony/http-foundation/Tests/Session/Storage/Handler/NativeSessionHandlerTest.php" afterPath="$PROJECT_DIR$/vendor/symfony/http-foundation/Tests/Session/Storage/Handler/NativeSessionHandlerTest.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/symfony/http-foundation/Tests/Session/Storage/Handler/PdoSessionHandlerTest.php" afterPath="$PROJECT_DIR$/vendor/symfony/http-foundation/Tests/Session/Storage/Handler/PdoSessionHandlerTest.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/symfony/http-foundation/Tests/Session/Storage/NativeSessionStorageTest.php" afterPath="$PROJECT_DIR$/vendor/symfony/http-foundation/Tests/Session/Storage/NativeSessionStorageTest.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/symfony/polyfill-mbstring/Mbstring.php" afterPath="$PROJECT_DIR$/vendor/symfony/polyfill-mbstring/Mbstring.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/symfony/polyfill-mbstring/composer.json" afterPath="$PROJECT_DIR$/vendor/symfony/polyfill-mbstring/composer.json" />
+      <change beforePath="$PROJECT_DIR$/vendor/symfony/routing/Loader/AnnotationClassLoader.php" afterPath="$PROJECT_DIR$/vendor/symfony/routing/Loader/AnnotationClassLoader.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/symfony/routing/Loader/XmlFileLoader.php" afterPath="$PROJECT_DIR$/vendor/symfony/routing/Loader/XmlFileLoader.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/symfony/routing/Loader/YamlFileLoader.php" afterPath="$PROJECT_DIR$/vendor/symfony/routing/Loader/YamlFileLoader.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/symfony/routing/Matcher/Dumper/DumperCollection.php" afterPath="$PROJECT_DIR$/vendor/symfony/routing/Matcher/Dumper/DumperCollection.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/symfony/routing/Matcher/Dumper/PhpMatcherDumper.php" afterPath="$PROJECT_DIR$/vendor/symfony/routing/Matcher/Dumper/PhpMatcherDumper.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/symfony/routing/Matcher/UrlMatcher.php" afterPath="$PROJECT_DIR$/vendor/symfony/routing/Matcher/UrlMatcher.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/symfony/routing/RouteCollection.php" afterPath="$PROJECT_DIR$/vendor/symfony/routing/RouteCollection.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/symfony/routing/RouteCollectionBuilder.php" afterPath="$PROJECT_DIR$/vendor/symfony/routing/RouteCollectionBuilder.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/symfony/routing/RouteCompiler.php" afterPath="$PROJECT_DIR$/vendor/symfony/routing/RouteCompiler.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/symfony/routing/Router.php" afterPath="$PROJECT_DIR$/vendor/symfony/routing/Router.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/symfony/routing/Tests/Fixtures/dumper/url_matcher1.php" afterPath="$PROJECT_DIR$/vendor/symfony/routing/Tests/Fixtures/dumper/url_matcher1.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/symfony/routing/Tests/Fixtures/dumper/url_matcher2.php" afterPath="$PROJECT_DIR$/vendor/symfony/routing/Tests/Fixtures/dumper/url_matcher2.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/symfony/routing/Tests/Fixtures/dumper/url_matcher3.php" afterPath="$PROJECT_DIR$/vendor/symfony/routing/Tests/Fixtures/dumper/url_matcher3.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/symfony/routing/Tests/Fixtures/dumper/url_matcher4.php" afterPath="$PROJECT_DIR$/vendor/symfony/routing/Tests/Fixtures/dumper/url_matcher4.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/symfony/routing/Tests/Fixtures/dumper/url_matcher5.php" afterPath="$PROJECT_DIR$/vendor/symfony/routing/Tests/Fixtures/dumper/url_matcher5.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/symfony/routing/Tests/Fixtures/dumper/url_matcher6.php" afterPath="$PROJECT_DIR$/vendor/symfony/routing/Tests/Fixtures/dumper/url_matcher6.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/symfony/routing/Tests/Fixtures/dumper/url_matcher7.php" afterPath="$PROJECT_DIR$/vendor/symfony/routing/Tests/Fixtures/dumper/url_matcher7.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/symfony/routing/Tests/Loader/AnnotationClassLoaderTest.php" afterPath="$PROJECT_DIR$/vendor/symfony/routing/Tests/Loader/AnnotationClassLoaderTest.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/symfony/routing/Tests/Loader/AnnotationDirectoryLoaderTest.php" afterPath="$PROJECT_DIR$/vendor/symfony/routing/Tests/Loader/AnnotationDirectoryLoaderTest.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/symfony/routing/Tests/Loader/PhpFileLoaderTest.php" afterPath="$PROJECT_DIR$/vendor/symfony/routing/Tests/Loader/PhpFileLoaderTest.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/symfony/routing/Tests/Loader/XmlFileLoaderTest.php" afterPath="$PROJECT_DIR$/vendor/symfony/routing/Tests/Loader/XmlFileLoaderTest.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/symfony/routing/Tests/Loader/YamlFileLoaderTest.php" afterPath="$PROJECT_DIR$/vendor/symfony/routing/Tests/Loader/YamlFileLoaderTest.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/symfony/routing/Tests/Matcher/Dumper/PhpMatcherDumperTest.php" afterPath="$PROJECT_DIR$/vendor/symfony/routing/Tests/Matcher/Dumper/PhpMatcherDumperTest.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/symfony/routing/Tests/Matcher/RedirectableUrlMatcherTest.php" afterPath="$PROJECT_DIR$/vendor/symfony/routing/Tests/Matcher/RedirectableUrlMatcherTest.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/symfony/routing/Tests/Matcher/UrlMatcherTest.php" afterPath="$PROJECT_DIR$/vendor/symfony/routing/Tests/Matcher/UrlMatcherTest.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/symfony/routing/Tests/RouteCollectionBuilderTest.php" afterPath="$PROJECT_DIR$/vendor/symfony/routing/Tests/RouteCollectionBuilderTest.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/symfony/routing/Tests/RouteCompilerTest.php" afterPath="$PROJECT_DIR$/vendor/symfony/routing/Tests/RouteCompilerTest.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/symfony/routing/Tests/RouteTest.php" afterPath="$PROJECT_DIR$/vendor/symfony/routing/Tests/RouteTest.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/symfony/routing/Tests/RouterTest.php" afterPath="$PROJECT_DIR$/vendor/symfony/routing/Tests/RouterTest.php" />
+      <change beforePath="$PROJECT_DIR$/vendor/symfony/routing/composer.json" afterPath="$PROJECT_DIR$/vendor/symfony/routing/composer.json" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -70,33 +230,106 @@
       <file leaf-file-name="index-script.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/js/index-script.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="17280">
-              <caret line="960" column="16" lean-forward="false" selection-start-line="960" selection-start-column="16" selection-end-line="962" selection-end-column="17" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="globals.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/globals.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="144">
-              <caret line="13" column="63" lean-forward="false" selection-start-line="13" selection-start-column="63" selection-end-line="13" selection-end-column="63" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="send_message.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/ajax/send_message.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="324">
-              <caret line="23" column="94" lean-forward="false" selection-start-line="23" selection-start-column="57" selection-end-line="23" selection-end-column="94" />
+            <state relative-caret-position="808">
+              <caret line="846" column="0" lean-forward="true" selection-start-line="846" selection-start-column="0" selection-end-line="846" selection-end-column="0" />
               <folding>
-                <marker date="1526351996945" expanded="true" signature="607:754" ph="SELECT count... chat" />
-                <marker date="1526351996945" expanded="true" signature="957:1067" ph="INSERT INTO chat... " />
-                <marker date="1526351996945" expanded="true" signature="1220:1279" ph="SELECT senta... chat" />
+                <marker date="1527535474047" expanded="true" signature="34913:34925" ph="..." />
+                <marker date="1527535474047" expanded="true" signature="35149:35161" ph="..." />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="database" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/database">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="2144">
+              <caret line="667" column="47" lean-forward="false" selection-start-line="667" selection-start-column="47" selection-end-line="667" selection-end-column="47" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="expired-link.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/expired-link.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="play.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/ajax/play.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="731">
+              <caret line="198" column="43" lean-forward="false" selection-start-line="198" selection-start-column="43" selection-end-line="198" selection-end-column="43" />
+              <folding>
+                <marker date="1527534622128" expanded="true" signature="3173:3227" ph="SELECT game_... game" />
+                <marker date="1527534622128" expanded="true" signature="3484:3590" ph="SELECT numbe... numberxuser" />
+                <marker date="1527534622128" expanded="true" signature="3880:4022" ph="INSERT INTO numberxuser... " />
+                <marker date="1527534622128" expanded="true" signature="4360:4485" ph="UPDATE user... " />
+                <marker date="1527534622128" expanded="true" signature="4608:4735" ph="INSERT INTO gamexuser... " />
+                <marker date="1527534622128" expanded="true" signature="5007:5175" ph="UPDATE gamexuser... " />
+                <marker date="1527534622128" expanded="true" signature="5902:5983" ph="SELECT numbe... numberxuser" />
+                <marker date="1527534622128" expanded="true" signature="6357:6509" ph="SELECT COUNT... numberxuser" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="account-script.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/js/account-script.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="36">
+              <caret line="2" column="126" lean-forward="false" selection-start-line="2" selection-start-column="126" selection-end-line="2" selection-end-column="126" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="user-stats.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/user-stats.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="196">
+              <caret line="144" column="44" lean-forward="false" selection-start-line="144" selection-start-column="44" selection-end-line="144" selection-end-column="44" />
+              <folding>
+                <marker date="1527299105899" expanded="true" signature="1820:1975" ph="SELECT u.net... user" />
+                <marker date="1527299105899" expanded="true" signature="2196:2494" ph="SELECT FIND_... user" />
+                <marker date="1527299105899" expanded="true" signature="2246:2393" ph="SELECT GROUP... user" />
+                <marker date="1527299105899" expanded="true" signature="2698:2855" ph="SELECT COUNT... gamexuser" />
+                <marker date="1527299105899" expanded="true" signature="2803:2854" ph="SELECT user_... user" />
+                <marker date="1527299105899" expanded="true" signature="3637:4339" ph="SELECT gu.ga... user" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="autoload_static.php" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/vendor/composer/autoload_static.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="327">
+              <caret line="175" column="21" lean-forward="false" selection-start-line="175" selection-start-column="21" selection-end-line="175" selection-end-column="21" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="README.md" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/vendor/phpmailer/phpmailer/README.md">
+          <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+            <state split_layout="SPLIT">
+              <first_editor relative-caret-position="187">
+                <caret line="42" column="21" lean-forward="false" selection-start-line="42" selection-start-column="21" selection-end-line="42" selection-end-column="21" />
+                <folding>
+                  <marker date="1522158585000" expanded="false" signature="4358:4423" ph="..." />
+                  <marker date="1522158585000" expanded="false" signature="6841:6906" ph="..." />
+                  <marker date="1522158585000" expanded="true" signature="7069:8665" ph="..." />
+                  <marker date="1522158585000" expanded="true" signature="8689:8762" ph="..." />
+                </folding>
+              </first_editor>
+              <second_editor />
             </state>
           </provider>
         </entry>
@@ -104,39 +337,30 @@
       <file leaf-file-name="index.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/index.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="574">
-              <caret line="580" column="18" lean-forward="false" selection-start-line="580" selection-start-column="18" selection-end-line="580" selection-end-column="18" />
+            <state relative-caret-position="-259">
+              <caret line="281" column="61" lean-forward="true" selection-start-line="281" selection-start-column="61" selection-end-line="281" selection-end-column="61" />
               <folding>
-                <marker date="1526357637328" expanded="true" signature="522:584" ph="SELECT game_... game" />
-                <marker date="1526357637328" expanded="true" signature="748:816" ph="SELECT COUNT... numberxuser" />
-                <marker date="1526357637328" expanded="true" signature="988:1039" ph="SELECT messa... chat" />
-                <marker date="1526357637328" expanded="true" signature="1263:1345" ph="SELECT numbe... numberxuser" />
-                <marker date="1526357637328" expanded="true" signature="1679:1784" ph="SELECT COUNT... numberxuser" />
-                <marker date="1526357637328" expanded="true" signature="2385:2649" ph="SELECT game_... game" />
-                <marker date="1526357637328" expanded="true" signature="2801:2900" ph="SELECT game_... game" />
-                <marker date="1526357637328" expanded="true" signature="3219:3476" ph="SELECT u.use... user" />
-                <marker date="1526357637328" expanded="true" signature="3647:3721" ph="SELECT COUNT... gamexuser" />
-                <marker date="1526357637328" expanded="true" signature="4356:4395" ph="..." />
+                <element signature="n#div#1;n#div#0;n#div#2;n#div#0;n#main#0;n#!!top" expanded="false" />
+                <marker date="1527534208240" expanded="true" signature="902:964" ph="SELECT game_... game" />
+                <marker date="1527534208240" expanded="true" signature="1414:1465" ph="SELECT messa... chat" />
+                <marker date="1527534208240" expanded="true" signature="1689:1771" ph="SELECT numbe... numberxuser" />
+                <marker date="1527534208240" expanded="true" signature="2105:2210" ph="SELECT COUNT... numberxuser" />
+                <marker date="1527534208240" expanded="true" signature="2811:3075" ph="SELECT game_... game" />
+                <marker date="1527534208240" expanded="true" signature="3227:3326" ph="SELECT game_... game" />
+                <marker date="1527534208240" expanded="true" signature="3645:3902" ph="SELECT u.use... user" />
+                <marker date="1527534208240" expanded="true" signature="4073:4147" ph="SELECT COUNT... gamexuser" />
+                <marker date="1527534208240" expanded="true" signature="23017:23029" ph="..." />
+                <marker date="1527534208240" expanded="true" signature="23030:23180" ph="..." />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="database" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/database">
+      <file leaf-file-name="timer.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/secure_php/timer.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="866">
-              <caret line="733" column="31" lean-forward="false" selection-start-line="733" selection-start-column="31" selection-end-line="733" selection-end-column="31" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="style.css" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/css/style.css">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="8100">
-              <caret line="450" column="1" lean-forward="false" selection-start-line="450" selection-start-column="1" selection-end-line="450" selection-end-column="1" />
+            <state relative-caret-position="144">
+              <caret line="13" column="42" lean-forward="false" selection-start-line="13" selection-start-column="8" selection-end-line="13" selection-end-column="42" />
               <folding />
             </state>
           </provider>
@@ -155,36 +379,36 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>left</find>
-      <find>user_sear</find>
-      <find>game_info</find>
-      <find>href</find>
-      <find>chip</find>
-      <find>numbers_card</find>
-      <find>tab</find>
-      <find>play card</find>
-      <find>blockquote-green</find>
-      <find>blockquote</find>
-      <find>send</find>
-      <find>game-info</find>
-      <find>.php</find>
-      <find>href=</find>
-      <find>modal</find>
-      <find>playersL</find>
-      <find>scroll</find>
-      <find>add_numbe</find>
-      <find>Increa</find>
-      <find>scale_</find>
-      <find>game_histo</find>
-      <find>chat-card</find>
-      <find>min-height</find>
-      <find>overflowable</find>
-      <find>med</find>
-      <find>game_his</find>
-      <find>last_game</find>
-      <find>FROM CH</find>
-      <find>FROM CHa</find>
+      <find>to_user</find>
+      <find>without</find>
+      <find>Logi</find>
+      <find>card-tabs</find>
+      <find>login</find>
+      <find>No trans</find>
       <find>chat</find>
+      <find>chat-space</find>
+      <find>tables</find>
+      <find>betNumber</find>
+      <find>balance_nnum</find>
+      <find>filterArrayOfNumbers</find>
+      <find>2510</find>
+      <find>25</find>
+      <find>100</find>
+      <find>sequence</find>
+      <find>ajax/check-bal</find>
+      <find>confirm_med</find>
+      <find>bet</find>
+      <find>bet(</find>
+      <find>$_SE</find>
+      <find>1000000</find>
+      <find>$bonu</find>
+      <find>console.log</find>
+      <find>$bonus</find>
+      <find>textarea</find>
+      <find>isArrayofNum</find>
+      <find>each numbers</find>
+      <find>timer_la</find>
+      <find>option</find>
     </findStrings>
     <replaceStrings>
       <replace>startNumber</replace>
@@ -222,23 +446,11 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/ajax/check_username_uniqueness.php" />
-        <option value="$PROJECT_DIR$/actions/withdraw.php" />
-        <option value="$PROJECT_DIR$/actions/transfer.php" />
-        <option value="$PROJECT_DIR$/actions/loading_registration.php" />
-        <option value="$PROJECT_DIR$/support/support-actions/review-response.php" />
-        <option value="$PROJECT_DIR$/globals.php" />
-        <option value="$PROJECT_DIR$/support/js/support.js" />
-        <option value="$PROJECT_DIR$/support/respond-ticket.php" />
-        <option value="$PROJECT_DIR$/support/support-actions/respond-ticket-action.php" />
         <option value="$PROJECT_DIR$/ajax/check-username-uniqueness.php" />
         <option value="$PROJECT_DIR$/js/registration-script.js" />
-        <option value="$PROJECT_DIR$/actions/loading-registration.php" />
         <option value="$PROJECT_DIR$/actions/confirm-email.php" />
         <option value="$PROJECT_DIR$/login.php" />
         <option value="$PROJECT_DIR$/actions/send-ticket.php" />
-        <option value="$PROJECT_DIR$/account.php" />
-        <option value="$PROJECT_DIR$/js/account-script.js" />
         <option value="$PROJECT_DIR$/forgot-password.php" />
         <option value="$PROJECT_DIR$/js/password-reset.js" />
         <option value="$PROJECT_DIR$/actions/change-password.php" />
@@ -253,26 +465,38 @@
         <option value="$PROJECT_DIR$/js/index_script.js" />
         <option value="$PROJECT_DIR$/js/game-info-script.js" />
         <option value="$PROJECT_DIR$/rank.php" />
-        <option value="$PROJECT_DIR$/inc/footer.php" />
         <option value="$PROJECT_DIR$/unlogged-success.php" />
         <option value="$PROJECT_DIR$/help.php" />
         <option value="$PROJECT_DIR$/password-reset.php" />
-        <option value="$PROJECT_DIR$/password-reset-email-send.php" />
         <option value="$PROJECT_DIR$/stats.php" />
         <option value="$PROJECT_DIR$/registration.php" />
         <option value="$PROJECT_DIR$/lost.php" />
-        <option value="$PROJECT_DIR$/inc/header.php" />
-        <option value="$PROJECT_DIR$/user-stats.php" />
         <option value="$PROJECT_DIR$/.htaccess" />
-        <option value="$PROJECT_DIR$/games-history.php" />
         <option value="$PROJECT_DIR$/src/Pusher.php" />
-        <option value="$PROJECT_DIR$/game-info.php" />
-        <option value="$PROJECT_DIR$/secure_php/end_game.php" />
-        <option value="$PROJECT_DIR$/css/style.css" />
         <option value="$PROJECT_DIR$/ajax/send_message.php" />
-        <option value="$PROJECT_DIR$/js/index-script.js" />
+        <option value="$PROJECT_DIR$/password-reset-email-send.php" />
+        <option value="$PROJECT_DIR$/user-stats.php" />
+        <option value="$PROJECT_DIR$/games-history.php" />
+        <option value="$PROJECT_DIR$/game-info.php" />
+        <option value="$PROJECT_DIR$/actions/loading-registration.php" />
+        <option value="$PROJECT_DIR$/ajax/check-balance.php" />
+        <option value="$PROJECT_DIR$/ajax/validate-address.php" />
+        <option value="$PROJECT_DIR$/actions/withdraw.php" />
+        <option value="$PROJECT_DIR$/account.php" />
+        <option value="$PROJECT_DIR$/inc/header.php" />
+        <option value="$PROJECT_DIR$/inc/footer.php" />
+        <option value="$PROJECT_DIR$/css/style.css" />
+        <option value="$PROJECT_DIR$/actions/transfer.php" />
+        <option value="$PROJECT_DIR$/test_bitcoin.php" />
+        <option value="$PROJECT_DIR$/ajax/balance_numbers_ajax.php" />
+        <option value="$PROJECT_DIR$/secure_php/end_game.php" />
+        <option value="$PROJECT_DIR$/ajax/balance-numbers-ajax.php" />
+        <option value="$PROJECT_DIR$/secure_php/timer.php" />
         <option value="$PROJECT_DIR$/index.php" />
+        <option value="$PROJECT_DIR$/ajax/play.php" />
+        <option value="$PROJECT_DIR$/js/index-script.js" />
         <option value="$PROJECT_DIR$/database" />
+        <option value="$PROJECT_DIR$/js/account-script.js" />
       </list>
     </option>
   </component>
@@ -307,13 +531,15 @@
       <path value="$PROJECT_DIR$/vendor/symfony/polyfill-php70" />
       <path value="$PROJECT_DIR$/vendor/phpmailer/phpmailer" />
       <path value="$PROJECT_DIR$/vendor/paragonie/random_compat" />
+      <path value="$PROJECT_DIR$/vendor/zendframework/zend-diactoros" />
+      <path value="$PROJECT_DIR$/vendor/nbobtc/bitcoind-php" />
+      <path value="$PROJECT_DIR$/vendor/psr/log" />
     </include_path>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="960" />
-    <option name="y" value="27" />
-    <option name="width" value="960" />
-    <option name="height" value="1053" />
+    <option name="y" value="156" />
+    <option name="width" value="1900" />
+    <option name="height" value="796" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -331,8 +557,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scratches" />
       <pane id="Scope" />
+      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -353,17 +579,7 @@
             <path>
               <item name="bitcoinLottery" type="b2602c69:ProjectViewProjectNode" />
               <item name="bitcoinLottery" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="bin" type="2a2b976b:PhpTreeStructureProvider$1" />
-            </path>
-            <path>
-              <item name="bitcoinLottery" type="b2602c69:ProjectViewProjectNode" />
-              <item name="bitcoinLottery" type="2a2b976b:PhpTreeStructureProvider$1" />
               <item name="css" type="2a2b976b:PhpTreeStructureProvider$1" />
-            </path>
-            <path>
-              <item name="bitcoinLottery" type="b2602c69:ProjectViewProjectNode" />
-              <item name="bitcoinLottery" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="img" type="2a2b976b:PhpTreeStructureProvider$1" />
             </path>
             <path>
               <item name="bitcoinLottery" type="b2602c69:ProjectViewProjectNode" />
@@ -383,18 +599,7 @@
             <path>
               <item name="bitcoinLottery" type="b2602c69:ProjectViewProjectNode" />
               <item name="bitcoinLottery" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="src" type="2a2b976b:PhpTreeStructureProvider$1" />
-            </path>
-            <path>
-              <item name="bitcoinLottery" type="b2602c69:ProjectViewProjectNode" />
-              <item name="bitcoinLottery" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="support" type="2a2b976b:PhpTreeStructureProvider$1" />
-            </path>
-            <path>
-              <item name="bitcoinLottery" type="b2602c69:ProjectViewProjectNode" />
-              <item name="bitcoinLottery" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="support" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="support-actions" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="vendor" type="2a2b976b:PhpTreeStructureProvider$1" />
             </path>
             <path>
               <item name="bitcoinLottery" type="b2602c69:ProjectViewProjectNode" />
@@ -408,7 +613,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
+    <property name="settings.editor.selected.configurable" value="web-ide.project.structure" />
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
     <property name="com.intellij.database.dataSource.DataSourceTemplate" value="MySQL" />
     <property name="list.type.of.created.stylesheet" value="CSS" />
@@ -542,14 +747,15 @@
       <workItem from="1525746220318" duration="54000" />
       <workItem from="1525836197859" duration="1478000" />
       <workItem from="1526349774709" duration="6906000" />
-      <workItem from="1526586939036" duration="237000" />
-    </task>
-    <task id="LOCAL-00008" summary="* Added game_info.php&#10;* Added links to game_info.php&#10;* Change height of td&#10;* Added collapsible for numbers">
-      <created>1511152439288</created>
-      <option name="number" value="00008" />
-      <option name="presentableId" value="LOCAL-00008" />
-      <option name="project" value="LOCAL" />
-      <updated>1511152439288</updated>
+      <workItem from="1526586939036" duration="257000" />
+      <workItem from="1526881483299" duration="4908000" />
+      <workItem from="1527119652545" duration="9743000" />
+      <workItem from="1527204413952" duration="1986000" />
+      <workItem from="1527234217268" duration="20926000" />
+      <workItem from="1527298763991" duration="4777000" />
+      <workItem from="1527309879431" duration="851000" />
+      <workItem from="1527378642617" duration="5072000" />
+      <workItem from="1527472482299" duration="22410000" />
     </task>
     <task id="LOCAL-00009" summary="* Added footer&#10;* 1 Player case handled.&#10;* Fixed game links bug (AJAX).">
       <created>1511249493654</created>
@@ -887,21 +1093,29 @@
       <option name="project" value="LOCAL" />
       <updated>1522697701636</updated>
     </task>
-    <option name="localTasksCounter" value="57" />
+    <task id="LOCAL-00057" summary="Working on index page.">
+      <created>1526587184602</created>
+      <option name="number" value="00057" />
+      <option name="presentableId" value="LOCAL-00057" />
+      <option name="project" value="LOCAL" />
+      <updated>1526587184602</updated>
+    </task>
+    <option name="localTasksCounter" value="58" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="798579000" />
+    <option name="totallyTimeSpent" value="869272000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="960" y="27" width="1920" height="1053" extended-state="6" />
+    <frame x="0" y="156" width="1920" height="1053" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18697916" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.1796875" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.33618844" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="12" side_tool="true" content_ui="tabs" />
-      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.16927083" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.16875" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32946146" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -909,7 +1123,6 @@
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.33618844" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
@@ -929,11 +1142,11 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="12" side_tool="true" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="REST Client" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.38330975" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32946146" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.44139388" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Database Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.34463277" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18697916" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.1796875" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection Results" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32869378" sideWeight="0.5" order="14" side_tool="false" content_ui="tabs" />
@@ -941,8 +1154,8 @@
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3254818" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
     </layout-to-restore>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -952,7 +1165,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="* Update password finished.&#10;* Added deposit table.&#10;* Fixed pagination for 1 page cases.&#10;* Fixed responsiveness for account page.&#10;* Finished deposit." />
     <MESSAGE value="* Files are now organized better" />
     <MESSAGE value="* Fixed tabs bug.&#10;* Withdrawal almost finished(JavaScript missing).&#10;* Advances on transfer." />
     <MESSAGE value="* Transfer finished.&#10;* Support added(unfinished).&#10;* Website name changed&#10;* Added under construction page." />
@@ -977,7 +1189,8 @@
     <MESSAGE value="Rank&#10;User Stats&#10;Game Info Done" />
     <MESSAGE value="Navbar fixed." />
     <MESSAGE value="Working on index page." />
-    <option name="LAST_COMMIT_MESSAGE" value="Working on index page." />
+    <MESSAGE value="CODING DONE!" />
+    <option name="LAST_COMMIT_MESSAGE" value="CODING DONE!" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -993,64 +1206,7 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/actions/loading-login.php" />
-    <entry file="file://$PROJECT_DIR$/actions/send-ticket.php" />
-    <entry file="file://$PROJECT_DIR$/actions/resend-password-reset-email.php" />
-    <entry file="file://$PROJECT_DIR$/actions/loading-registration.php" />
-    <entry file="file://$PROJECT_DIR$/actions/resend-confirmation-email.php" />
-    <entry file="file://$PROJECT_DIR$/actions/confirm-email.php" />
-    <entry file="file://$PROJECT_DIR$/actions/change-password.php" />
-    <entry file="file://$PROJECT_DIR$/js/password-reset.js" />
-    <entry file="file://$PROJECT_DIR$/actions/generate-password-reset-link.php" />
-    <entry file="file://$PROJECT_DIR$/actions/update-email-code.php" />
-    <entry file="file://$PROJECT_DIR$/actions/update-email.php" />
-    <entry file="file://$PROJECT_DIR$/actions/withdraw.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2504">
-          <caret line="157" column="0" lean-forward="true" selection-start-line="157" selection-start-column="0" selection-end-line="157" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/error.php" />
-    <entry file="file://$PROJECT_DIR$/inc/login_checker.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="288">
-          <caret line="21" column="65" lean-forward="false" selection-start-line="21" selection-start-column="65" selection-end-line="21" selection-end-column="65" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/js/account-script.js" />
-    <entry file="file://$PROJECT_DIR$/js/game-info-script.js" />
     <entry file="file://$PROJECT_DIR$/ajax/players-number-ajax.php" />
-    <entry file="file://$PROJECT_DIR$/inc/footer.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="144">
-          <caret line="13" column="63" lean-forward="false" selection-start-line="13" selection-start-column="63" selection-end-line="13" selection-end-column="63" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/account.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="389">
-          <caret line="1144" column="25" lean-forward="false" selection-start-line="1144" selection-start-column="25" selection-end-line="1144" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/expired-link.php" />
-    <entry file="file://$PROJECT_DIR$/ajax/play.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1836">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/rank.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="91" column="24" lean-forward="false" selection-start-line="91" selection-start-column="24" selection-end-line="91" selection-end-column="24" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/forgot-password.php" />
     <entry file="file://$PROJECT_DIR$/function.php">
       <provider selected="true" editor-type-id="text-editor">
@@ -1061,7 +1217,6 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/under_construction.php" />
     <entry file="file://$PROJECT_DIR$/password-reset.php" />
-    <entry file="file://$PROJECT_DIR$/password-reset-email-send.php" />
     <entry file="file://$PROJECT_DIR$/js/registration-script.js" />
     <entry file="file://$PROJECT_DIR$/help.php">
       <provider selected="true" editor-type-id="text-editor">
@@ -1109,31 +1264,10 @@
         <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/inc/header.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-488">
-          <caret line="68" column="32" lean-forward="true" selection-start-line="68" selection-start-column="32" selection-end-line="68" selection-end-column="32" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/user-stats.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="281">
-          <caret line="377" column="40" lean-forward="false" selection-start-line="377" selection-start-column="35" selection-end-line="377" selection-end-column="40" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/login.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="576">
           <caret line="37" column="16" lean-forward="false" selection-start-line="37" selection-start-column="16" selection-end-line="44" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/Pusher.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="234">
-          <caret line="19" column="5" lean-forward="false" selection-start-line="19" selection-start-column="5" selection-end-line="19" selection-end-column="5" />
         </state>
       </provider>
     </entry>
@@ -1144,47 +1278,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/game-info.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="7038">
-          <caret line="391" column="26" lean-forward="false" selection-start-line="391" selection-start-column="26" selection-end-line="391" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/secure_php/end_game.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="864">
-          <caret line="48" column="56" lean-forward="false" selection-start-line="48" selection-start-column="56" selection-end-line="48" selection-end-column="56" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bin/push-server.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="378">
-          <caret line="26" column="13" lean-forward="false" selection-start-line="26" selection-start-column="13" selection-end-line="26" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/games-history.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="360">
-          <caret line="94" column="20" lean-forward="false" selection-start-line="94" selection-start-column="20" selection-end-line="94" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/css/style.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="8100">
-          <caret line="450" column="1" lean-forward="false" selection-start-line="450" selection-start-column="1" selection-end-line="450" selection-end-column="1" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/globals.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="144">
           <caret line="13" column="63" lean-forward="false" selection-start-line="13" selection-start-column="63" selection-end-line="13" selection-end-column="63" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1192,45 +1289,364 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="324">
           <caret line="23" column="94" lean-forward="false" selection-start-line="23" selection-start-column="57" selection-end-line="23" selection-end-column="94" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/rank.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="6210">
+          <caret line="345" column="41" lean-forward="false" selection-start-line="345" selection-start-column="37" selection-end-line="345" selection-end-column="43" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/composer.lock">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Pusher.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="234">
+          <caret line="19" column="5" lean-forward="false" selection-start-line="19" selection-start-column="5" selection-end-line="19" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vendor/composer/installed.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="157">
+          <caret line="619" column="40" lean-forward="false" selection-start-line="619" selection-start-column="40" selection-end-line="619" selection-end-column="40" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bin/push-server.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="234">
+          <caret line="18" column="0" lean-forward="false" selection-start-line="18" selection-start-column="0" selection-end-line="18" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/actions/confirm-email.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="162">
+          <caret line="9" column="25" lean-forward="false" selection-start-line="9" selection-start-column="25" selection-end-line="9" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/composer.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="234">
+          <caret line="13" column="0" lean-forward="false" selection-start-line="13" selection-start-column="0" selection-end-line="13" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vendor/autoload.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/password-reset-email-send.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="774">
+          <caret line="43" column="72" lean-forward="false" selection-start-line="43" selection-start-column="72" selection-end-line="43" selection-end-column="72" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/games-history.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="162">
+          <caret line="9" column="0" lean-forward="true" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/game-info.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="144">
+          <caret line="8" column="0" lean-forward="true" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ajax/check-balance.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="54">
+          <caret line="8" column="0" lean-forward="false" selection-start-line="8" selection-start-column="0" selection-end-line="41" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ajax/validate-address.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="15" column="24" lean-forward="false" selection-start-line="15" selection-start-column="24" selection-end-line="15" selection-end-column="24" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/actions/withdraw.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="468">
+          <caret line="26" column="22" lean-forward="false" selection-start-line="26" selection-start-column="22" selection-end-line="26" selection-end-column="22" />
           <folding>
-            <marker date="1526351996945" expanded="true" signature="607:754" ph="SELECT count... chat" />
-            <marker date="1526351996945" expanded="true" signature="957:1067" ph="INSERT INTO chat... " />
-            <marker date="1526351996945" expanded="true" signature="1220:1279" ph="SELECT senta... chat" />
+            <marker date="1527475122531" expanded="true" signature="4020:4151" ph="INSERT INTO withdrawal... " />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/js/index-script.js">
+    <entry file="file://$PROJECT_DIR$/actions/loading-registration.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17280">
-          <caret line="960" column="16" lean-forward="false" selection-start-line="960" selection-start-column="16" selection-end-line="962" selection-end-column="17" />
+        <state relative-caret-position="281">
+          <caret line="132" column="29" lean-forward="false" selection-start-line="132" selection-start-column="29" selection-end-line="132" selection-end-column="29" />
+          <folding>
+            <element signature="e#108#142#0#PHP" expanded="true" />
+            <marker date="1527299245434" expanded="true" signature="1738:1789" ph="SELECT user_... user" />
+            <marker date="1527299245434" expanded="true" signature="2419:2464" ph="SELECT user_... user" />
+            <marker date="1527299245434" expanded="true" signature="4617:4848" ph="INSERT INTO user... " />
+            <marker date="1527299245434" expanded="true" signature="5094:5140" ph="UPDATE stats... " />
+            <marker date="1527299245434" expanded="true" signature="5266:5317" ph="SELECT user_... user" />
+            <marker date="1527299245434" expanded="true" signature="5819:5998" ph="INSERT INTO email_confirmation... " />
+            <marker date="1527299245434" expanded="true" signature="7618:7647" ph="..." />
+            <marker date="1527299245434" expanded="true" signature="7648:8594" ph="..." />
+            <marker date="1527299245434" expanded="false" signature="7666:7683" ph="..." />
+            <marker date="1527299245434" expanded="false" signature="7775:7819" ph="..." />
+            <marker date="1527299245434" expanded="true" signature="7820:8487" ph="..." />
+            <marker date="1527299245434" expanded="true" signature="7832:7994" ph="..." />
+            <marker date="1527299245434" expanded="false" signature="7856:7867" ph="..." />
+            <marker date="1527299245434" expanded="true" signature="8123:8307" ph="..." />
+            <marker date="1527299245434" expanded="false" signature="8506:8553" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/account.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1037">
+          <caret line="829" column="68" lean-forward="true" selection-start-line="829" selection-start-column="68" selection-end-line="829" selection-end-column="68" />
+          <folding>
+            <marker date="1527477466373" expanded="true" signature="985:1034" ph="SELECT enabl... user" />
+            <marker date="1527477466373" expanded="true" signature="1287:1347" ph="SELECT bit_a... user" />
+            <marker date="1527477466373" expanded="true" signature="1619:1752" ph="SELECT COUNT... email_update" />
+            <marker date="1527477466373" expanded="true" signature="2230:2307" ph="SELECT COUNT... transfer" />
+            <marker date="1527477466373" expanded="true" signature="2230:2326" ph="SELECT COUNT... transfer" />
+            <marker date="1527477466373" expanded="true" signature="2230:2343" ph="SELECT COUNT... transfer" />
+            <marker date="1527477466373" expanded="true" signature="3078:3159" ph="SELECT COUNT... withdrawal" />
+            <marker date="1527477466373" expanded="true" signature="5159:5328" ph="SELECT user_... withdrawal" />
+            <marker date="1527477466373" expanded="true" signature="6747:7075" ph="SELECT u.use... transfer" />
+            <marker date="1527477466373" expanded="true" signature="6757:6809" ph="SELECT usern... user" />
+            <marker date="1527477466373" expanded="true" signature="6822:6874" ph="SELECT usern... user" />
+            <marker date="1527477466373" expanded="true" signature="14741:15067" ph="..." />
+            <marker date="1527477466373" expanded="true" signature="14773:15067" ph="..." />
+            <marker date="1527477466373" expanded="true" signature="14885:15067" ph="..." />
+            <marker date="1527477466373" expanded="true" signature="14955:15067" ph="..." />
+            <marker date="1527477466373" expanded="true" signature="15164:15423" ph="..." />
+            <marker date="1527477466373" expanded="true" signature="15226:15423" ph="..." />
+            <marker date="1527477466373" expanded="true" signature="15309:15423" ph="..." />
+            <marker date="1527477466373" expanded="true" signature="37762:37835" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/inc/header.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="767">
+          <caret line="142" column="9" lean-forward="false" selection-start-line="142" selection-start-column="9" selection-end-line="142" selection-end-column="9" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/inc/footer.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="684">
+          <caret line="43" column="7" lean-forward="false" selection-start-line="43" selection-start-column="7" selection-end-line="43" selection-end-column="7" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/css/style.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="360">
+          <caret line="232" column="18" lean-forward="false" selection-start-line="232" selection-start-column="18" selection-end-line="232" selection-end-column="18" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test_bitcoin.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="558">
+          <caret line="36" column="0" lean-forward="true" selection-start-line="36" selection-start-column="0" selection-end-line="36" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/secure_php/end_game.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="504">
+          <caret line="158" column="71" lean-forward="false" selection-start-line="158" selection-start-column="71" selection-end-line="158" selection-end-column="71" />
+          <folding>
+            <marker date="1527495171986" expanded="true" signature="815:885" ph="SELECT game_... game" />
+            <marker date="1527495171986" expanded="true" signature="1167:1260" ph="SELECT COUNT... numberxuser" />
+            <marker date="1527495171986" expanded="true" signature="1635:1753" ph="INSERT INTO game... " />
+            <marker date="1527495171986" expanded="true" signature="1917:1965" ph="UPDATE stats... " />
+            <marker date="1527495171986" expanded="true" signature="2129:2250" ph="UPDATE game... " />
+            <marker date="1527495171986" expanded="true" signature="2427:3365" ph="SELECT nxf.n... number_id" />
+            <marker date="1527495171986" expanded="true" signature="2494:2683" ph="SELECT numbe... numberxuser" />
+            <marker date="1527495171986" expanded="true" signature="2784:3134" ph="SELECT frequ... number_id" />
+            <marker date="1527495171986" expanded="true" signature="2872:3061" ph="SELECT numbe... numberxuser" />
+            <marker date="1527495171986" expanded="true" signature="3668:3856" ph="SELECT COUNT... numberxuser" />
+            <marker date="1527495171986" expanded="true" signature="4902:4931" ph="SELECT max_j... stats" />
+            <marker date="1527495171986" expanded="true" signature="5200:5239" ph="UPDATE stats... " />
+            <marker date="1527495171986" expanded="true" signature="5404:5459" ph="UPDATE stats... " />
+            <marker date="1527495171986" expanded="true" signature="5639:5771" ph="UPDATE game... " />
+            <marker date="1527495171986" expanded="true" signature="6038:6436" ph="UPDATE user... " />
+            <marker date="1527495171986" expanded="true" signature="6740:6875" ph="SELECT usern... user" />
+            <marker date="1527495171986" expanded="true" signature="8659:8891" ph="SELECT game_... game" />
+            <marker date="1527495171986" expanded="true" signature="9348:9618" ph="SELECT u.use... user" />
+            <marker date="1527495171986" expanded="true" signature="9348:9620" ph="SELECT u.use... user" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ajax/balance-numbers-ajax.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="522">
+          <caret line="29" column="37" lean-forward="false" selection-start-line="29" selection-start-column="37" selection-end-line="29" selection-end-column="37" />
+          <folding>
+            <marker date="1527495211774" expanded="true" signature="1340:1410" ph="SELECT game_... game" />
+            <marker date="1527495211774" expanded="true" signature="1588:1744" ph="SELECT COUNT... numberxuser" />
+            <marker date="1527495211774" expanded="true" signature="1661:1720" ph="SELECT user_... user" />
+            <marker date="1527495211774" expanded="true" signature="1990:2124" ph="SELECT numbe... numberxuser" />
+            <marker date="1527495211774" expanded="true" signature="2041:2100" ph="SELECT user_... user" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/actions/transfer.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="594">
+          <caret line="123" column="63" lean-forward="true" selection-start-line="120" selection-start-column="20" selection-end-line="123" selection-end-column="63" />
+          <folding>
+            <marker date="1527485157765" expanded="true" signature="1481:1532" ph="SELECT user_... user" />
+            <marker date="1527485157765" expanded="true" signature="3926:4052" ph="INSERT INTO transfer... " />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/secure_php/timer.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="144">
+          <caret line="13" column="42" lean-forward="false" selection-start-line="13" selection-start-column="8" selection-end-line="13" selection-end-column="42" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/index.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="574">
-          <caret line="580" column="18" lean-forward="false" selection-start-line="580" selection-start-column="18" selection-end-line="580" selection-end-column="18" />
+        <state relative-caret-position="-259">
+          <caret line="281" column="61" lean-forward="true" selection-start-line="281" selection-start-column="61" selection-end-line="281" selection-end-column="61" />
           <folding>
-            <marker date="1526357637328" expanded="true" signature="522:584" ph="SELECT game_... game" />
-            <marker date="1526357637328" expanded="true" signature="748:816" ph="SELECT COUNT... numberxuser" />
-            <marker date="1526357637328" expanded="true" signature="988:1039" ph="SELECT messa... chat" />
-            <marker date="1526357637328" expanded="true" signature="1263:1345" ph="SELECT numbe... numberxuser" />
-            <marker date="1526357637328" expanded="true" signature="1679:1784" ph="SELECT COUNT... numberxuser" />
-            <marker date="1526357637328" expanded="true" signature="2385:2649" ph="SELECT game_... game" />
-            <marker date="1526357637328" expanded="true" signature="2801:2900" ph="SELECT game_... game" />
-            <marker date="1526357637328" expanded="true" signature="3219:3476" ph="SELECT u.use... user" />
-            <marker date="1526357637328" expanded="true" signature="3647:3721" ph="SELECT COUNT... gamexuser" />
-            <marker date="1526357637328" expanded="true" signature="4356:4395" ph="..." />
+            <element signature="n#div#1;n#div#0;n#div#2;n#div#0;n#main#0;n#!!top" expanded="false" />
+            <marker date="1527534208240" expanded="true" signature="902:964" ph="SELECT game_... game" />
+            <marker date="1527534208240" expanded="true" signature="1414:1465" ph="SELECT messa... chat" />
+            <marker date="1527534208240" expanded="true" signature="1689:1771" ph="SELECT numbe... numberxuser" />
+            <marker date="1527534208240" expanded="true" signature="2105:2210" ph="SELECT COUNT... numberxuser" />
+            <marker date="1527534208240" expanded="true" signature="2811:3075" ph="SELECT game_... game" />
+            <marker date="1527534208240" expanded="true" signature="3227:3326" ph="SELECT game_... game" />
+            <marker date="1527534208240" expanded="true" signature="3645:3902" ph="SELECT u.use... user" />
+            <marker date="1527534208240" expanded="true" signature="4073:4147" ph="SELECT COUNT... gamexuser" />
+            <marker date="1527534208240" expanded="true" signature="23017:23029" ph="..." />
+            <marker date="1527534208240" expanded="true" signature="23030:23180" ph="..." />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ajax/play.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="731">
+          <caret line="198" column="43" lean-forward="false" selection-start-line="198" selection-start-column="43" selection-end-line="198" selection-end-column="43" />
+          <folding>
+            <marker date="1527534622128" expanded="true" signature="3173:3227" ph="SELECT game_... game" />
+            <marker date="1527534622128" expanded="true" signature="3484:3590" ph="SELECT numbe... numberxuser" />
+            <marker date="1527534622128" expanded="true" signature="3880:4022" ph="INSERT INTO numberxuser... " />
+            <marker date="1527534622128" expanded="true" signature="4360:4485" ph="UPDATE user... " />
+            <marker date="1527534622128" expanded="true" signature="4608:4735" ph="INSERT INTO gamexuser... " />
+            <marker date="1527534622128" expanded="true" signature="5007:5175" ph="UPDATE gamexuser... " />
+            <marker date="1527534622128" expanded="true" signature="5902:5983" ph="SELECT numbe... numberxuser" />
+            <marker date="1527534622128" expanded="true" signature="6357:6509" ph="SELECT COUNT... numberxuser" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/js/index-script.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="808">
+          <caret line="846" column="0" lean-forward="true" selection-start-line="846" selection-start-column="0" selection-end-line="846" selection-end-column="0" />
+          <folding>
+            <marker date="1527535474047" expanded="true" signature="34913:34925" ph="..." />
+            <marker date="1527535474047" expanded="true" signature="35149:35161" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/expired-link.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/database">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="866">
-          <caret line="733" column="31" lean-forward="false" selection-start-line="733" selection-start-column="31" selection-end-line="733" selection-end-column="31" />
+        <state relative-caret-position="2144">
+          <caret line="667" column="47" lean-forward="false" selection-start-line="667" selection-start-column="47" selection-end-line="667" selection-end-column="47" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/js/account-script.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="36">
+          <caret line="2" column="126" lean-forward="false" selection-start-line="2" selection-start-column="126" selection-end-line="2" selection-end-column="126" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vendor/phpmailer/phpmailer/README.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="187">
+            <caret line="42" column="21" lean-forward="false" selection-start-line="42" selection-start-column="21" selection-end-line="42" selection-end-column="21" />
+            <folding>
+              <marker date="1522158585000" expanded="false" signature="4358:4423" ph="..." />
+              <marker date="1522158585000" expanded="false" signature="6841:6906" ph="..." />
+              <marker date="1522158585000" expanded="true" signature="7069:8665" ph="..." />
+              <marker date="1522158585000" expanded="true" signature="8689:8762" ph="..." />
+            </folding>
+          </first_editor>
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/user-stats.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="196">
+          <caret line="144" column="44" lean-forward="false" selection-start-line="144" selection-start-column="44" selection-end-line="144" selection-end-column="44" />
+          <folding>
+            <marker date="1527299105899" expanded="true" signature="1820:1975" ph="SELECT u.net... user" />
+            <marker date="1527299105899" expanded="true" signature="2196:2494" ph="SELECT FIND_... user" />
+            <marker date="1527299105899" expanded="true" signature="2246:2393" ph="SELECT GROUP... user" />
+            <marker date="1527299105899" expanded="true" signature="2698:2855" ph="SELECT COUNT... gamexuser" />
+            <marker date="1527299105899" expanded="true" signature="2803:2854" ph="SELECT user_... user" />
+            <marker date="1527299105899" expanded="true" signature="3637:4339" ph="SELECT gu.ga... user" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vendor/composer/autoload_static.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="327">
+          <caret line="175" column="21" lean-forward="false" selection-start-line="175" selection-start-column="21" selection-end-line="175" selection-end-column="21" />
           <folding />
         </state>
       </provider>

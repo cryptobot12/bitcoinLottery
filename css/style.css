@@ -140,6 +140,12 @@ main {
     margin: .82rem 0 .656rem 0;
 }
 
+.h7Span {
+    font-size: 1.01rem;
+    line-height: 190%;
+    margin: .82rem 0 .656rem 0;
+}
+
 .modal-title-np {
     font-size: 1.64rem;
     line-height: 178%;
@@ -223,6 +229,10 @@ ul.browser-default li {
     border-bottom: 2px solid #ff8f00 !important;
 }
 
+.dropdown-content li>a, .dropdown-content li>span {
+    color: #ff6f00 !important;
+}
+
 .pagination {
     margin-top: 1.5em;
 }
@@ -283,9 +293,18 @@ ul.browser-default li {
     flex: 1;
 }
 
-#chat-space {
-    height: 30vh;
+@media only screen and (min-width: 993px) {
+    #chat-space {
+        height: 30vh;
+    }
 }
+
+@media only screen and (max-width: 601px) {
+    #chat-space {
+        height: 30vh;
+    }
+}
+
 
 #chat-messages {
     overflow-y: hidden;

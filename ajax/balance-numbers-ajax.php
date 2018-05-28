@@ -7,6 +7,8 @@
  */
 session_start();
 
+require_once '/home/luckiestguyever/PhpstormProjects/bitcoinLottery/vendor/autoload.php';
+
 include "../globals.php";
 include "../inc/login_checker.php";
 
@@ -18,11 +20,22 @@ if ($logged_in) {
         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 
+        $driver = new \Nbobtc\Http\Driver\CurlDriver();
+        $driver
+            ->addCurlOption(CURLOPT_VERBOSE, true)
+            ->addCurlOption(CURLOPT_STDERR, '/var/logs/curl.err');
+
+
+        $client = new \Nbobtc\Http\Client('http://puppetmaster:vz6qGFsHBv5auSSDhTPWPktVu@localhost:18332');
+        $client->withDriver($driver);
         //Selecting balance
-        $stmt = $conn->prepare('SELECT balance FROM user WHERE username = :username');
-        $stmt->execute(array('username' => $username));
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
-        $balance = $row['balance'] / 100;
+        //Getting balance
+        $command = new \Nbobtc\Command\Command('getbalance', $username);
+        /** @var \Nbobtc\Http\Message\Response */
+        $response = $client->sendCommand($command);
+        /** @var string */
+        $output = json_decode($response->getBody()->getContents());
+        $balance = $output->result * 1000000;
 
         //Selecting current game
         $stmt = $conn->prepare('SELECT game_id FROM game ORDER BY game_id DESC, game_date DESC LIMIT 1');
@@ -47,8 +60,6 @@ if ($logged_in) {
         foreach ($row as $item) {
             array_push($arrayOfNumbers, $item['number_id']);
         }
-
-        $_SESSION['numbers_list'] = $arrayOfNumbers;
 
         $returnAjax = array('balance' => $balance, 'numbers' => $arrayOfNumbers, 'count' => $numbersCount);
         $jsonAjax = json_encode($returnAjax);

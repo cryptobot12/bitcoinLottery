@@ -1,6 +1,6 @@
 /* EMAIL CHECKER */
 function isEmail(email) {
-    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(String(email).toLowerCase());
 }
 
@@ -8,6 +8,31 @@ $(document).ready(function () {
     M.AutoInit();
 
     $('input#support_subject, textarea#support_content').characterCounter();
+
+    var server_off_minutes = 360;
+    var offset = new Date().getTimezoneOffset();
+    var to = server_off_minutes - offset;
+
+    $('.transfer_time').each(function () {
+
+        var row_time = new Date($(this).html());
+        row_time.setMinutes(row_time.getMinutes() + to);
+        $(this).html($.format.date(row_time, "MMM D, yyyy h:mm a"));
+    });
+
+    $('.withdraw-time').each(function () {
+
+        var row_time = new Date($(this).html() * 1000);
+        row_time.setMinutes(row_time.getMinutes() + to);
+        $(this).html($.format.date(row_time, "MMM D, yyyy h:mm a"));
+    });
+
+    $('.deposit-time').each(function () {
+
+        var row_time = new Date($(this).html() * 1000);
+        row_time.setMinutes(row_time.getMinutes() + to);
+        $(this).html($.format.date(row_time, "MMM D, yyyy h:mm a"));
+    });
 });
 
 /* AJAX EMAIL UNIQUENESS */
@@ -319,12 +344,25 @@ $(function () {
         if (!Number.isInteger(amount)) {
             transferAmountHelper.attr('data-error', "Amount must be an integer number");
             transferAmountInput.addClass('invalid');
+        } else {
+            $.ajax('ajax/check-balance', {
+                    success: function (result) {
+                        var response = JSON.parse(result);
+
+                        if (response['balance'] < transferAmountInput.val()) {
+                            transferAmountInput.addClass('invalid');
+                            transferAmountHelper.attr('data-error', 'Not enough balance');
+                        } else
+                            transferAmountInput.addClass('valid');
+
+                        if (transferUserInput.hasClass('valid') && transferAmountInput.hasClass('valid'))
+                            toggleTransferButton(true);
+                    }
+                    ,
+                    method: 'POST'
+                }
+            );
         }
-        else if (amount <= 100) {
-            transferAmountHelper.attr('data-error', "Amount must be greater than 100");
-            transferAmountInput.addClass('invalid');
-        } else
-            transferAmountInput.addClass('valid');
     }
 
     var username = transferUserInput.val();
@@ -358,7 +396,7 @@ $(function () {
                 console.log("Could not verify if user exists");
             },
             method: 'POST'
-        })
+        });
     }
 
 
@@ -414,6 +452,13 @@ $(function () {
         }, 1800);
     });
 
+    var delayTransferAmount = (function () {
+        var timer = 0;
+        return function (callback, ms) {
+            clearTimeout(timer);
+            timer = setTimeout(callback, ms);
+        };
+    })();
 
     transferAmountInput.on('input keyup', function () {
         transferAmountInput.removeClass('invalid');
@@ -421,29 +466,45 @@ $(function () {
 
         toggleTransferButton(false);
 
+        delayTransferAmount(function () {
+            var amount = parseFloat(transferAmountInput.val());
 
-        var amount = parseFloat(transferAmountInput.val());
+            //Not empty inputs
+            if (transferAmountInput.val().length > 0) {
+                if (!Number.isInteger(amount)) {
+                    transferAmountHelper.attr('data-error', "Amount must be an integer number");
+                    transferAmountInput.addClass('invalid');
+                } else {
+                    $.ajax('ajax/check-balance', {
+                            success: function (result) {
+                                var response = JSON.parse(result);
 
-        //Not empty inputs
-        if (transferAmountInput.val().length > 0) {
-            if (!Number.isInteger(amount)) {
-                transferAmountHelper.attr('data-error', "Amount must be an integer number");
-                transferAmountInput.addClass('invalid');
+                                if (response['balance'] < transferAmountInput.val()) {
+                                    transferAmountInput.addClass('invalid');
+                                    transferAmountHelper.attr('data-error', 'Not enough balance');
+                                } else
+                                    transferAmountInput.addClass('valid');
+
+                                if (transferUserInput.hasClass('valid') && transferAmountInput.hasClass('valid'))
+                                    toggleTransferButton(true);
+                            }
+                            ,
+                            method: 'POST'
+                        }
+                    );
+                }
             }
-            else if (amount <= 100) {
-                transferAmountHelper.attr('data-error', "Amount must be greater than 100");
-                transferAmountInput.addClass('invalid');
-            } else
-                transferAmountInput.addClass('valid');
-        }
 
-        if (transferUserInput.hasClass('valid') && transferAmountInput.hasClass('valid'))
-            toggleTransferButton(true);
+            if (transferUserInput.hasClass('valid') && transferAmountInput.hasClass('valid'))
+                toggleTransferButton(true);
+        }, 1800)
+
 
 
     });
 
-});
+})
+;
 
 /* Withdraw button toggle */
 function toggleWithdrawButton(isEnabled) {
@@ -464,8 +525,10 @@ function toggleWithdrawButton(isEnabled) {
 $(function () {
     /* Inputs */
     var withdrawalAmountInput = $("#withdraw_amount");
+    var withdrawalAddressInput = $("#withdraw_address");
 
     var withdrawalAmountHelper = $("#withdraw_amount_helper");
+    var withdrawalAddressHelper = $("#withdraw_address_helper");
 
     var amount = parseFloat(withdrawalAmountInput.val());
 
@@ -475,14 +538,31 @@ $(function () {
             withdrawalAmountHelper.attr('data-error', "Amount must be an integer number");
             withdrawalAmountInput.addClass('invalid');
         }
-        else if (amount <= 100) {
-            withdrawalAmountHelper.attr('data-error', "Amount must be greater than 100");
+        else if (amount <= 200) {
+            withdrawalAmountHelper.attr('data-error', "Amount must be greater than 200");
             withdrawalAmountInput.addClass('invalid');
-        } else
-            withdrawalAmountInput.addClass('valid');
+        } else {
+            $.ajax('ajax/check-balance', {
+                    success: function (result) {
+                        var response = JSON.parse(result);
 
-        if (withdrawalAmountInput.hasClass('valid'))
-            toggleWithdrawButton(true);
+                        if (response['balance'] < amount) {
+                            withdrawalAmountInput.addClass('invalid');
+                            withdrawalAmountHelper.attr('data-error', 'Not enough balance');
+                        } else
+                            withdrawalAmountInput.addClass('valid');
+
+
+                        if (withdrawalAmountInput.hasClass('valid'))
+                            toggleWithdrawButton(true);
+                    }
+                    ,
+                    method: 'POST'
+                }
+            );
+        }
+
+
     }
 
     withdrawalAmountInput.on('input keyup', function () {
@@ -498,16 +578,75 @@ $(function () {
             withdrawalAmountHelper.attr('data-error', "Amount must be an integer number");
             withdrawalAmountInput.addClass('invalid');
         }
-        else if (amount <= 100) {
-            withdrawalAmountHelper.attr('data-error', "Amount must be greater than 100");
+        else if (amount <= 200) {
+            withdrawalAmountHelper.attr('data-error', "Amount must be greater than 200");
             withdrawalAmountInput.addClass('invalid');
-        } else
-            withdrawalAmountInput.addClass('valid');
+        } else {
+            $.ajax('ajax/check-balance', {
+                    success: function (result) {
+                        var response = JSON.parse(result);
 
-        if (withdrawalAmountInput.hasClass('valid'))
-            toggleWithdrawButton(true);
+                        if (response['balance'] < amount) {
+                            withdrawalAmountInput.addClass('invalid');
+                            withdrawalAmountHelper.attr('data-error', 'Not enough balance');
+                        } else
+                            withdrawalAmountInput.addClass('valid');
+
+                        if (withdrawalAddressInput.hasClass('valid') && withdrawalAmountInput.hasClass('valid'))
+                            toggleWithdrawButton(true);
+                    }
+                    ,
+                    method: 'POST'
+                }
+            );
+        }
+
+    });
+
+    var delayWithdrawAddress = (function () {
+        var timer = 0;
+        return function (callback, ms) {
+            clearTimeout(timer);
+            timer = setTimeout(callback, ms);
+        };
+    })();
 
 
+    withdrawalAddressInput.on('keyup input', function () {
+        withdrawalAddressInput.removeClass('invalid');
+        withdrawalAddressInput.removeClass('valid');
+
+        toggleWithdrawButton(false);
+
+        var address = withdrawalAddressInput.val();
+
+        delayWithdrawAddress(function () {
+
+            if (address.length > 0) {
+                $.ajax('ajax/validate-address', {
+                    success: function (result) {
+                        var response = JSON.parse(result);
+
+                        if (!response['is_valid']) {
+                            withdrawalAddressInput.addClass('invalid');
+                            withdrawalAddressHelper.attr('data-error', 'Invalid Bitcoin address');
+                        }
+                        else {
+                            withdrawalAddressInput.addClass('valid');
+                        }
+
+                        if (withdrawalAddressInput.hasClass('valid') && withdrawalAmountInput.hasClass('valid'))
+                            toggleWithdrawButton(true);
+
+                    },
+                    data: {
+                        wallet_address: address
+                    },
+                    method: 'POST'
+                })
+            }
+
+        }, 1800);
     });
 
 });

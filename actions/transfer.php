@@ -7,6 +7,8 @@
  */
 session_start();
 
+require_once '/home/luckiestguyever/PhpstormProjects/bitcoinLottery/vendor/autoload.php';
+
 include '../globals.php';
 include '../function.php';
 include '../inc/login_checker.php';
@@ -14,17 +16,8 @@ include '../inc/login_checker.php';
 
 $amount = htmlspecialchars($_POST['transfer_amount']);
 $to_user = htmlspecialchars($_POST['transfer_user']);
-$hash = rand_string(64);
-/*
- * HERE YOU SHOULD DO SOMETHING TO REPLACE THIS FAKE HASH
- *
- *
- *
- *
- * */
 
 $recaptcha_response = $_POST['g-recaptcha-response'];
-var_dump($recaptcha_response);
 
 /* Captcha verifying */
 $privatekey = "6Lf1d0EUAAAAAPhwWXktY_b1rBWR_ClydgLfj8g1";
@@ -44,8 +37,6 @@ $options = array(
 $context = stream_context_create($options);
 $verify = file_get_contents($url, false, $context);
 $captcha_success = json_decode($verify);
-
-var_dump($captcha_success);
 
 if ($logged_in) {
     if ($captcha_success->success) {
@@ -74,17 +65,27 @@ if ($logged_in) {
                     } else
                         $user_exists = false;
 
-                if (ctype_digit($amount) && $amount > 100) {
+                $driver = new \Nbobtc\Http\Driver\CurlDriver();
+                $driver
+                    ->addCurlOption(CURLOPT_VERBOSE, true)
+                    ->addCurlOption(CURLOPT_STDERR, '/var/logs/curl.err');
+
+                $client = new \Nbobtc\Http\Client('http://puppetmaster:vz6qGFsHBv5auSSDhTPWPktVu@localhost:18332');
+                $client->withDriver($driver);
+                if (ctype_digit($amount)) {
                     //Checking balance
-                    $stmt = $conn->prepare('SELECT balance FROM user WHERE user_id = :user_id');
-                    $stmt->execute(array('user_id' => $user_id));
-                    $result = $stmt->fetch(PDO::FETCH_ASSOC);
-                    $balance = $result['balance'];
 
-                    var_dump($balance);
-                    echo $balance;
+                    $command = new \Nbobtc\Command\Command('getbalance', $username);
 
-                    if ($balance >= ($amount * 100 + 10000))
+                    /** @var \Nbobtc\Http\Message\Response */
+                    $response = $client->sendCommand($command);
+
+                    /** @var string */
+                    $output = json_decode($response->getBody()->getContents());
+
+                    $balance = $output->result;
+                    $amount_in_bitcoin = $amount / 1000000;
+                    if ($balance >= $amount_in_bitcoin)
                         $not_enough_balance = false;
                     else
                         $not_enough_balance = true;
@@ -94,7 +95,7 @@ if ($logged_in) {
                 echo "Connection failed: " . $e->getMessage();
             }
 
-            if (ctype_digit($amount) && $amount > 100 && $user_exists && !$not_enough_balance && !$is_the_same_user) {
+            if (ctype_digit($amount) && $user_exists && !$not_enough_balance && !$is_the_same_user) {
 
                 try {
                     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $dbuser, $dbpass);
@@ -102,16 +103,11 @@ if ($logged_in) {
                     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                     $conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 
-                    $amount = $amount * 100;
-
+                    $amount_in_bitcoin = $amount / 1000000;
                     //Insert into transfer history
-                    $stmt = $conn->prepare('INSERT INTO transfer(user_id, to_user, hash, request_date, completed_on, amount)
-         VALUES (:user_id, :to_user, :hash, CURRENT_DATE(), NULL, :amount)');
-                    $stmt->execute(array('user_id' => $user_id, 'to_user' => $to_user_id, 'hash' => $hash, 'amount' => $amount));
-
-                    //Updating user balance
-                    $stmt = $conn->prepare('UPDATE user SET balance = balance - :to_subtract WHERE user_id = :user_id');
-                    $stmt->execute(array('to_subtract' => $amount + 10000, 'user_id' => $user_id));
+                    $stmt = $conn->prepare('INSERT INTO transfer(user_id, to_user, transfer_time, amount)
+         VALUES (:user_id, :to_user, CURRENT_TIMESTAMP, :amount)');
+                    $stmt->execute(array('user_id' => $user_id, 'to_user' => $to_user_id, 'amount' => $amount));
 
                     /*
                      *
@@ -119,7 +115,15 @@ if ($logged_in) {
                      *  BITCOIN TRANSACTION HERE
                      *
                      *
-                     * */
+                     */
+
+
+                    $command = new \Nbobtc\Command\Command('move', array($username, $to_user, $amount_in_bitcoin));
+
+                    /** @var \Nbobtc\Http\Message\Response */
+                    $response = $client->sendCommand($command);
+
+                     /*         * */
 
 
                     $_SESSION['account_management_success'] = 4;

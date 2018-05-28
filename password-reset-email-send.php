@@ -41,7 +41,7 @@ include "inc/header.php";
                 <?php endif; ?>
                 <div class="card">
                     <div class="card-content">
-                        <span class="card-title"><b>Email Confirmation</b></span>
+                        <span class="card-title"><b>Password Reset Email</b></span>
                         <p>A link was sent to your email account. Click on it to reset your password.
                             You might need to check your junk folder.</p>
                     </div>

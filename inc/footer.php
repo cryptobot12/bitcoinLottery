@@ -21,9 +21,13 @@
                     <li><a class="black-text text-lighten-3" href="<?php echo $base_dir; ?>rank">Ranking</a></li>
                     <li><a class="black-text text-lighten-3" href="<?php echo $base_dir; ?>stats">Server Stats</a></li>
                     <li><a class="black-text text-lighten-3" href="<?php echo $base_dir; ?>game_info">Game Info</a></li>
-                    <li><a class="black-text text-lighten-3" href="<?php echo $base_dir; ?>games_history">Games history</a></li>
-                    <li><a class="black-text text-lighten-3" href="<?php echo $base_dir; ?>user_stats">User Stats</a></li>
-                    <li><a class="black-text text-lighten-3" href="<?php echo $base_dir; ?>registration">Registration</a></li>
+                    <li><a class="black-text text-lighten-3" href="<?php echo $base_dir; ?>games_history">Games
+                            History</a></li>
+                    <li><a class="black-text text-lighten-3" href="<?php echo $base_dir; ?>user_stats">User Stats</a>
+                    </li>
+                    <li><a class="black-text text-lighten-3"
+                           href="<?php echo $base_dir; ?>registration">Registration</a></li>
+                    <li><a class="black-text text-lighten-3" href="<?php echo $base_dir; ?>account">My Account</a></li>
                 </ul>
             </div>
         </div>
@@ -34,5 +38,10 @@
         </div>
     </div>
 </footer>
+<script>
+    $(document).ready(function () {
+        $('.dropdown-trigger').dropdown({constrainWidth: false});
+    });
+</script>
 </body>
 </html>

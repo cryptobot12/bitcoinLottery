@@ -7,6 +7,8 @@
  */
 session_start();
 
+require_once '/home/luckiestguyever/PhpstormProjects/bitcoinLottery/vendor/autoload.php';
+
 include "function.php";
 include "globals.php";
 include "inc/login_checker.php";
@@ -14,6 +16,14 @@ include "inc/login_checker.php";
 $rowPerPage = 7;
 
 if ($logged_in) {
+
+    $driver = new \Nbobtc\Http\Driver\CurlDriver();
+    $driver
+        ->addCurlOption(CURLOPT_VERBOSE, true)
+        ->addCurlOption(CURLOPT_STDERR, '/var/logs/curl.err');
+
+    $client = new \Nbobtc\Http\Client('http://puppetmaster:vz6qGFsHBv5auSSDhTPWPktVu@localhost:18332');
+    $client->withDriver($driver);
 
     try {
         $conn = new PDO("mysql:host=$servername;dbname=$dbname", $dbuser, $dbpass);
@@ -49,41 +59,10 @@ if ($logged_in) {
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
             $current_time = $result['NOW()'];
 
-            //Deposits pageCount
-            $stmt = $conn->prepare('SELECT COUNT(hash) AS the_count FROM deposit WHERE user_id = :user_id');
-            $stmt->execute(array('user_id' => $user_id));
-            $result = $stmt->fetch(PDO::FETCH_ASSOC);
-            $depositRowCount = $result['the_count'];
-            $pageCount = ceil($depositRowCount / $rowPerPage);
-
-            if (!empty($_GET['p'])) {
-                $page = htmlspecialchars($_GET['p']);
-                filterOnlyNumber($page, 1, $pageCount, 1);
-                $page_deposit_parameter = $page;
-            } else {
-                $page = 1;
-                $page_deposit_parameter = 0;
-            }
-
-            //Withdraws pageCount
-            $stmt = $conn->prepare('SELECT COUNT(hash) AS the_count FROM withdrawal WHERE user_id = :user_id');
-            $stmt->execute(array('user_id' => $user_id));
-            $result = $stmt->fetch(PDO::FETCH_ASSOC);
-            $withdrawRowCount = $result['the_count']; //Number of pages withdraw
-            $pageWithdrawCount = ceil($withdrawRowCount / $rowPerPage); //Number of pages
-
-            if (!empty($_GET['pw'])) {
-                $pageWithdraw = htmlspecialchars($_GET['pw']);
-                filterOnlyNumber($pageWithdraw, 1, $pageWithdrawCount, 1);
-                $page_withdraw_parameter = $pageWithdraw;
-            } else {
-                $pageWithdraw = 1;
-                $page_withdraw_parameter = 0;
-            }
-
             //Transfers pageCount
-            $stmt = $conn->prepare('SELECT COUNT(transfer_id) AS the_count FROM transfer WHERE user_id = :user_id');
-            $stmt->execute(array('user_id' => $user_id));
+            $stmt = $conn->prepare('SELECT COUNT(transfer_id) AS the_count FROM transfer WHERE user_id = :user_id1
+            OR to_user = :user_id2');
+            $stmt->execute(array('user_id1' => $user_id, 'user_id2' => $user_id));
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
             $transferRowCount = $result['the_count']; //Number of pages transfer
             $pageTransferCount = ceil($transferRowCount / $rowPerPage); //Number of pages
@@ -97,27 +76,107 @@ if ($logged_in) {
                 $page_transfer_parameter = 0;
             }
 
+            //Withdraws pageCount
+            $stmt = $conn->prepare('SELECT COUNT(withdrawal_id) AS the_count FROM withdrawal WHERE user_id = :user_id');
+            $stmt->execute(array('user_id' => $user_id));
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            $withdrawRowCount = $result['the_count']; //Number of pages withdraw
+            $pageWithdrawCount = ceil($withdrawRowCount / $rowPerPage); //Number of pages
+            if (!empty($_GET['pw'])) {
+                $pageWithdraw = htmlspecialchars($_GET['pw']);
+                filterOnlyNumber($pageWithdraw, 1, $pageWithdrawCount, 1);
+                $page_withdraw_parameter = $pageWithdraw;
+            } else {
+                $pageWithdraw = 1;
+                $page_withdraw_parameter = 0;
+            }
+
             //Selecting deposits
-            $stmt = $conn->prepare('SELECT hash, amount, DATE_FORMAT(deposit_date, "%M %D, %Y") AS deposit_date, deposit_date AS dpt FROM deposit WHERE user_id = :user_id
-                                      ORDER BY dpt DESC LIMIT :rows OFFSET :the_offset');
-            $stmt->execute(array('user_id' => $user_id, 'rows' => $rowPerPage, 'the_offset' => (($page - 1) * $rowPerPage)));
-            $rowTableDeposits = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            $command = new \Nbobtc\Command\Command('getreceivedbyaddress', $bit_address);
+
+            /** @var \Nbobtc\Http\Message\Response */
+            $response = $client->sendCommand($command);
+
+            /** @var string */
+            $output = json_decode($response->getBody()->getContents());
+
+            $total_deposits = $output->result * 1000000;
+
+//            $array_of_deposits = array();
+//            foreach ($output->result as $transaction) {
+//
+//                if ($transaction->category == "receive") {
+//                    array_push($array_of_deposits, $transaction);
+//                }
+//            }
+
+            //Deposits pageCount
+//            $depositRowCount = count($array_of_deposits);
+//            $pageCount = ceil($depositRowCount / $rowPerPage);
+//
+//            if (!empty($_GET['p'])) {
+//                $page = htmlspecialchars($_GET['p']);
+//                filterOnlyNumber($page, 1, $pageCount, 1);
+//                $page_deposit_parameter = $page;
+//            } else {
+//                $page = 1;
+//                $page_deposit_parameter = 0;
+//            }
+//
+//            $slice_from = ($page - 1) * $rowPerPage;
+//
+//            array_slice($array_of_deposits, $slice_from, $rowPerPage);
 
             //Selecting withdrawals
-            $stmt = $conn->prepare('SELECT hash, amount, DATE_FORMAT(request_date, "%M %D, %Y") AS request_date,
- DATE_FORMAT(completed_on, "%M %D, %Y") AS completed_on, request_date AS rdt FROM withdrawal WHERE user_id = :user_id
-                                      ORDER BY rdt DESC LIMIT :rows OFFSET :the_offset');
+
+            $stmt = $conn->prepare('SELECT user_id, txid, inserted_on FROM withdrawal WHERE user_id = :user_id
+                                      ORDER BY inserted_on DESC LIMIT :rows OFFSET :the_offset');
             $stmt->execute(array('user_id' => $user_id, 'rows' => $rowPerPage, 'the_offset' => (($pageWithdraw - 1) * $rowPerPage)));
             $rowTableWithdraws = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+
+            $array_of_withdrawals = array();
+            foreach ($rowTableWithdraws as $item) {
+
+                $command = new \Nbobtc\Command\Command('gettransaction', $item['txid']);
+
+                /** @var \Nbobtc\Http\Message\Response */
+                $response = $client->sendCommand($command);
+
+                /** @var string */
+                $output = json_decode($response->getBody()->getContents());
+
+                $resultRPC = $output->result;
+                $resultDetails = $resultRPC->details;
+
+                $transaction = new stdClass();
+                $transaction->txid = $item['txid'];
+                $transaction->confirmations = $resultRPC->confirmations;
+                $transaction->timereceived = $resultRPC->timereceived;
+
+                foreach ($resultDetails as $resultDetail) {
+                    if ($resultDetail->category == "send") {
+                        $transaction->amount = $resultDetail->amount;
+                        $transaction->fee = $resultDetail->fee;
+                    }
+                }
+
+                array_push($array_of_withdrawals, $transaction);
+
+            }
+
             //Selecting transfers
-            $stmt = $conn->prepare('SELECT u.username, hash, amount, DATE_FORMAT(request_date, "%M %D, %Y") AS request_date, request_date AS rdt,
- DATE_FORMAT(completed_on, "%M %D, %Y") AS completed_on FROM transfer AS t 
-  INNER JOIN user AS u
-  ON t.to_user = u.user_id
-  WHERE t.user_id = :user_id
-                                      ORDER BY rdt DESC LIMIT :rows OFFSET :the_offset');
-            $stmt->execute(array('user_id' => $user_id, 'rows' => $rowPerPage, 'the_offset' => (($pageTransfer - 1) * $rowPerPage)));
+            $stmt = $conn->prepare('SELECT
+  (SELECT username FROM user WHERE  user_id = t.user_id) from_u,
+  (SELECT username FROM user WHERE  user_id = t.to_user) to_u,
+  amount,
+  transfer_time
+  FROM transfer t
+WHERE t.user_id = :user_id1
+OR t.to_user = :user_id2
+                                      ORDER BY transfer_time DESC LIMIT :rows OFFSET :the_offset');
+            $stmt->execute(array('user_id1' => $user_id, 'user_id2' => $user_id, 'rows' => $rowPerPage, 'the_offset' => (($pageTransfer - 1) * $rowPerPage)));
             $rowTableTransfers = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
@@ -186,11 +245,14 @@ if ($logged_in) {
                 $withdraw_error_message = "Invalid Bitcoin address.";
             elseif (!empty($_SESSION['withdraw_insufficient']) && $_SESSION['withdraw_insufficient'])
                 $withdraw_error_message = "You do not have enough bits to do this transaction.";
+            elseif (!empty($_SESSION['withdraw_blockchain_error']) && $_SESSION['withdraw_blockchain_error'])
+                $withdraw_error_message = $_SESSION['withdraw_blockchain_error'];
             else
                 $withdraw_error_message = "";
 
             $expand_withdraw_collapsible = !empty($_SESSION['expand_withdraw']) ? $_SESSION['expand_withdraw'] : false;
 
+            unset($_SESSION['withdraw_blockchain_error']);
             unset($_SESSION['captcha_failed_withdraw']);
             unset($_SESSION['withdraw_invalid_address']);
             unset($_SESSION['withdraw_insufficient']);
@@ -280,10 +342,10 @@ include "inc/header.php"; ?>
                                                     echo "Password successfully updated.";
                                                     break;
                                                 case 3:
-                                                    echo "Your withdrawal is being processed.";
+                                                    echo "Transfer completed successfully.";
                                                     break;
                                                 case 4:
-                                                    echo "Your transfer is being processed.";
+                                                    echo "Your transaction is being confirmed by the blockchain.";
                                                     break;
                                                 case 5:
                                                     echo "Your support ticket has been successfully created! Please allow up to 72 hours for a response.";
@@ -449,161 +511,7 @@ include "inc/header.php"; ?>
                                                     </div>
                                                 </div>
                                                 <div class="row">
-                                                    <h4>Deposits history</h4>
-                                                    <div class="col s10 offset-s1">
-                                                        <table>
-                                                            <thead>
-                                                            <tr>
-                                                                <th>Amount</th>
-                                                                <th>Link</th>
-                                                                <th>Date</th>
-                                                            </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                            <?php
-
-                                                            if ($depositRowCount > 0) {
-                                                                foreach ($rowTableDeposits as $i) {
-                                                                    echo "<tr>
-                                                        <td>" . $i['amount'] / 100 . " bits</td>" .
-                                                                        "<td><a href='" . $i['hash'] . "'>Click here</a></td>" .
-                                                                        "<td>" . $i['deposit_date'] . "</td>" .
-                                                                        "</tr>";
-                                                                }
-
-                                                            } else {
-                                                                echo "<tr><td colspan='3'>No deposits yet.</td></tr>";
-                                                            }
-                                                            ?>
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                </div>
-                                                <div class="row centerWrap">
-                                                    <div class="centeredDiv">
-                                                        <?php if ($pageCount > 1): ?>
-                                                            <ul class="pagination">
-                                                                <!-- Left pagination -->
-                                                                <li class="<?php
-
-                                                                if ($page > 1)
-                                                                    echo "waves-effect";
-                                                                else
-                                                                    echo "disabled";
-
-
-                                                                ?>"><a href="<?php
-
-                                                                    if ($page > 1)
-                                                                        echo $base_dir . "account/" . ($page_deposit_parameter - 1) . $page_withdraw_parameter . $page_transfer_parameter;
-                                                                    else
-                                                                        echo "#!";
-
-                                                                    ?>"><i class="material-icons">chevron_left</i></a>
-                                                                </li>
-                                                                <!-- Numbers pagination -->
-                                                                <?php if ($pageCount <= 7): ?>
-                                                                    <?php for ($i = 1; $i <= $pageCount; $i++) : ?>
-                                                                        <li class="<?php
-                                                                        if ($i == $page)
-                                                                            echo "active";
-                                                                        else
-                                                                            echo "waves-effect";
-
-                                                                        ?>">
-                                                                            <a href="<?php echo $base_dir . "account/" . $i . $page_withdraw_parameter . $page_transfer_parameter; ?>">
-                                                                                <?php echo $i; ?>
-                                                                            </a>
-                                                                        </li>
-                                                                    <?php endfor; ?>
-                                                                <?php else: ?>
-                                                                    <?php if ($page <= 3): ?>
-                                                                        <?php for ($i = 1; $i <= 6; $i++): ?>
-                                                                            <li class="<?php
-                                                                            if ($i == $page)
-                                                                                echo "active";
-                                                                            else
-                                                                                echo "waves-effect";
-
-                                                                            ?>">
-                                                                                <a href="<?php echo $base_dir . "account/" . $i . $page_withdraw_parameter . $page_transfer_parameter; ?>">
-                                                                                    <?php echo $i; ?>
-                                                                                </a>
-                                                                            </li>
-                                                                        <?php endfor; ?>
-                                                                        <li class="">...</li>
-                                                                        <li class="waves-effect">
-                                                                            <a href="<?php echo $base_dir . "account/" . $pageCount . $page_withdraw_parameter . $page_transfer_parameter; ?>">
-                                                                                <?php echo $pageCount; ?>
-                                                                            </a>
-                                                                        </li>
-                                                                    <?php elseif ($page > 3 && $page < ($pageCount - 3)): ?>
-                                                                        <li class="waves-effect"><a
-                                                                                    href="<?php echo $base_dir . "account/1" . $page_withdraw_parameter . $page_transfer_parameter; ?>">1</a>
-                                                                        </li>
-                                                                        <li>...</li>
-                                                                        <?php for ($i = $page - 2; $i <= $page + 2; $i++): ?>
-                                                                            <li class="<?php
-                                                                            if ($i == $page)
-                                                                                echo "active";
-                                                                            else
-                                                                                echo "waves-effect";
-
-                                                                            ?>">
-                                                                                <a href="<?php echo $base_dir . "account/" . $i . $page_withdraw_parameter . $page_transfer_parameter; ?>">
-                                                                                    <?php echo $i; ?>
-                                                                                </a>
-                                                                            </li>
-                                                                        <?php endfor; ?>
-                                                                        <li>...</li>
-                                                                        <li class="waves-effect">
-                                                                            <a href="<?php echo $base_dir . "account/" . $pageCount . $page_withdraw_parameter . $page_transfer_parameter; ?>">
-                                                                                <?php echo $pageCount; ?>
-                                                                            </a>
-                                                                        </li>
-                                                                    <?php else: ?>
-                                                                        <li class="waves-effect"><a
-                                                                                    href="<?php echo $base_dir . "account/1" . $page_withdraw_parameter . $page_transfer_parameter; ?>">1</a>
-                                                                        </li>
-                                                                        <li>...</li>
-                                                                        <?php for ($i = $pageCount - 5; $i <= $pageCount; $i++): ?>
-                                                                            <li class="<?php
-                                                                            if ($i == $page)
-                                                                                echo "active";
-                                                                            else
-                                                                                echo "waves-effect";
-
-                                                                            ?>">
-                                                                                <a href="<?php echo $base_dir . "account/" . $i . $page_withdraw_parameter . $page_transfer_parameter; ?>">
-                                                                                    <?php echo $i; ?>
-                                                                                </a>
-                                                                            </li>
-                                                                        <?php endfor; ?>
-                                                                    <?php endif; ?>
-                                                                <?php endif; ?>
-                                                                <!-- Right pagination-->
-                                                                <li class="<?php
-
-                                                                if ($page < $pageCount)
-                                                                    echo "waves-effect";
-                                                                else
-                                                                    echo "disabled";
-
-
-                                                                ?>"><a href="<?php
-
-                                                                    if ($page_deposit_parameter == 0)
-                                                                        echo $base_dir . "account/2" . $page_withdraw_parameter . $page_transfer_parameter;
-                                                                    else if ($page < $pageCount)
-                                                                        echo $base_dir . "account/" . ($page_deposit_parameter + 1) . $page_withdraw_parameter . $page_transfer_parameter;
-                                                                    else
-                                                                        echo "#!";
-
-                                                                    ?>"><i class="material-icons">chevron_right</i></a>
-                                                                </li>
-                                                            </ul>
-                                                        <?php endif; ?>
-                                                    </div>
+                                                    <h6><b>Total Deposits: </b><?php echo $total_deposits; ?> bits</h6>
                                                 </div>
                                             </div>
                                         </div>
@@ -622,10 +530,12 @@ include "inc/header.php"; ?>
                                                 <form method="post"
                                                       action="<?php echo $base_dir; ?>actions/withdraw">
                                                     <blockquote class="blockquote-green w900">
-                                                        Transfer bitcoin to your personal wallet. Amount must be an
+                                                        Transfer Bitcoin to your personal wallet. Amount must be an
                                                         integer
-                                                        number greater than 100 bits. A 100 bits
-                                                        mining fee will be added to the transaction.
+                                                        number greater than 200 bits. We include a fee of 20
+                                                        satoshis/byte.
+                                                        For the median transaction size of 225 bytes, this results in a
+                                                        fee of 4,500 satoshis.
                                                     </blockquote>
                                                     <?php if (!empty($withdraw_error_message)) : ?>
                                                         <div class="col s12">
@@ -639,7 +549,7 @@ include "inc/header.php"; ?>
                                                         <input type="text" id="withdraw_address" name="withdraw_address"
                                                                value="<?php echo $withdraw_address_input; ?>">
                                                         <label for="withdraw_address">Wallet Address</label>
-                                                        <span class="helper-text">The Bitcoin address in which you will send your bits</span>
+                                                        <span class="helper-text" id="withdraw_address_helper   ">The Bitcoin address to which you will send your bits</span>
 
                                                     </div>
                                                     <div class="input-field col l4 m5 s6">
@@ -668,32 +578,35 @@ include "inc/header.php"; ?>
                                                     <thead>
                                                     <tr>
                                                         <th>Amount</th>
-                                                        <th>Link</th>
-                                                        <th>Request date</th>
-                                                        <th>Completed on</th>
+                                                        <th>Fee</th>
+                                                        <th>Transaction</th>
+                                                        <th>Confirmations</th>
+                                                        <th>Transaction Time</th>
                                                         <th></th>
                                                     </tr>
                                                     </thead>
                                                     <tbody>
                                                     <?php if ($withdrawRowCount > 0): ?>
-                                                        <?php foreach ($rowTableWithdraws as $i): ?>
+                                                        <?php foreach ($array_of_withdrawals as $i): ?>
                                                             <tr>
-                                                                <td><?php echo $i['amount'] / 100; ?> bits</td>
-                                                                <td><a href="<?php echo $i['hash']; ?>">Click here</a>
+                                                                <td><?php echo $i->amount * 1000000 * -1; ?> bits</td>
+                                                                <td><?php echo $i->fee * 1000000 * -1; ?> bits</td>
+                                                                <td>
+                                                                    <a href="https://live.blockcypher.com/btc-testnet/tx/<?php echo $i->txid; ?>"
+                                                                       target="_blank">See transaction</a>
                                                                 </td>
-                                                                <td><?php echo $i['request_date']; ?></td>
                                                                 <td><?php
-                                                                    if (empty($i['completed_on']))
-                                                                        echo "<span class='warning-text'>Unconfirmed</span>";
+                                                                    if ($i->confirmations > 0)
+                                                                        echo "<span class='win-text'>" . $i->confirmations . "</span>";
                                                                     else
-                                                                        echo "<span class='win-text'>" . $i['completed_on'] . "</span>";
-
+                                                                        echo "<span class='lose-text'>" . $i->confirmations . "</span>";
                                                                     ?></td>
+                                                                <td class="withdraw-time"><?php echo $i->timereceived; ?></td>
                                                             </tr>
                                                         <?php endforeach; ?>
                                                     <?php else: ?>
                                                         <tr>
-                                                            <td colspan="4">No withdrawals yet.</td>
+                                                            <td colspan="5">No withdrawals yet.</td>
                                                         </tr>
                                                     <?php endif; ?>
                                                     </tbody>
@@ -839,9 +752,7 @@ include "inc/header.php"; ?>
                                                     <form id="transfer_form" method="post"
                                                           action="<?php echo $base_dir; ?>actions/transfer">
                                                         <blockquote class="blockquote-green w900">
-                                                            Transfer bitcoin to another user. Amount must be an integer
-                                                            number greater than 100 bits. A 100 bits
-                                                            mining fee will be added to the transaction.
+                                                            Transfer bitcoin instantly to another user without any fee.
                                                         </blockquote>
                                                         <?php if (!empty($transfer_error_message)) : ?>
                                                             <div class="col s12">
@@ -881,38 +792,39 @@ include "inc/header.php"; ?>
                                                         <table>
                                                             <thead>
                                                             <tr>
-                                                                <th>User</th>
+                                                                <th>From</th>
+                                                                <th>To</th>
                                                                 <th>Amount</th>
-                                                                <th>Link</th>
-                                                                <th>Request date</th>
-                                                                <th>Completed on</th>
+                                                                <th>Transfer Date</th>
                                                             </tr>
                                                             </thead>
                                                             <tbody>
                                                             <?php if ($transferRowCount > 0) :
                                                                 foreach ($rowTableTransfers as $i): ?>
-
                                                                     <tr>
-                                                                        <td><?php echo $i['username']; ?></td>
-                                                                        <td><?php echo $i['amount'] / 100; ?> bits</td>
-                                                                        <td><a href="<?php echo $i['hash']; ?>">Click
-                                                                                here</a>
+                                                                        <td>
+                                                                            <a href="<?php echo $base_dir . "user-stats/" .
+                                                                                $i['from_u']; ?>"
+                                                                               target="_blank"><?php echo $i['from_u']; ?></a>
                                                                         </td>
-                                                                        <td><?php echo $i['request_date']; ?></td>
-                                                                        <td><?php
-                                                                            if (empty($i['completed_on']))
-                                                                                echo "<span class='warning-text'>Unconfirmed</span>";
+                                                                        <td>
+                                                                            <a href="<?php echo $base_dir . "user-stats/" .
+                                                                                $i['to_u']; ?>"
+                                                                               target="_blank"><?php echo $i['to_u']; ?></a>
+                                                                        </td>
+                                                                        <td><?php echo $i['amount'];
+                                                                            if ($i['amount'] > 1)
+                                                                                echo " bits";
                                                                             else
-                                                                                echo "<span class='win-text'>" . $i['completed_on'] . "</span>";
-
-                                                                            ?></td>
+                                                                                echo "bit"; ?> </td>
+                                                                        <td class="transfer_time"><?php echo $i['transfer_time']; ?></td>
                                                                     </tr>
 
                                                                 <?php endforeach;
 
                                                             else:?>
                                                                 <tr>
-                                                                    <td colspan="5">No transfers yet.</td>
+                                                                    <td colspan="4">No transfers yet.</td>
                                                                 </tr>
                                                             <?php endif; ?>
                                                             </tbody>
@@ -1138,6 +1050,7 @@ include "inc/header.php"; ?>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <!-- Compiled and minified JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/js/materialize.min.js"></script>
+    <script src="<?php echo $base_dir; ?>js/jquery-dateformat.min.js"></script>
 
     <!-- Custom scripts -->
     <script src="<?php echo $base_dir; ?>js/account-script.js"></script>

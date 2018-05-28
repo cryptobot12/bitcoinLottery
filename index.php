@@ -9,10 +9,23 @@ session_start();
  *
  */
 
+require_once '/home/luckiestguyever/PhpstormProjects/bitcoinLottery/vendor/autoload.php';
+
 include "globals.php";
 include "inc/login_checker.php";
 
-$_SESSION['last_url'] = 'index.php';
+$_SESSION['last_url'] = 'index';
+
+
+
+$driver = new \Nbobtc\Http\Driver\CurlDriver();
+$driver
+    ->addCurlOption(CURLOPT_VERBOSE, true)
+    ->addCurlOption(CURLOPT_STDERR, '/var/logs/curl.err');
+
+
+$client = new \Nbobtc\Http\Client('http://puppetmaster:vz6qGFsHBv5auSSDhTPWPktVu@localhost:18332');
+$client->withDriver($driver);
 
 try {
     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $dbuser, $dbpass);
@@ -25,13 +38,14 @@ try {
     $stmt->execute();
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
     $current_game = $row['game_id'];
-    $bonus = $row['amount'];
 
-    $stmt = $conn->prepare('SELECT COUNT(*) AS jackpot FROM numberxuser WHERE game_id = :game_id');
-    $stmt->execute(array('game_id' => $current_game));
-
+    $command = new \Nbobtc\Command\Command('getbalance', "jackpot");
+    /** @var \Nbobtc\Http\Message\Response */
+    $response = $client->sendCommand($command);
+    /** @var string */
+    $output = json_decode($response->getBody()->getContents());
     //Getting jackpot
-    $jackpot = ($stmt->fetchColumn() * 9500 + $bonus) / 100;
+    $jackpot = $output->result * 1000000;
 
     $stmt = $conn->prepare('SELECT message, username, sentat FROM chat LIMIT 60');
     $stmt->execute();
@@ -123,7 +137,9 @@ include 'inc/header.php' ?>
                 <div class="col m12 s12">
                     <div class="card-panel amber lighten-1 hoverable">
                         <h5 class="center-align" id="jackpot"><b>Jackpot: </b><span
-                                    id="jackpot_number"><?php echo $jackpot; ?></span> bits
+                                    id="jackpot_number_med"><?php echo $jackpot; ?></span> bits
+                            <span id="timer_span_small" class="right win-text"><i class="material-icons left">timer</i> <span
+                                        id="timer_small">--</span></span>
                         </h5>
                     </div>
                 </div>
@@ -134,9 +150,13 @@ include 'inc/header.php' ?>
                 <!--            Jackpot card   -->
                 <div id="jackpot_card" class="card z-depth-1 amber lighten-1 hide-on-med-and-down hoverable">
                     <div class="card-content">
-                        <span class="card-title"><b>Jackpot</b></span>
+                        <span class="card-title"><b>Jackpot</b>
+                            <span id="timer_span_large" class="right win-text"><i class="material-icons left">timer</i> <span
+                                        id="timer_large">--</span></span>
+                        </span>
+
                         <p class="center-align h3Size" id="jackpot"><span
-                                    id="jackpot_number"><?php echo $jackpot; ?></span> bits
+                                    id="jackpot_number_large"><?php echo $jackpot; ?></span> bits
                         </p>
                     </div>
                 </div>
@@ -256,7 +276,7 @@ include 'inc/header.php' ?>
 
 
             <!-- Medium and large only -->
-            <div class="col l8 m6 hide-on-small">
+            <div class="col l8 m6 s12">
                 <?php if ($logged_in): ?>
                     <!--            Play card    -->
                     <div class="col l6 m12" id="play_med_col">
@@ -275,8 +295,8 @@ include 'inc/header.php' ?>
                                 <!--       Text Area Input          -->
                                 <div id="textarea_div_med">
                                     <blockquote class="blockquote-orange w900">
-                                        Each number costs 50 bits.
-                                        Only 25 numbers per play allowed. Numbers
+                                        Each number costs 25 bits.
+                                        Only 100 numbers per play allowed. Numbers
                                         must be
                                         between 1 and 50000.
                                     </blockquote>
@@ -286,17 +306,16 @@ include 'inc/header.php' ?>
                                         <span class="helper-text" data-error="Invalid numbers">Type your numbers separated by spaces.</span>
                                     </div>
                                     <p class="center-align">
-                                        <a class="waves-effect waves-light btn disabled modal-trigger amber darken-3"
-                                           id="textarea_button_med"
-                                           href="#confirm_numbers_modal_med">Bet</a>
+                                        <a class="waves-effect waves-light btn disabled amber darken-3"
+                                           id="textarea_button_med">Bet</a>
                                     </p>
                                 </div>
 
                                 <!--   Random Input    -->
                                 <div id="random_div_med">
                                     <blockquote class="blockquote-orange w900">
-                                        Each number costs 50 bits.
-                                        Only 25 numbers per play allowed. Numbers
+                                        Each number costs 25 bits.
+                                        Only 100 numbers per play allowed. Numbers
                                         must be
                                         between 1 and 50000.
                                     </blockquote>
@@ -326,8 +345,8 @@ include 'inc/header.php' ?>
                                 <!--     Sequence Input                       -->
                                 <div id="sequence_div_med">
                                     <blockquote class="blockquote-orange w900">
-                                        Each number costs 50 bits.
-                                        Only 25 numbers per play allowed. Numbers
+                                        Each number costs 25 bits.
+                                        Only 100 numbers per play allowed. Numbers
                                         must be
                                         between 1 and 50000.
                                     </blockquote>
@@ -353,10 +372,18 @@ include 'inc/header.php' ?>
                                 <div id="numbers_div_med">
                                     <span id="count_numbers_small"
                                           class="card-title"><b><?php echo $numbers_title; ?></b></span>
-                                    <div id="numbers_list_small" class="overflowable">
+                                    <div id="numbers_list_small" class="overflowable
+                                     <?php if (empty($numbers_list_result))
+                                        echo "valign-wrapper"; ?>">
                                         <?php
-                                        foreach ($numbers_list_result as $item) {
-                                            echo '<div class="chip small-chip yellow"><b>' . $item['number_id'] . '</b></div>';
+                                        if (!empty($numbers_list_result)) {
+                                            foreach ($numbers_list_result as $item) {
+                                                echo '<div class="chip small-chip yellow"><b>' . $item['number_id'] . '</b></div>';
+                                            }
+                                        } else {
+                                            echo "<div class='centerWrap' style='width: 100%;'>
+<div class='centeredDiv'><span class='h7Span'><i class='material-icons small left'>mood_bad</i> Maybe you should get some numbers</span></div>
+</div>";
                                         }
                                         ?>
                                     </div>
@@ -389,10 +416,18 @@ include 'inc/header.php' ?>
                             <div class="card-content" id="card-numbers-content">
                                 <span id="count_numbers_med"
                                       class="card-title"><b><?php echo $numbers_title; ?></b></span>
-                                <div id="numbers_list_med" class="overflowable">
+                                <div id="numbers_list_med" class="overflowable
+                                     <?php if (empty($numbers_list_result))
+                                    echo "valign-wrapper"; ?>">
                                     <?php
-                                    foreach ($numbers_list_result as $item) {
-                                        echo '<div class="chip small-chip yellow"><b>' . $item['number_id'] . '</b></div>';
+                                    if (!empty($numbers_list_result)) {
+                                        foreach ($numbers_list_result as $item) {
+                                            echo '<div class="chip small-chip yellow"><b>' . $item['number_id'] . '</b></div>';
+                                        }
+                                    } else {
+                                        echo "<div class='centerWrap' style='width: 100%;'>
+<div class='centeredDiv'><span class='h7Span'><i class='material-icons small left'>mood_bad</i> Maybe you should get some numbers</span></div>
+</div>";
                                     }
                                     ?>
                                 </div>
@@ -400,12 +435,16 @@ include 'inc/header.php' ?>
                         </div>
                     </div>
                 <?php else: ?>
-                    <div class="card-panel">
-                        <p class="center-align"><a class="waves-effect waves-light btn"
-                                                   href="<?php echo $base_dir; ?>login">Login
-                                to
-                                play</a><br>
-                            <a href="<?php echo $base_dir; ?>registration">or register</a></p>
+                    <div id="not-logged-play" class="col s12">
+                        <div class="row"></div>
+                        <div class="row">
+                            <div class="col s12">
+                                <p class="center-align"><a class="waves-effect waves-light btn amber darken-3"
+                                                           href="<?php echo $base_dir; ?>login">Login to play</a><br>
+                                    <a href="<?php echo $base_dir; ?>registration">or register</a></p>
+
+                            </div>
+                        </div>
                     </div>
                 <?php endif; ?>
 
@@ -419,14 +458,19 @@ include 'inc/header.php' ?>
                                     <li><b>Frank:</b> Welcome!</li>
                                 </ul>
                             </div>
-                            <div id="chat-input-line" class="row">
-                                <input placeholder="Enter your message here" id="input-chat" class="input-chat"
-                                       type="text"
-                                       maxlength="180">
-                                <button
-                                        class="btn amber darken-3 btn-no-marg" id="chat-send"><i class="material-icons">send</i>
-                                </button>
-                            </div>
+                            <?php if ($logged_in): ?>
+                                <div id="chat-input-line" class="row">
+                                    <input placeholder="Enter your message here" id="input-chat" class="input-chat"
+                                           type="text"
+                                           maxlength="180">
+                                    <button
+                                            class="btn amber darken-3 btn-no-marg" id="chat-send"><i
+                                                class="material-icons">send</i>
+                                    </button>
+                                </div>
+                            <?php else: ?>
+                                <div class="row"></div>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
@@ -587,7 +631,7 @@ include 'inc/header.php' ?>
         if ($logged_in) {
             echo json_encode($arrayOfNumbers);
         } else {
-            echo "";
+            echo "\"\"";
         }?>;
 </script>
 <script src="js/index-script.js"></script>

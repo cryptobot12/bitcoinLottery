@@ -8,7 +8,6 @@ CREATE TABLE user
   password          VARCHAR(255) NOT NULL,
   email             VARCHAR(254) NOT NULL UNIQUE,
   bit_address       VARCHAR(64)  NOT NULL UNIQUE,
-  balance           BIGINT       NOT NULL,
   net_profit        BIGINT       NOT NULL,
   games_played      BIGINT       NOT NULL,
   registration_date DATETIME     NOT NULL,
@@ -61,35 +60,24 @@ CREATE TABLE password_reset
 
 CREATE TABLE game
 (
-  game_id           BIGINT AUTO_INCREMENT PRIMARY KEY
-  ,
-  game_date         DATETIME NOT NULL
-  ,
-  winner_number     INT      NOT NULL
-  ,
-  amount            BIGINT   NOT NULL
-  ,
+  game_id           BIGINT AUTO_INCREMENT PRIMARY KEY  ,
+  game_date         DATETIME NOT NULL  ,
+  winner_number     INT      NOT NULL  ,
+  amount            BIGINT   NOT NULL  ,
   number_of_players INT      NOT NULL
 );
 
 CREATE TABLE gamexuser
 (
-  game_id BIGINT  NOT NULL
-  ,
-  user_id BIGINT  NOT NULL
-  ,
-  win     BOOLEAN NOT NULL
-  ,
-  bet     BIGINT  NOT NULL
-  ,
-  profit  BIGINT  NOT NULL
-  ,
-  PRIMARY KEY (game_id, user_id)
-  ,
+  game_id BIGINT  NOT NULL  ,
+  user_id BIGINT  NOT NULL  ,
+  win     BOOLEAN NOT NULL  ,
+  bet     BIGINT  NOT NULL  ,
+  profit  BIGINT  NOT NULL  ,
+  PRIMARY KEY (game_id, user_id)  ,
   FOREIGN KEY (game_id)
   REFERENCES game (game_id)
-    ON DELETE CASCADE
-  ,
+    ON DELETE CASCADE  ,
   FOREIGN KEY (user_id)
   REFERENCES user (user_id)
     ON DELETE CASCADE
@@ -99,16 +87,11 @@ DROP TABLE chat;
 
 CREATE TABLE chat
 (
-  message_id BIGINT AUTO_INCREMENT PRIMARY KEY
-  ,
-  user_id    BIGINT       NOT NULL
-  ,
-  username   VARCHAR(19)  NOT NULL
-  ,
-  message    VARCHAR(180) NOT NULL
-  ,
-  sentat     DATETIME     NOT NULL
-  ,
+  message_id BIGINT AUTO_INCREMENT PRIMARY KEY  ,
+  user_id    BIGINT       NOT NULL  ,
+  username   VARCHAR(19)  NOT NULL  ,
+  message    VARCHAR(180) NOT NULL  ,
+  sentat     DATETIME     NOT NULL  ,
   FOREIGN KEY (user_id)
   REFERENCES user (user_id)
     ON DELETE CASCADE
@@ -116,18 +99,13 @@ CREATE TABLE chat
 
 CREATE TABLE numberxuser
 (
-  game_id   BIGINT NOT NULL
-  ,
-  number_id INT    NOT NULL
-  ,
-  user_id   BIGINT NOT NULL
-  ,
-  PRIMARY KEY (game_id, number_id, user_id)
-  ,
+  game_id   BIGINT NOT NULL  ,
+  number_id INT    NOT NULL  ,
+  user_id   BIGINT NOT NULL  ,
+  PRIMARY KEY (game_id, number_id, user_id)  ,
   FOREIGN KEY (game_id)
   REFERENCES game (game_id)
-    ON DELETE CASCADE
-  ,
+    ON DELETE CASCADE  ,
   FOREIGN KEY (user_id)
   REFERENCES user (user_id)
     ON DELETE CASCADE
@@ -135,60 +113,23 @@ CREATE TABLE numberxuser
 
 CREATE TABLE stats
 (
-  stats_id     INT AUTO_INCREMENT PRIMARY KEY
-  ,
-  deposits     BIGINT NOT NULL
-  ,
-  withdrawals  BIGINT NOT NULL
-  ,
-  net          BIGINT NOT NULL
-  ,
-  games_played BIGINT NOT NULL
-  ,
-  gross_profit BIGINT NOT NULL
-  ,
-  max_jackpot  BIGINT NOT NULL
-  ,
+  stats_id     INT AUTO_INCREMENT PRIMARY KEY  ,
+  deposits     BIGINT NOT NULL  ,
+  withdrawals  BIGINT NOT NULL  ,
+  net          BIGINT NOT NULL  ,
+  games_played BIGINT NOT NULL  ,
+  gross_profit BIGINT NOT NULL  ,
+  max_jackpot  BIGINT NOT NULL  ,
   total_users  BIGINT NOT NULL
 );
 
-CREATE TABLE deposit
-(
-  deposit_id   BIGINT AUTO_INCREMENT PRIMARY KEY
-  ,
-  user_id      BIGINT      NOT NULL
-  ,
-  hash         VARCHAR(64) NOT NULL
-  ,
-  deposit_date DATETIME    NOT NULL
-  ,
-  FOREIGN KEY (user_id)
-  REFERENCES user (user_id)
-    ON DELETE CASCADE
-  ,
-  amount       BIGINT      NOT NULL
-);
-
-ALTER TABLE withdrawal
-  MODIFY COLUMN request_date DATETIME NOT NULL;
-
-ALTER TABLE withdrawal
-  MODIFY COLUMN completed_on DATETIME;
 
 CREATE TABLE withdrawal
 (
-  withdrawal_id BIGINT AUTO_INCREMENT PRIMARY KEY
-  ,
-  user_id       BIGINT      NOT NULL
-  ,
-  hash          VARCHAR(64) NOT NULL
-  ,
-  request_date  DATETIME    NOT NULL
-  ,
-  completed_on  DATETIME
-  ,
-  amount        BIGINT      NOT NULL
-  ,
+  withdrawal_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  user_id       BIGINT      NOT NULL,
+  txid          VARCHAR(64) NOT NULL,
+  inserted_on   DATETIME    NOT NULL,
   FOREIGN KEY (user_id)
   REFERENCES user (user_id)
     ON DELETE CASCADE
@@ -196,30 +137,19 @@ CREATE TABLE withdrawal
 
 CREATE TABLE transfer
 (
-  transfer_id  BIGINT AUTO_INCREMENT PRIMARY KEY
-  ,
-  user_id      BIGINT      NOT NULL
-  ,
-  to_user      BIGINT      NOT NULL
-  ,
-  hash         VARCHAR(64) NOT NULL
-  ,
-  request_date DATE        NOT NULL
-  ,
-  completed_on DATE
-  ,
-  amount       BIGINT      NOT NULL
-  ,
+  transfer_id   BIGINT AUTO_INCREMENT PRIMARY KEY,
+  user_id       BIGINT    NOT NULL,
+  to_user       BIGINT    NOT NULL,
+  transfer_time TIMESTAMP NOT NULL,
+  amount        BIGINT    NOT NULL,
   FOREIGN KEY (user_id)
   REFERENCES user (user_id)
-    ON DELETE CASCADE
-  ,
+    ON DELETE CASCADE,
   FOREIGN KEY (to_user)
   REFERENCES user (user_id)
     ON DELETE CASCADE
 );
 
-DROP TABLE support_team;
 CREATE TABLE support_team
 (
   worker_id         BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -233,7 +163,6 @@ CREATE TABLE support_team
   enabled           BOOL         NOT NULL
 );
 
-DROP TABLE ticket;
 CREATE TABLE ticket
 (
   ticket_id    BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -247,20 +176,13 @@ CREATE TABLE ticket
 
 CREATE TABLE auth_token
 (
-  auth_token_id    BIGINT AUTO_INCREMENT PRIMARY KEY
-  ,
-  selector         CHAR(12)      NOT NULL UNIQUE
-  ,
-  hashed_validator CHAR(64)      NOT NULL
-  ,
-  user_id          BIGINT        NOT NULL
-  ,
-  user_agent       VARCHAR(8192) NOT NULL
-  ,
-  ip_address       VARCHAR(45)   NOT NULL
-  ,
-  expires          DATETIME      NOT NULL
-  ,
+  auth_token_id    BIGINT AUTO_INCREMENT PRIMARY KEY  ,
+  selector         CHAR(12)      NOT NULL UNIQUE  ,
+  hashed_validator CHAR(64)      NOT NULL  ,
+  user_id          BIGINT        NOT NULL  ,
+  user_agent       VARCHAR(8192) NOT NULL  ,
+  ip_address       VARCHAR(45)   NOT NULL  ,
+  expires          DATETIME      NOT NULL  ,
   FOREIGN KEY (user_id)
   REFERENCES user (user_id)
     ON DELETE CASCADE
@@ -629,15 +551,17 @@ LIMIT :rows OFFSET :the_offset;
 
 /* Transfer table*/
 SELECT
-  u.username,
-  hash,
+  (SELECT username
+   FROM user
+   WHERE user_id = t.user_id) from_u,
+  (SELECT username
+   FROM user
+   WHERE user_id = t.to_user) to_u,
   amount,
-  DATE_FORMAT(request_date, "%M %D, %Y") AS request_date,
-  DATE_FORMAT(completed_on, "%M %D, %Y") AS completed_on
-FROM transfer AS t
-  INNER JOIN user AS u
-    ON t.to_user = u.user_id
-WHERE t.user_id = :user_id;
+  transfer_time
+FROM transfer t
+WHERE t.user_id = :user_id1
+      OR t.to_user = :user_id2;
 
 SELECT count(message_id)
 FROM chat
@@ -732,3 +656,13 @@ FROM user AS u INNER JOIN gamexuser AS gu ON u.user_id = gu.user_id
 WHERE u.username = :username
 ORDER BY gu.game_id ASC, gu.bet DESC, gu.profit ASC, ga.amount ASC
 LIMIT :rows OFFSET :the_offset;
+
+SELECT COUNT(transfer_id) AS the_count
+FROM transfer
+WHERE user_id = :user_id OR to_user = :user_id;
+
+SELECT username
+FROM user
+  INNER JOIN gamexuser
+    ON user.user_id = gamexuser.user_id
+WHERE gamexuser.win = 1 AND game_id = :game_id;

@@ -11,7 +11,7 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
 //Load composer's autoloader
-require '../vendor/autoload.php';
+require_once '/home/luckiestguyever/PhpstormProjects/bitcoinLottery/vendor/autoload.php';
 
 include '../function.php';
 include "../globals.php";
@@ -23,11 +23,6 @@ $password = $_POST['password'];
 $confirm_password = $_POST['confirm_password'];
 $email = strtolower($_POST['email']);
 
-$bit_address = rand_string(15);
-/* Implement bitcoin stuff here
-
-
-*/
 $recaptcha_response = $_POST['g-recaptcha-response'];
 
 
@@ -128,6 +123,24 @@ if ($captcha_success->success) {
                 && $valid_email && $not_empty_username && $not_empty_email && $not_empty_password) {
 
                 $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+
+                $driver = new \Nbobtc\Http\Driver\CurlDriver();
+                $driver
+                    ->addCurlOption(CURLOPT_VERBOSE, true)
+                    ->addCurlOption(CURLOPT_STDERR, '/var/logs/curl.err');
+
+                $client = new \Nbobtc\Http\Client('http://puppetmaster:vz6qGFsHBv5auSSDhTPWPktVu@localhost:18332');
+                $client->withDriver($driver);
+
+                $command = new \Nbobtc\Command\Command('getnewaddress', $username);
+
+                /** @var \Nbobtc\Http\Message\Response */
+                $response = $client->sendCommand($command);
+
+                /** @var string */
+                $output = json_decode($response->getBody()->getContents());
+
+                $bit_address = $output->result;
 
                 //CREATE NEW USER
                 $stmt = $conn->prepare('INSERT INTO user(username, password, email, bit_address, balance, 

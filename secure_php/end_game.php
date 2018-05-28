@@ -5,9 +5,18 @@
  * Date: 10/22/2017
  * Time: 12:34 PM
  */
-session_start();
 
+require_once '/home/luckiestguyever/PhpstormProjects/bitcoinLottery/vendor/autoload.php';
 include "../globals.php";
+
+$driver = new \Nbobtc\Http\Driver\CurlDriver();
+$driver
+    ->addCurlOption(CURLOPT_VERBOSE, true)
+    ->addCurlOption(CURLOPT_STDERR, '/var/logs/curl.err');
+
+
+$client = new \Nbobtc\Http\Client('http://puppetmaster:vz6qGFsHBv5auSSDhTPWPktVu@localhost:18332');
+$client->withDriver($driver);
 
 try {
     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $dbuser, $dbpass);
@@ -16,7 +25,7 @@ try {
     $conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 
     //Selecting current game
-    $stmt = $conn->prepare('SELECT game_id, amount FROM game ORDER BY game_id DESC, game_date DESC LIMIT 1');
+    $stmt = $conn->prepare('SELECT game_id FROM game ORDER BY game_id DESC, game_date DESC LIMIT 1');
     $stmt->execute();
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
     $current_game = $row['game_id'];
@@ -55,14 +64,12 @@ try {
         $stmt = $conn->prepare('SELECT nxf.number_id
                                         FROM (SELECT number_id, COUNT(number_id) AS frequency FROM numberxuser
                                         WHERE game_id = :game_id1
-                                        GROUP BY number_id
-                                        HAVING frequency <= 30) AS nxf
+                                        GROUP BY number_id) AS nxf
                                         INNER JOIN
                                         (SELECT frequency, COUNT(frequency) AS fxf FROM(
                                         SELECT number_id, COUNT(number_id) AS frequency FROM numberxuser
                                         WHERE game_id = :game_id2
-                                        GROUP BY number_id
-                                        HAVING frequency <= 30) AS sometable
+                                        GROUP BY number_id) AS sometable
                                         GROUP BY frequency) AS fxft
                                         ON fxft.frequency = nxf.frequency
                                         ORDER BY fxft.fxf ASC, nxf.frequency ASC, nxf.number_id ASC
@@ -82,31 +89,20 @@ try {
         echo "Number of winners: " . $number_of_winners . "<br>";
 
         //Calculating jackpot and how much each receives
-        $stmt = $conn->prepare('SELECT COUNT(*) AS jackpot FROM numberxuser WHERE game_id = :game_id');
-        $stmt->execute(array('game_id' => $current_game));
-        $jackpot = $stmt->fetchColumn() * 9500 + $bonus;
-        echo "Jackpot: " . $jackpot . "<br>";
+        $command = new \Nbobtc\Command\Command('getbalance', "jackpot");
+        /** @var \Nbobtc\Http\Message\Response */
+        $response = $client->sendCommand($command);
+        /** @var string */
+        $output = json_decode($response->getBody()->getContents());
+        //Getting jackpot
+        $jackpot = $output->result;
+        $jackpot_in_bits = $jackpot * 1000000;
+        $jackpot_in_satoshis = $jackpot_in_bits * 100;
 
-        $each_receives = floor($jackpot / $number_of_winners);
-        echo "Each receives: " . $each_receives . "<br>";
-        $bonus = $jackpot - ($each_receives * $number_of_winners); //Bonus is added to next game
-        echo "Bonus: " . $bonus . "<br>";
+        echo "Jackpot: " . ($jackpot_in_bits) . " bits<br>";
 
-        //Updating new game bonus
-        $stmt = $conn->prepare('SELECT game_id FROM game ORDER BY game_id DESC, game_date DESC LIMIT 1');
-        $stmt->execute();
-        echo "Selecting new game...<br>";
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
-        $the_new_game = $row['game_id'];
-        echo "New game id: " . $the_new_game . "<br>";
-        $stmt = $conn->prepare('UPDATE game SET amount = :bonus WHERE game_id = :game_id');
-        $stmt->execute(array('bonus' => $bonus, 'game_id' => $the_new_game));
-        echo "Updating new game bonus...<br>";
-
-        /****************** Here you should add what to do with the 5% of the money not taken by the users *********/
-
-
-        /************************************************************************************************************/
+        $each_receives = floor($jackpot_in_satoshis / $number_of_winners);
+        echo "Each receives: " . $each_receives / 100 . " bits<br>";
 
         //Updating max_jackpot and gross profit (history)
         $stmt = $conn->prepare('SELECT max_jackpot FROM stats');
@@ -115,20 +111,20 @@ try {
         $max_jackpot = $result['max_jackpot'];
         echo "Max jackpot: " . $max_jackpot . "<br>";
 
-        if ($jackpot > $max_jackpot) {
+        if ($jackpot_in_satoshis > $max_jackpot) {
             $stmt = $conn->prepare('UPDATE stats SET max_jackpot = :jackpot');
-            $stmt->execute(array('jackpot' => $jackpot));
+            $stmt->execute(array('jackpot' => $jackpot_in_satoshis));
             echo "Updating max jackpot...<br>";
         }
 
         $stmt = $conn->prepare('UPDATE stats SET gross_profit = gross_profit + :jackpot');
-        $stmt->execute(array('jackpot' => $jackpot));
+        $stmt->execute(array('jackpot' => $jackpot_in_satoshis));
         echo "Increasing gross profit...<br>";
 
         //Saving game history
         $stmt = $conn->prepare('UPDATE game SET game_date = current_timestamp, winner_number = :winner_number,
             amount = :amount WHERE game_id = :game_id');
-        $stmt->execute(array('winner_number' => $winner_number, 'amount' => $jackpot, 'game_id' => $current_game));
+        $stmt->execute(array('winner_number' => $winner_number, 'amount' => $jackpot_in_satoshis, 'game_id' => $current_game));
         echo "Saving game history...<br>";
 
         //Giving profit to winners, updating net profit...
@@ -136,34 +132,66 @@ try {
               INNER JOIN gamexuser AS gu ON u.user_id = gu.user_id
               INNER JOIN numberxuser AS nu ON u.user_id = nu.user_id
               AND gu.game_id = nu.game_id
-            SET u.balance = u.balance + :profit, u.net_profit = u.net_profit + :net_profit,
+            SET u.net_profit = u.net_profit + :net_profit,
               gu.profit = gu.profit + :profit2, gu.win = 1
             WHERE nu.number_id = :winner_number
             AND gu.game_id = :game_id');
-        $stmt->execute(array('profit' => $each_receives, 'net_profit' => $each_receives, 'profit2' => $each_receives,
+        $stmt->execute(array('net_profit' => $each_receives, 'profit2' => $each_receives,
             'winner_number' => $winner_number, 'game_id' => $current_game));
         echo "Giving profit to winners...(user)<br>";
 
-        $jackpot_last = $jackpot / 100;
+        /*****BITCOIN TRANSACTION *********/
+
+        $stmt = $conn->prepare('SELECT username
+FROM user
+  INNER JOIN gamexuser
+    ON user.user_id = gamexuser.user_id
+WHERE gamexuser.win = 1 AND game_id = :game_id');
+        $stmt->execute(array('game_id' => $current_game));
+        $winners_usernames = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        foreach ($winners_usernames as $winner) {
+            echo $winner['username'] . "<br>";
+            $command = new \Nbobtc\Command\Command('move', array("jackpot", $winner['username'], $each_receives / 100000000));
+
+            /** @var \Nbobtc\Http\Message\Response */
+            $response = $client->sendCommand($command);
+            $output = json_decode($response->getBody()->getContents());
+            echo "<br>";
+        }
+        /*********************************/
+
+        $jackpot_last = $jackpot_in_bits;
         //After new game
 
         echo "Broadcasting...<br>";
-        //Selecting actually current game
-        $stmt = $conn->prepare('SELECT game_id, amount FROM game ORDER BY game_id DESC, game_date DESC LIMIT 1');
-        $stmt->execute();
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        $actually_current_game = $result['game_id'];
-        $bonus = $result['amount'];
 
-        //Selecting jackpot from new game
-        $stmt = $conn->prepare('SELECT COUNT(*) AS jackpot FROM numberxuser WHERE game_id = :game_id');
-        $stmt->execute(array('game_id' => $actually_current_game));
-        $jackpot = ($stmt->fetchColumn() * 9500 + $bonus) / 100;
+        /****TRANSFERRING BITCOIN FROM NEXT JACKPOT TO JACKPOT ****/
+
+        $command = new \Nbobtc\Command\Command('getbalance', "nextjackpot");
+        /** @var \Nbobtc\Http\Message\Response */
+        $response = $client->sendCommand($command);
+        $output = json_decode($response->getBody()->getContents());
+        //Getting jackpot
+        $next_jackpot_balance = $output->result;
+
+        $command = new \Nbobtc\Command\Command('move', array("nextjackpot", "jackpot", $next_jackpot_balance));
+        /** @var \Nbobtc\Http\Message\Response */
+        $response = $client->sendCommand($command);
+
+        /**********************************************************/
+
+        $command = new \Nbobtc\Command\Command('getbalance', "jackpot");
+        /** @var \Nbobtc\Http\Message\Response */
+        $response = $client->sendCommand($command);
+        $output = json_decode($response->getBody()->getContents());
+        //Getting jackpot
+        $new_jackpot = $output->result * 1000000;
 
         //Selecting games history
         $stmt = $conn->prepare('SELECT game_id, date_format(game_date, \'%h:%i %p\') AS time, winner_number, amount FROM game
                                       WHERE amount > 0
-                                      ORDER BY game_id DESC, game_date DESC LIMIT 20');
+                                      ORDER BY game_id DESC, game_date DESC LIMIT 1');
         $stmt->execute();
 
         $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -182,8 +210,7 @@ try {
      ON u.user_id = gu.user_id
      WHERE gu.game_id = :game_id
      ORDER BY win DESC, profit DESC, bet DESC, username ASC 
-     LIMIT 20');
-
+     LIMIT 30');
 
         $stmt->execute(array('game_id' => $current_game));
         $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -198,13 +225,11 @@ try {
 
         }
 
-
         //Broadcasting
-        $entryData = array('category' => 'all', 'option' => 2, 'jackpot' => $jackpot, 'games' => $arrayOfGames,
+        $entryData = array('category' => 'all', 'option' => 2, 'jackpot' => $new_jackpot, 'games' => $arrayOfGames,
             'last_game_number' => $current_game, 'last_winner_number' => $winner_number, 'last_jackpot' => $jackpot_last,
             'players' => $arrayOfPlayers);
 
-        var_dump($entryData);
 
         $context = new ZMQContext();
         $socket = $context->getSocket(ZMQ::SOCKET_PUSH, 'my pusher');
