@@ -41,7 +41,7 @@ if ($captcha_success->success) {
         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 
-        $stmt = $conn->prepare('SELECT user_id, username, balance, password FROM user WHERE username = :username');
+        $stmt = $conn->prepare('SELECT user_id, username, password FROM user WHERE username = :username');
         $stmt->execute(array('username' => $username));
         $user_info = $stmt->fetch(PDO::FETCH_ASSOC);
 

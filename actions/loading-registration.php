@@ -11,7 +11,7 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
 //Load composer's autoloader
-require_once '/home/luckiestguyever/PhpstormProjects/bitcoinLottery/vendor/autoload.php';
+require_once '/var/www/bitcoinpvp.net/html/vendor/autoload.php';
 
 include '../function.php';
 include "../globals.php";
@@ -124,14 +124,6 @@ if ($captcha_success->success) {
 
                 $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
-                $driver = new \Nbobtc\Http\Driver\CurlDriver();
-                $driver
-                    ->addCurlOption(CURLOPT_VERBOSE, true)
-                    ->addCurlOption(CURLOPT_STDERR, '/var/logs/curl.err');
-
-                $client = new \Nbobtc\Http\Client('http://puppetmaster:vz6qGFsHBv5auSSDhTPWPktVu@localhost:18332');
-                $client->withDriver($driver);
-
                 $command = new \Nbobtc\Command\Command('getnewaddress', $username);
 
                 /** @var \Nbobtc\Http\Message\Response */
@@ -143,9 +135,8 @@ if ($captcha_success->success) {
                 $bit_address = $output->result;
 
                 //CREATE NEW USER
-                $stmt = $conn->prepare('INSERT INTO user(username, password, email, bit_address, balance, 
-            net_profit, games_played, registration_date, enabled) VALUES (:username, :password, :email, :bit_address,
-            0, 0, 0, CURRENT_TIMESTAMP, FALSE)');
+                $stmt = $conn->prepare('INSERT INTO user(username, password, email, bit_address, 
+            net_profit, games_played, registration_date, enabled) VALUES (:username, :password, :email, :bit_address, 0, 0, CURRENT_TIMESTAMP, FALSE)');
 
                 $stmt->execute(array('username' => $username, 'password' => $hashed_password, 'email' => $email,
                     'bit_address' => $bit_address));

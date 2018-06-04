@@ -1,7 +1,5 @@
 RewriteEngine On
 
-RewriteBase /bitcoinLottery/
-
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^password-reset/([^/]+)/([^/]+)/?$ password-reset.php?sel=$1&val=$2 [L,QSA]
 RewriteRule ^actions/update-email/([^/]+)/([^/]+)/?$ actions/update-email.php?sel=$1&val=$2 [L,QSA]
@@ -26,4 +24,5 @@ RewriteCond %{REQUEST_URI} [^/]$
 # Rewrite the request with a .php extension. L means this is the 'Last' rule
 RewriteRule ^(.*)$ $1.php [L]
 
-ErrorDocument 404 http://localhost/bitcoinLottery/lost
+ErrorDocument 404 https://www.bitcoinpvp.net
+DirectoryIndex index.php

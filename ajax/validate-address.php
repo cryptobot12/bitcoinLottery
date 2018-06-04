@@ -8,7 +8,7 @@
 
 session_start();
 
-require_once '/home/luckiestguyever/PhpstormProjects/bitcoinLottery/vendor/autoload.php';
+require_once '/var/www/bitcoinpvp.net/html/vendor/autoload.php';
 
 include "../globals.php";
 include "../inc/login_checker.php";
@@ -16,14 +16,6 @@ include "../inc/login_checker.php";
 $wallet_address = $_POST['wallet_address'];
 
 if ($logged_in) {
-
-    $driver = new \Nbobtc\Http\Driver\CurlDriver();
-    $driver
-        ->addCurlOption(CURLOPT_VERBOSE, true)
-        ->addCurlOption(CURLOPT_STDERR, '/var/logs/curl.err');
-
-    $client = new \Nbobtc\Http\Client('http://puppetmaster:vz6qGFsHBv5auSSDhTPWPktVu@localhost:18332');
-    $client->withDriver($driver);
 
     $command = new \Nbobtc\Command\Command('validateaddress', $wallet_address);
 

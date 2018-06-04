@@ -12,7 +12,7 @@ CREATE TABLE user
   games_played      BIGINT       NOT NULL,
   registration_date DATETIME     NOT NULL,
   enabled           BOOL         NOT NULL
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
 CREATE INDEX rank_index
   ON user (user_id);
@@ -30,7 +30,7 @@ CREATE TABLE email_update
   FOREIGN KEY (user_id)
   REFERENCES user (user_id)
     ON DELETE CASCADE
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
 CREATE TABLE email_confirmation
 (

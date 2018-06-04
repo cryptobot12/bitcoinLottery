@@ -6,7 +6,7 @@
  * Time: 5:41 PM
  */
 
-require dirname(__DIR__) . '/vendor/autoload.php';
+require '/root/serverstuff/vendor/autoload.php';
 
 $loop   = React\EventLoop\Factory::create();
 $pusher = new MyApp\Pusher;

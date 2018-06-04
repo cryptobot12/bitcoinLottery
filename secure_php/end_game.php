@@ -6,17 +6,8 @@
  * Time: 12:34 PM
  */
 
-require_once '/home/luckiestguyever/PhpstormProjects/bitcoinLottery/vendor/autoload.php';
+require_once '/var/www/bitcoinpvp.net/html/vendor/autoload.php';
 include "../globals.php";
-
-$driver = new \Nbobtc\Http\Driver\CurlDriver();
-$driver
-    ->addCurlOption(CURLOPT_VERBOSE, true)
-    ->addCurlOption(CURLOPT_STDERR, '/var/logs/curl.err');
-
-
-$client = new \Nbobtc\Http\Client('http://puppetmaster:vz6qGFsHBv5auSSDhTPWPktVu@localhost:18332');
-$client->withDriver($driver);
 
 try {
     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $dbuser, $dbpass);

@@ -9,23 +9,12 @@ session_start();
  *
  */
 
-require_once '/home/luckiestguyever/PhpstormProjects/bitcoinLottery/vendor/autoload.php';
+require_once '/var/www/bitcoinpvp.net/html/vendor/autoload.php';
 
 include "globals.php";
 include "inc/login_checker.php";
 
 $_SESSION['last_url'] = 'index';
-
-
-
-$driver = new \Nbobtc\Http\Driver\CurlDriver();
-$driver
-    ->addCurlOption(CURLOPT_VERBOSE, true)
-    ->addCurlOption(CURLOPT_STDERR, '/var/logs/curl.err');
-
-
-$client = new \Nbobtc\Http\Client('http://puppetmaster:vz6qGFsHBv5auSSDhTPWPktVu@localhost:18332');
-$client->withDriver($driver);
 
 try {
     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $dbuser, $dbpass);
@@ -78,12 +67,6 @@ try {
             $numbers_title = "My number";
         else
             $numbers_title = "No numbers yet";
-
-        if ($numbers_count > 0)
-            $scale_status = "";
-        else
-            $scale_status = "";
-
     }
 
     // Selecting game history
@@ -121,7 +104,7 @@ try {
     $n_of_winners = $stmt->fetch(PDO::FETCH_ASSOC)['n_o_w'];
 
 } catch (PDOException $e) {
-    echo "Connection failed: " . $e->getMessage();
+    echo "Connection failed1: " . $e->getMessage();
 }
 
 $title = "BitcoinPVP";

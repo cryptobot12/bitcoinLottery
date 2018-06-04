@@ -62,7 +62,7 @@ if (!empty($_SESSION['auth_token'])) {
             }
 
         } catch (PDOException $e) {
-            echo "Connection failed: " . $e->getMessage();
+            echo "Connection failed2: " . $e->getMessage();
         }
     }
 } else

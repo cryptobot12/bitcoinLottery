@@ -44,26 +44,26 @@ include 'inc/header.php'; ?>
                 </div>
                 <div class="row" id="how-to">
                     <h5>How to play?</h5>
-                    <p> Each round, you have the opportunity to buy a number. You can buy up to 25 numbers per play, you
-                        can play limitless times each round. Each number costs 100 bits. Each round lasts a minute.
+                    <p> Each round, you have the opportunity to buy a number. You can buy up to 100 numbers per play, you
+                        can play limitless times each round. Each number costs 25 bits. Each round lasts a minute.
                         After each round the winner will be selected based on the frequency of the numbers that the
                         players bought.<br><br>
-                        The frequency that repeats the least will be selected as long as the frequency is below 10.
+                        The frequency that repeats the least will be selected as long as the frequency is below 15.
                         If two or more frequencies repeat the same amount of times, the one that contains the lowest
-                        number will be selected. This means that there can be at the most 10 winners per round.<br><br>
+                        number will be selected. This means that there can be at the most 15 winners per round.<br><br>
                         <b>Examples:</b>
                     <p>The frequency column represents how many times a number was bought. The frequency of number's
                         frequency
                         column represents how many times a frequency value repeats. This column determines the winner
                         number.
-                        The lowest value in the frequency of frequency column whose frequency value is below 10 and has
+                        The lowest value in the frequency of frequency column whose frequency value is below 15 and has
                         the
                         lowest number determines the winner number.</p>
                     <div class="row">
                         <div class="legend red"></div>
-                        <span><b>f(Frequency) not below 10</b></span><br>
+                        <span><b>f(Frequency) not below 15</b></span><br>
                         <div class="legend amber"></div>
-                        <span><b>f(Frequency) below 10</b></span><br>
+                        <span><b>f(Frequency) below 15</b></span><br>
                         <div class="legend green"></div>
                         <span><b>Lowest f(Frequency) and lowest number</b></span>
                     </div>
@@ -308,8 +308,7 @@ include 'inc/header.php'; ?>
                 </div>
                 <div class="row" id="is-there">
                     <h5>Is there any fee for playing?</h5>
-                    <p>We take 5% of the cost of each number to pay the mining fees of the microtransactions, to
-                        keep our servers running, and for our profit.</p>
+                    <p>4 bits are taken from each number for the next game jackpot. We take 1 bit of every number you buy for our profit.</p>
                 </div>
                 <div class="row" id="how-do">
                     <h5>How do I deposit bits?</h5>
@@ -324,7 +323,7 @@ include 'inc/header.php'; ?>
                 </div>
                 <div class="row" id="how-long">
                     <h5>How long do deposits take to be credited?</h5>
-                    <p>As soon the bitcoin transaction is confirmed, your account will be credited. The lower the fee
+                    <p>As soon the Bitcoin transaction has at least 1 confirmation, your account will be credited. The lower the fee
                         you
                         pay for
                         your transaction the longer it will take to confirm. It is up to you to decide the fee you will

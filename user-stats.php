@@ -7,7 +7,7 @@
  */
 session_start();
 
-require '/home/luckiestguyever/PhpstormProjects/bitcoinLottery/vendor/autoload.php';
+require '/var/www/bitcoinpvp.net/html/vendor/autoload.php';
 
 include "globals.php";
 include "function.php";

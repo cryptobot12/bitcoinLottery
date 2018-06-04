@@ -27,7 +27,7 @@ $(document).ready(function () {
         var chat_send_pl = chat_send.css("paddingLeft");
         var chat_send_pr = chat_send.css("paddingRight");
 
-        var new_width_for_input = parseFloat(chat_input_line_width) - parseFloat(chat_send_pl) - parseFloat(chat_send_pr) - 4;
+        var new_width_for_input = parseFloat(chat_input_line_width) - parseFloat(chat_send_pl) - parseFloat(chat_send_pr) - 12;
 
 
         var nav_top = $("#nav-top");
@@ -172,7 +172,7 @@ $(window).resize(function () {
         var chat_send_pl = chat_send.css("paddingLeft");
         var chat_send_pr = chat_send.css("paddingRight");
 
-        var new_width_for_input = parseFloat(chat_input_line_width) - parseFloat(chat_send_pl) - parseFloat(chat_send_pr) - 4;
+        var new_width_for_input = parseFloat(chat_input_line_width) - parseFloat(chat_send_pl) - parseFloat(chat_send_pr) - 12;
 
 
         var nav_top = $("#nav-top");
@@ -747,13 +747,40 @@ $(function () {
 
 
 /* Web sockets */
-var conn = new ab.Session('ws://localhost:8080',
+var conn = new ab.Session('wss://bitcoinpvp.net/wss2',
     function () {
         conn.subscribe('all', function (topic, data) {
 
+            var timer_large = $("#timer_large");
+            var timer_small = $("#timer_small");
+
+            var timer_span_large = $("#timer_span_large");
+            var timer_span_small = $("#timer_span_small");
+
+            var play_button_ta = $("#textarea_button_med");
+            var play_button_random = $("#random_button_med");
+            var play_button_sequence = $("#sequence_button_med");
+
+            var jackpotNumber = $("#jackpot_number_large");
+            var jackpotNumberMed = $("#jackpot_number_med");
+
+            var last_game_number_med = $("#last_game_number_med");
+            var last_game_number_small = $("#last_game_number_small");
+            var game_link_med = $("#game_link_med");
+            var game_link_small = $("#game_link_small");
+            var last_winner_number_med = $("#last_winner_number_med");
+            var last_winner_number_small = $("#last_winner_number_small");
+            var last_jackpot_med = $("#last_jackpot_med");
+            var last_jackpot_small = $("#last_jackpot_small");
+
+            var not_logged_in_div = $("#not-logged-play");
+            var lastGameTable = $("#last_game_table_med").find("tbody");
+            var lastGameTableSmall = $("#last_game_table_small").find("tbody");
+            var gameHistoryTableMed = $("#game_history_table_large");
+            var gameHistoryTableSmall = $("#game_history_table_small");
+            var chat_list = $("#chat-messages");
+
             if (data.option === 1) {
-                var jackpotNumber = $("#jackpot_number_large");
-                var jackpotNumberMed = $("#jackpot_number_med");
                 jackpotNumber.html(data.jackpot);
                 jackpotNumberMed.html(data.jackpot);
             }
@@ -761,19 +788,18 @@ var conn = new ab.Session('ws://localhost:8080',
 
             if (data.option === 2) {
 
-                $("#jackpot_number_large").html(data.jackpot);
-                $("#jackpot_number_med").html(data.jackpot);
-                $("#last_game_number_med").html(data.last_game_number);
-                $("#last_game_number_small").html(data.last_game_number);
-                $("#game_link_med").attr("href", "http://localhost/bitcoinLottery/game_info/" + data.last_game_number);
-                $("#game_link_small").attr("href", "http://localhost/bitcoinLottery/game_info/" + data.last_game_number);
-                $("#last_winner_number_med").html(data.last_winner_number);
-                $("#last_winner_number_small").html(data.last_winner_number);
-                $("#last_jackpot_med").html(data.last_jackpot);
-                $("#last_jackpot_small").html(data.last_jackpot);
+                jackpotNumber.html(data.jackpot);
+                jackpotNumberMed.html(data.jackpot);
+                last_game_number_med.html(data.last_game_number);
+                last_game_number_small.html(data.last_game_number);
+                game_link_med.attr("href", "https://www.bitcoinpvp.net/game_info/" + data.last_game_number);
+                game_link_small.attr("href", "https://www.bitcoinpvp.net/game_info/" + data.last_game_number);
+                last_winner_number_med.html(data.last_winner_number);
+                last_winner_number_small.html(data.last_winner_number);
+                last_jackpot_med.html(data.last_jackpot);
+                last_jackpot_small.html(data.last_jackpot);
 
-                var lastGameTable = $("#last_game_table_med").find("tbody");
-                var lastGameTableSmall = $("#last_game_table_small").find("tbody");
+
                 lastGameTable.empty();
                 lastGameTableSmall.empty();
 
@@ -803,15 +829,14 @@ var conn = new ab.Session('ws://localhost:8080',
                     lastGameTableSmall.append(toAppend);
                 });
 
-                var gameHistoryTableMed = $("#game_history_table_large");
-                var gameHistoryTableSmall = $("#game_history_table_small");
+
 
                 $.each(data.games, function (index, value) {
-                    gameHistoryTableMed.prepend('<tr><td><a href="http://localhost/bitcoinLottery/game_info/' + value['game_id'] + '" target="_blank">' + value['game_id'] + '</a></td><td>' +
+                    gameHistoryTableMed.prepend('<tr><td><a href="https://www.bitcoinpvp.net/game_info/' + value['game_id'] + '" target="_blank">' + value['game_id'] + '</a></td><td>' +
                         value['amount'] + ' bits</td><td><div class="chip yellow">' + value['winner_number'] + '</div></td><td>' +
                         value['timedate'] + '</td></tr>');
 
-                    gameHistoryTableSmall.prepend('<tr><td><a href="http://localhost/bitcoinLottery/game_info/' + value['game_id'] + '" target="_blank">' + value['game_id'] + '</a></td><td>' +
+                    gameHistoryTableSmall.prepend('<tr><td><a href="https://www.bitcoinpvp.net/game_info/' + value['game_id'] + '" target="_blank">' + value['game_id'] + '</a></td><td>' +
                         value['amount'] + ' bits</td><td><div class="chip yellow">' + value['winner_number'] + '</div></td><td>' +
                         value['timedate'] + '</td></tr>');
 
@@ -823,7 +848,7 @@ var conn = new ab.Session('ws://localhost:8080',
             }
 
             if (data.option === 3) {
-                var chat_list = $("#chat-messages");
+
                 var time = new Date(data.sentat);
                 time.setMinutes(time.getMinutes() + to);
                 var hour = time.getHours();
@@ -839,18 +864,9 @@ var conn = new ab.Session('ws://localhost:8080',
             }
 
             if (data.option === 4) {
-                var timer_large = $("#timer_large");
-                var timer_small = $("#timer_small");
 
-                var timer_span_large = $("#timer_span_large");
-                var timer_span_small = $("#timer_span_small");
-
-                var play_button_ta = $("#textarea_button_med");
-                var play_button_random = $("#random_button_med");
-                var play_button_sequence = $("#sequence_button_med");
 
                 if (data.time !== "LOCKED") {
-
                     if (timer_span_large.hasClass("lose-text")) {
                         timer_span_large.removeClass("lose-text");
                         timer_span_large.addClass("win-text");
@@ -858,9 +874,11 @@ var conn = new ab.Session('ws://localhost:8080',
                         timer_span_small.removeClass("lose-text");
                         timer_span_small.addClass("win-text");
 
-                        validateTextarea();
-                        validate_random_med();
-                        validate_sequence_med();
+                        if (not_logged_in_div.length === 0) {
+                            validateTextarea();
+                            validate_random_med();
+                            validate_sequence_med();
+                        }
                     }
 
                     timer_large.html(data.time + "s");
@@ -982,7 +1000,7 @@ function bet(arrayOfNumbers) {
                 numbers_list_small.append('<div class="chip small-chip yellow"><b>' + value + '</b></div>');
             });
 
-            var numbers_added = response['count'] - arrayOfNumbers.length;
+            var numbers_added = arrayOfNumbers.length;
 
             if (numbers_added > 1)
                 M.toast({html: numbers_added + ' numbers added'});

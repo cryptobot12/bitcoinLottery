@@ -1,0 +1,13 @@
+User-agent: *
+Disallow: /ajax/
+Disallow: /actions/
+Disallow: /css/
+Disallow: /js/
+Disallow: /support/
+Disallow: /vendor/
+Disallow: .htaccess
+Disallow: composer.json
+Disallow: composer.lock
+Disallow: composer.phar
+Disallow: installer
+

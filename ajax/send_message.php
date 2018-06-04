@@ -5,9 +5,10 @@
  * Date: 1/30/18
  * Time: 12:25 AM
  */
+session_start();
 
-include "../globals.php";
-include "../inc/login_checker.php";
+include "/var/www/bitcoinpvp.net/html/globals.php";
+include "/var/www/bitcoinpvp.net/html/inc/login_checker.php";
 
 $chat_message = htmlspecialchars($_POST['message']);
 

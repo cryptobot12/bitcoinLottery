@@ -7,7 +7,7 @@
  */
 session_start();
 
-require_once '/home/luckiestguyever/PhpstormProjects/bitcoinLottery/vendor/autoload.php';
+require_once '/var/www/bitcoinpvp.net/html/vendor/autoload.php';
 
 include "function.php";
 include "globals.php";
@@ -16,14 +16,6 @@ include "inc/login_checker.php";
 $rowPerPage = 7;
 
 if ($logged_in) {
-
-    $driver = new \Nbobtc\Http\Driver\CurlDriver();
-    $driver
-        ->addCurlOption(CURLOPT_VERBOSE, true)
-        ->addCurlOption(CURLOPT_STDERR, '/var/logs/curl.err');
-
-    $client = new \Nbobtc\Http\Client('http://puppetmaster:vz6qGFsHBv5auSSDhTPWPktVu@localhost:18332');
-    $client->withDriver($driver);
 
     try {
         $conn = new PDO("mysql:host=$servername;dbname=$dbname", $dbuser, $dbpass);
@@ -489,7 +481,7 @@ include "inc/header.php"; ?>
                                         </div>
                                     </div>
                                 </li>
-                                <li class="<?php if ($page_deposit_parameter > 0) echo "active"; ?>">
+                                <li>
                                     <div class="collapsible-header"><i class="material-icons">account_balance</i>Deposit
                                     </div>
                                     <div class="collapsible-body">

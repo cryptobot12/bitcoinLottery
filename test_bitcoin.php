@@ -8,14 +8,6 @@
 
 require __DIR__ . '/vendor/autoload.php';
 
-$driver = new \Nbobtc\Http\Driver\CurlDriver();
-$driver
-    ->addCurlOption(CURLOPT_VERBOSE, true)
-    ->addCurlOption(CURLOPT_STDERR, '/var/logs/curl.err');
-
-$client = new \Nbobtc\Http\Client('http://puppetmaster:vz6qGFsHBv5auSSDhTPWPktVu@localhost:18332');
-$client->withDriver($driver);
-
 $command = new \Nbobtc\Command\Command('move', array("jackpot", "test123456", 4));
 
 /** @var \Nbobtc\Http\Message\Response */

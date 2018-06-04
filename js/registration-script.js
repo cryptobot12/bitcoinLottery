@@ -56,7 +56,7 @@ $(function () {
     var username_val = username_input_el.val();
 
     if (username_val.length > 0) {
-        if (/^[a-z0-9_-]+$/.test(username_val)) {
+        if (/^[A-Za-z0-9_-]+$/.test(username_val)) {
             if (username_val.length > 3 && username_val.length <= 19) {
                 check_username_uniqueness();
             }
@@ -82,7 +82,7 @@ $(function () {
             var username_val = username_input_el.val();
 
             if (username_val.length > 0) {
-                if (/^[a-z0-9_-]+$/.test(username_val)) {
+                if (/^[A-Za-z0-9_-]+$/.test(username_val)) {
                     if (username_val.length > 3 && username_val.length <= 19) {
                         check_username_uniqueness();
                     }
