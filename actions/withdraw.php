@@ -8,7 +8,7 @@
  */
 session_start();
 
-require_once '/var/www/bitcoinpvp.net/html/vendor/autoload.php';
+require_once '/var/www/html/bitcoinLottery/vendor/autoload.php';
 
 include '../globals.php';
 include '../function.php';
@@ -42,6 +42,17 @@ $captcha_success = json_decode($verify);
 
 if ($logged_in) {
     if ($captcha_success->success) {
+
+        $driver = new \Nbobtc\Http\Driver\CurlDriver();
+        $driver
+            ->addCurlOption(CURLOPT_VERBOSE, true)
+            ->addCurlOption(CURLOPT_STDERR, '/var/logs/curl.err');
+
+        $client = new \Nbobtc\Http\Client('http://puppetmaster:vz6qGFsHBv5auSSDhTPWPktVu@localhost:18332');
+        $client->withDriver($driver);
+
+
+
         if (!empty($amount) && !empty($withdraw_address)) {
             if (ctype_digit($amount)) {
                 if ($amount <= 200) {
@@ -62,21 +73,29 @@ if ($logged_in) {
                     $output = json_decode($response->getBody()->getContents());
 
                     $valid_address = $output->result->isvalid;
+
+
                     if ($valid_address) {
 
+                        try {
+                            $conn = new PDO("mysql:host=$servername;dbname=$dbname", $dbuser, $dbpass);
+                            // set the PDO error mode to exception
+                            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                            $conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 
-                        $command = new \Nbobtc\Command\Command('getbalance', $username);
+                            $stmt = $conn->prepare('SELECT balance FROM balances WHERE username = :username');
+                            $stmt->execute(array('username' => $username));
+                            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+                            $balance_in_satoshis = $row['balance'];
 
-                        /** @var \Nbobtc\Http\Message\Response */
-                        $response = $client->sendCommand($command);
+                        } catch (PDOException $e) {
+                            echo "Connection failed: " . $e->getMessage();
+                        }
 
-                        /** @var string */
-                        $output = json_decode($response->getBody()->getContents());
-
-                        $balance = $output->result;
                         $amount_in_bitcoin = $amount / 1000000;
+                        $amount_in_satoshis = $amount * 100;
 
-                        if ($balance >= $amount_in_bitcoin) {
+                        if ($balance_in_satoshis >= $amount_in_satoshis) {
 
                             /*******DO THE BITCOIN TRANSACTION HERE*******/
 
@@ -89,25 +108,9 @@ if ($logged_in) {
 
                             $transaction_id = $output->result;
 
-                            if (!empty($transaction_id)) {
-
-                                try {
-                                    $conn = new PDO("mysql:host=$servername;dbname=$dbname", $dbuser, $dbpass);
-                                    // set the PDO error mode to exception
-                                    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                                    $conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 
 
-                                    //Selecting user_id for to_user
-                                    $stmt = $conn->prepare('INSERT INTO withdrawal(user_id, txid, inserted_on) 
-                                    VALUES (:user_id, :txid, CURRENT_TIMESTAMP)');
-                                    $stmt->execute(array('user_id' => $user_id, 'txid' => $transaction_id));
-                                    $result = $stmt->fetch(PDO::FETCH_ASSOC);
-                                } catch (PDOException $e) {
-                                    echo "Connection failed: " . $e->getMessage();
-                                }
-
-                            } else {
+                            if (empty($transaction_id)) {
                                 $error = $output->error->message;
 
                                 $_SESSION['withdraw_amount_input'] = $amount;
@@ -125,7 +128,6 @@ if ($logged_in) {
                             header("Location: " . $base_dir . "account");
                             die();
                         } else {
-
                             $_SESSION['withdraw_amount_input'] = $amount;
                             $_SESSION['withdraw_address_input'] = $withdraw_address;
                             $_SESSION['withdraw_insufficient'] = true;

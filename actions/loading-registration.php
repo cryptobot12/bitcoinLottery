@@ -11,13 +11,14 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
 //Load composer's autoloader
-require_once '/var/www/bitcoinpvp.net/html/vendor/autoload.php';
+require_once '/var/www/html/bitcoinLottery/vendor/autoload.php';
 
 include '../function.php';
 include "../globals.php";
 include "../inc/login_checker.php";
 
 
+$username_to_insert = $_POST['username'];
 $username = strtolower($_POST['username']);
 $password = $_POST['password'];
 $confirm_password = $_POST['confirm_password'];
@@ -47,6 +48,15 @@ $captcha_success = json_decode($verify);
 
 if ($captcha_success->success) {
     if (!$logged_in) {
+
+        $driver = new \Nbobtc\Http\Driver\CurlDriver();
+        $driver
+            ->addCurlOption(CURLOPT_VERBOSE, true)
+            ->addCurlOption(CURLOPT_STDERR, '/var/logs/curl.err');
+
+        $client = new \Nbobtc\Http\Client('http://puppetmaster:vz6qGFsHBv5auSSDhTPWPktVu@localhost:18332');
+        $client->withDriver($driver);
+
         try {
             $conn = new PDO("mysql:host=$servername;dbname=$dbname", $dbuser, $dbpass);
             // set the PDO error mode to exception
@@ -135,11 +145,17 @@ if ($captcha_success->success) {
                 $bit_address = $output->result;
 
                 //CREATE NEW USER
-                $stmt = $conn->prepare('INSERT INTO user(username, password, email, bit_address, 
-            net_profit, games_played, registration_date, enabled) VALUES (:username, :password, :email, :bit_address, 0, 0, CURRENT_TIMESTAMP, FALSE)');
+                $stmt = $conn->prepare('INSERT INTO user(username, username_display, password, email, bit_address, 
+            net_profit, games_played, registration_date, enabled) VALUES (:username, :username_display, :password, :email, :bit_address, 0, 0, CURRENT_TIMESTAMP, FALSE)');
 
-                $stmt->execute(array('username' => $username, 'password' => $hashed_password, 'email' => $email,
+                $stmt->execute(array('username' => $username, 'username_display' => $username_to_insert, 'password' => $hashed_password, 'email' => $email,
                     'bit_address' => $bit_address));
+
+                //CREATE BALANCE
+                $stmt = $conn->prepare('INSERT INTO balances(username, balance) VALUES 
+                  (:username, 0)');
+                $stmt->execute(array('username' => $username));
+
 
                 //Adding to stats
                 $stmt = $conn->prepare('UPDATE stats SET total_users = total_users + 1');
@@ -203,7 +219,7 @@ if ($captcha_success->success) {
                     $mail->send();
 
                     //Let's login the new user
-                    $_SESSION['auth_token'] = json_encode(array('username' => $username, 'user_id' => $user_id));
+                    $_SESSION['auth_token'] = json_encode(array('username' => $username, 'username_display' => $username_to_insert,'user_id' => $user_id));
 
                     header("Location: " . $base_dir . "account");
                     die();

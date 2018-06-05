@@ -9,8 +9,6 @@ session_start();
  *
  */
 
-require_once '/var/www/bitcoinpvp.net/html/vendor/autoload.php';
-
 include "globals.php";
 include "inc/login_checker.php";
 
@@ -28,13 +26,11 @@ try {
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
     $current_game = $row['game_id'];
 
-    $command = new \Nbobtc\Command\Command('getbalance', "jackpot");
-    /** @var \Nbobtc\Http\Message\Response */
-    $response = $client->sendCommand($command);
-    /** @var string */
-    $output = json_decode($response->getBody()->getContents());
     //Getting jackpot
-    $jackpot = $output->result * 1000000;
+    $stmt = $conn->prepare('SELECT balance FROM balances WHERE username = :username');
+    $stmt->execute(array('username' => 'jackpot'));
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    $jackpot = $row['balance'] / 100;
 
     $stmt = $conn->prepare('SELECT message, username, sentat FROM chat LIMIT 60');
     $stmt->execute();

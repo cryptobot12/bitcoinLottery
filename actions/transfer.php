@@ -7,7 +7,7 @@
  */
 session_start();
 
-require_once '/var/www/bitcoinpvp.net/html/vendor/autoload.php';
+require_once '/var/www/html/bitcoinLottery/vendor/autoload.php';
 
 include '../globals.php';
 include '../function.php';
@@ -40,6 +40,14 @@ $captcha_success = json_decode($verify);
 
 if ($logged_in) {
     if ($captcha_success->success) {
+        $driver = new \Nbobtc\Http\Driver\CurlDriver();
+        $driver
+            ->addCurlOption(CURLOPT_VERBOSE, true)
+            ->addCurlOption(CURLOPT_STDERR, '/var/logs/curl.err');
+
+        $client = new \Nbobtc\Http\Client('http://puppetmaster:vz6qGFsHBv5auSSDhTPWPktVu@localhost:18332');
+        $client->withDriver($driver);
+
         if (!empty($amount) && !empty($to_user)) {
             try {
                 $conn = new PDO("mysql:host=$servername;dbname=$dbname", $dbuser, $dbpass);
@@ -68,17 +76,15 @@ if ($logged_in) {
                 if (ctype_digit($amount)) {
                     //Checking balance
 
-                    $command = new \Nbobtc\Command\Command('getbalance', $username);
+                    $stmt = $conn->prepare('SELECT balance FROM balances WHERE username = :username');
+                    $stmt->execute(array('username' => $username));
+                    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+                    $balance = $row['balance'];
 
-                    /** @var \Nbobtc\Http\Message\Response */
-                    $response = $client->sendCommand($command);
-
-                    /** @var string */
-                    $output = json_decode($response->getBody()->getContents());
-
-                    $balance = $output->result;
                     $amount_in_bitcoin = $amount / 1000000;
-                    if ($balance >= $amount_in_bitcoin)
+                    $balance_in_bitcoin = $balance / 100000000;
+
+                    if ($balance_in_bitcoin >= $amount_in_bitcoin)
                         $not_enough_balance = false;
                     else
                         $not_enough_balance = true;
@@ -96,11 +102,12 @@ if ($logged_in) {
                     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                     $conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 
-                    $amount_in_bitcoin = $amount / 1000000;
+                    $amount_in_satoshi = $amount * 100;
+
                     //Insert into transfer history
                     $stmt = $conn->prepare('INSERT INTO transfer(user_id, to_user, transfer_time, amount)
          VALUES (:user_id, :to_user, CURRENT_TIMESTAMP, :amount)');
-                    $stmt->execute(array('user_id' => $user_id, 'to_user' => $to_user_id, 'amount' => $amount));
+                    $stmt->execute(array('user_id' => $user_id, 'to_user' => $to_user_id, 'amount' => $amount_in_satoshi));
 
                     /*
                      *

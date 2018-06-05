@@ -9,7 +9,7 @@ session_start();
  * Date: 10/19/2017
  * Time: 12:44 PM
  */
-require_once '/var/www/bitcoinpvp.net/html/vendor/autoload.php';
+require_once '/var/www/html/bitcoinLottery/vendor/autoload.php';
 
 include "../globals.php";
 include "../inc/login_checker.php";
@@ -45,6 +45,14 @@ if ($logged_in) {
     if ($the_timer > 10 && $the_timer < 55) {
         if (legalArray($betNumber)) {
 
+            $driver = new \Nbobtc\Http\Driver\CurlDriver();
+            $driver
+                ->addCurlOption(CURLOPT_VERBOSE, true)
+                ->addCurlOption(CURLOPT_STDERR, '/var/logs/curl.err');
+
+            $client = new \Nbobtc\Http\Client('http://puppetmaster:vz6qGFsHBv5auSSDhTPWPktVu@localhost:18332');
+            $client->withDriver($driver);
+
             try {
                 $conn = new PDO("mysql:host=$servername;dbname=$dbname", $dbuser, $dbpass);
                 // set the PDO error mode to exception
@@ -53,15 +61,11 @@ if ($logged_in) {
 
                 //Checking balance
 
-                $command = new \Nbobtc\Command\Command('getbalance', $username);
-
-                /** @var \Nbobtc\Http\Message\Response */
-                $response = $client->sendCommand($command);
-
-                /** @var string */
-                $output = json_decode($response->getBody()->getContents());
-
-                $balance_in_bits = $output->result * 1000000;
+                //Getting current game
+                $stmt = $conn->prepare('SELECT balance FROM balances WHERE username = :username');
+                $stmt->execute(array('username' => $username));
+                $row = $stmt->fetch(PDO::FETCH_ASSOC);
+                $balance_in_bits = $row['balance'] / 100;
 
                 array_unique($betNumber); //Removing duplicates
                 $plays = count($betNumber);
@@ -86,12 +90,29 @@ if ($logged_in) {
                     /** @var \Nbobtc\Http\Message\Response */
                     $response = $client->sendCommand($command);
 
+                    //DATABASE RECORDS
+                    $stmt = $conn->prepare('UPDATE balances SET balance = balance - :subtract WHERE username = :username');
+                    $stmt->execute(array('subtract' => $plays * 2500, 'username' => $username));
+
+                    /*TO JACKPOT */
+                    $stmt = $conn->prepare('UPDATE balances SET balance = balance + :add WHERE username = :username');
+                    $stmt->execute(array('add' => $plays * 2000, 'username' => 'jackpot'));
+
+                    /*TO PROFIT*/
+                    $stmt = $conn->prepare('UPDATE balances SET balance = balance + :add WHERE username = :username');
+                    $stmt->execute(array('add' => $plays * 100, 'username' => 'profit'));
+
+
+                    /* TO NEXT JACKPOT */
+                    $stmt = $conn->prepare('UPDATE balances SET balance = balance + :add WHERE username = :username');
+                    $stmt->execute(array('add' => $plays * 400, 'username' => 'next_jackpot'));
+
+
                     //Selecting current game
                     $stmt = $conn->prepare('SELECT game_id FROM game ORDER BY game_id DESC LIMIT 1');
                     $stmt->execute();
                     $row = $stmt->fetch(PDO::FETCH_ASSOC);
                     $current_game = $row['game_id'];
-
 
                     //Have you played this round before?
                     $stmt = $conn->prepare('SELECT number_id FROM numberxuser WHERE user_id = :user_id 
@@ -107,6 +128,7 @@ if ($logged_in) {
                     foreach ($betNumber as $number) {
                         $stmt->execute(array('game_id' => $current_game, 'number_id' => $number, 'user_id' => $user_id));
                     }
+
 
                     //Increasing games played
                     if (!$havePlayed) {
@@ -127,15 +149,11 @@ if ($logged_in) {
                     }
 
                     //Getting balance
-                    $command = new \Nbobtc\Command\Command('getbalance', $username);
+                    $stmt = $conn->prepare('SELECT balance FROM balances WHERE username = :username');
+                    $stmt->execute(array('username' => $username));
+                    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+                    $balance_in_bits = $row['balance'] / 100;
 
-                    /** @var \Nbobtc\Http\Message\Response */
-                    $response = $client->sendCommand($command);
-
-                    /** @var string */
-                    $output = json_decode($response->getBody()->getContents());
-
-                    $balance_in_bits = $output->result * 1000000;
 
                     //NumbersList
                     $arrayOfNumbers = array();
@@ -158,12 +176,10 @@ if ($logged_in) {
                     echo $jsonAjax;
 
                     //Broadcasting
-                    $command = new \Nbobtc\Command\Command('getbalance', "jackpot");
-                    /** @var \Nbobtc\Http\Message\Response */
-                    $response = $client->sendCommand($command);
-                    /** @var string */
-                    $output = json_decode($response->getBody()->getContents());
-                    $jackpot = $output->result * 1000000;
+                    $stmt = $conn->prepare('SELECT balance FROM balances WHERE username = :username');
+                    $stmt->execute(array('username' => 'jackpot'));
+                    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+                    $jackpot = $row['balance'] / 100;
 
                     $entryData = array('category' => 'all', 'option' => 1, 'jackpot' => $jackpot);
 

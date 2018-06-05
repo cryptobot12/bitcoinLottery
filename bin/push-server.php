@@ -6,7 +6,7 @@
  * Time: 5:41 PM
  */
 
-require '/root/serverstuff/vendor/autoload.php';
+require '/var/www/html/bitcoinLottery/vendor/autoload.php';
 
 $loop   = React\EventLoop\Factory::create();
 $pusher = new MyApp\Pusher;

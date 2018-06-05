@@ -7,7 +7,7 @@
  */
 session_start();
 
-require_once '/var/www/bitcoinpvp.net/html/vendor/autoload.php';
+require_once '/var/www/html/bitcoinLottery/vendor/autoload.php';
 
 include "../globals.php";
 include "../inc/login_checker.php";
@@ -21,12 +21,10 @@ if ($logged_in) {
         $conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
         //Selecting balance
         //Getting balance
-        $command = new \Nbobtc\Command\Command('getbalance', $username);
-        /** @var \Nbobtc\Http\Message\Response */
-        $response = $client->sendCommand($command);
-        /** @var string */
-        $output = json_decode($response->getBody()->getContents());
-        $balance = $output->result * 1000000;
+        $stmt = $conn->prepare('SELECT balance FROM balances WHERE username = :username');
+        $stmt->execute(array('username' => $username));
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $balance = $row['balance'] / 100;
 
         //Selecting current game
         $stmt = $conn->prepare('SELECT game_id FROM game ORDER BY game_id DESC, game_date DESC LIMIT 1');

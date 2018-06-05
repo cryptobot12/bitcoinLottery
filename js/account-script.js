@@ -22,14 +22,14 @@ $(document).ready(function () {
 
     $('.withdraw-time').each(function () {
 
-        var row_time = new Date($(this).html() * 1000);
+        var row_time = new Date($(this).html());
         row_time.setMinutes(row_time.getMinutes() + to);
         $(this).html($.format.date(row_time, "MMM D, yyyy h:mm a"));
     });
 
     $('.deposit-time').each(function () {
 
-        var row_time = new Date($(this).html() * 1000);
+        var row_time = new Date($(this).html());
         row_time.setMinutes(row_time.getMinutes() + to);
         $(this).html($.format.date(row_time, "MMM D, yyyy h:mm a"));
     });

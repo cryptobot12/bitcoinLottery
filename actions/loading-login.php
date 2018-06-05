@@ -41,7 +41,7 @@ if ($captcha_success->success) {
         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 
-        $stmt = $conn->prepare('SELECT user_id, username, password FROM user WHERE username = :username');
+        $stmt = $conn->prepare('SELECT user_id, username, username_display, password FROM user WHERE username = :username');
         $stmt->execute(array('username' => $username));
         $user_info = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -81,7 +81,8 @@ if ($captcha_success->success) {
                     setcookie('auth_token', json_encode($cookie_data), $expires, "/");
 
                 } else {
-                    $_SESSION['auth_token'] = json_encode(array('username' => $user_info['username'], 'user_id' => $user_info['user_id']));
+                    $_SESSION['auth_token'] = json_encode(array('username' => $user_info['username'], 'username_display' => $user_info['username_display'],
+                        'user_id' => $user_info['user_id']));
                 }
 
                 if (!empty($_SESSION['last_url']))

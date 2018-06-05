@@ -15,6 +15,7 @@ if (!empty($_SESSION['auth_token'])) {
 
     $username = $auth_token->username;
     $user_id = $auth_token->user_id;
+    $username_display = $auth_token->username_display;
 
 } elseif (!empty($_COOKIE['auth_token'])) {
     $auth_token = json_decode($_COOKIE['auth_token']);
@@ -50,11 +51,13 @@ if (!empty($_SESSION['auth_token'])) {
                     $stmt->execute(array('user_agent' => $user_agent, 'ip_address' => $ip_address, 'selector' => $selector));
 
 //                    Getting username
-                    $stmt = $conn->prepare('SELECT username FROM user WHERE user_id = :user_id');
+                    $stmt = $conn->prepare('SELECT username, username_display FROM user WHERE user_id = :user_id');
                     $stmt->execute(array('user_id' => $user_id));
                     $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
                     $username = $result['username'];
+                    $username_display = $result['username_display'];
+
                     $logged_in = true;
                 }
             } else {

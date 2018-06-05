@@ -38,7 +38,7 @@ VALUES (:user_id, :username, :message, CURRENT_TIMESTAMP)');
             $sentat = $result['sentat'];
 
             //Broadcasting
-            $entryData = array('category' => 'all', 'option' => 3, 'user' => $username, 'chat_message' => $chat_message,
+            $entryData = array('category' => 'all', 'option' => 3, 'user' => $username_display, 'chat_message' => $chat_message,
                 'sentat' => $sentat);
 
             $context = new ZMQContext();

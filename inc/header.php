@@ -6,18 +6,18 @@
  * Time: 1:10 PM
  */
 
-require_once '/var/www/bitcoinpvp.net/html/vendor/autoload.php';
-
 if ($logged_in) {
-    $command = new \Nbobtc\Command\Command('getbalance', $username);
+    $conn = new PDO("mysql:host=$servername;dbname=$dbname", $dbuser, $dbpass);
+    // set the PDO error mode to exception
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 
-    /** @var \Nbobtc\Http\Message\Response */
-    $response = $client->sendCommand($command);
+    //Getting current balance
+    $stmt = $conn->prepare('SELECT balance FROM balances WHERE username = :username');
+    $stmt->execute(array('username' => $username));
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    $balance = $row['balance'] / 100;
 
-    /** @var string */
-    $output = json_decode($response->getBody()->getContents());
-
-    $balance = $output->result * 1000000;
 }
 
 ?>
@@ -80,7 +80,7 @@ if ($logged_in) {
                         Balance: <span id="my_balance"><?php echo $balance; ?></span> bits
                     </li>
                     <li><a class="dropdown-trigger" href="#" data-target="profileDropdown">
-                            <?php echo $username; ?><i
+                            <?php echo $username_display; ?><i
                                     class="material-icons right">arrow_drop_down</i></a>
                     </li>
                 <?php else: ?>

@@ -5,6 +5,7 @@ CREATE TABLE user
 (
   user_id           BIGINT AUTO_INCREMENT PRIMARY KEY,
   username          VARCHAR(19)  NOT NULL UNIQUE,
+  username_display  VARCHAR(19)  NOT NULL UNIQUE,
   password          VARCHAR(255) NOT NULL,
   email             VARCHAR(254) NOT NULL UNIQUE,
   bit_address       VARCHAR(64)  NOT NULL UNIQUE,
@@ -83,7 +84,6 @@ CREATE TABLE gamexuser
     ON DELETE CASCADE
 );
 
-DROP TABLE chat;
 
 CREATE TABLE chat
 (
@@ -123,12 +123,19 @@ CREATE TABLE stats
   total_users  BIGINT NOT NULL
 );
 
+CREATE TABLE deposit
+(
+
+
+);
 
 CREATE TABLE withdrawal
 (
   withdrawal_id BIGINT AUTO_INCREMENT PRIMARY KEY,
   user_id       BIGINT      NOT NULL,
   txid          VARCHAR(64) NOT NULL,
+  amount        BIGINT NOT NULL,
+  fee           BIGINT NOT NULL,
   inserted_on   DATETIME    NOT NULL,
   FOREIGN KEY (user_id)
   REFERENCES user (user_id)
@@ -148,19 +155,6 @@ CREATE TABLE transfer
   FOREIGN KEY (to_user)
   REFERENCES user (user_id)
     ON DELETE CASCADE
-);
-
-CREATE TABLE support_team
-(
-  worker_id         BIGINT AUTO_INCREMENT PRIMARY KEY,
-  username          VARCHAR(19)  NOT NULL UNIQUE,
-  password          VARCHAR(255) NOT NULL,
-  email             VARCHAR(254) NOT NULL UNIQUE,
-  first_name        VARCHAR(30)  NOT NULL,
-  middle_name       VARCHAR(30)  NOT NULL,
-  last_name         VARCHAR(30)  NOT NULL,
-  registration_date DATETIME     NOT NULL,
-  enabled           BOOL         NOT NULL
 );
 
 CREATE TABLE ticket
@@ -188,6 +182,17 @@ CREATE TABLE auth_token
     ON DELETE CASCADE
 );
 
+
+CREATE TABLE balances
+(
+  balance_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  username VARCHAR(19) NOT NULL,
+  balance BIGINT NOT NULL
+);
+
+INSERT INTO balances(username, balance) VALUES ('jackpot', 0);
+INSERT INTO balances(username, balance) VALUES ('next_jackpot', 0);
+INSERT INTO balances(username, balance) VALUES ('profit', 0);
 
 INSERT INTO stats VALUES (0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 INSERT INTO game (timedate, winner_number, amount) VALUES (CURRENT_TIMESTAMP, 0, 0);

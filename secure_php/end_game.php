@@ -6,7 +6,7 @@
  * Time: 12:34 PM
  */
 
-require_once '/var/www/bitcoinpvp.net/html/vendor/autoload.php';
+require_once '/var/www/html/bitcoinLottery/vendor/autoload.php';
 include "../globals.php";
 
 try {
@@ -33,6 +33,15 @@ try {
     echo "Number of players in this game: " . $players_in_current_game . "<br>";
 
     if ($players_in_current_game > 1) {
+
+        $driver = new \Nbobtc\Http\Driver\CurlDriver();
+        $driver
+            ->addCurlOption(CURLOPT_VERBOSE, true)
+            ->addCurlOption(CURLOPT_STDERR, '/var/logs/curl.err');
+
+        $client = new \Nbobtc\Http\Client('http://puppetmaster:vz6qGFsHBv5auSSDhTPWPktVu@localhost:18332');
+        $client->withDriver($driver);
+
 
         //New game
         echo "Creating new game...<br>";
@@ -80,15 +89,11 @@ try {
         echo "Number of winners: " . $number_of_winners . "<br>";
 
         //Calculating jackpot and how much each receives
-        $command = new \Nbobtc\Command\Command('getbalance', "jackpot");
-        /** @var \Nbobtc\Http\Message\Response */
-        $response = $client->sendCommand($command);
-        /** @var string */
-        $output = json_decode($response->getBody()->getContents());
-        //Getting jackpot
-        $jackpot = $output->result;
-        $jackpot_in_bits = $jackpot * 1000000;
-        $jackpot_in_satoshis = $jackpot_in_bits * 100;
+        $stmt = $conn->prepare('SELECT balance FROM balances WHERE username = :username');
+        $stmt->execute(array('username' => 'jackpot'));
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $jackpot_in_satoshis = $row['balance'];
+        $jackpot_in_bits = $jackpot_in_satoshis / 100;
 
         echo "Jackpot: " . ($jackpot_in_bits) . " bits<br>";
 
@@ -141,15 +146,22 @@ WHERE gamexuser.win = 1 AND game_id = :game_id');
         $stmt->execute(array('game_id' => $current_game));
         $winners_usernames = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+
+        $stmt = $conn->prepare('UPDATE balances SET balance = balance + :add WHERE username = :username');
+
         foreach ($winners_usernames as $winner) {
             echo $winner['username'] . "<br>";
             $command = new \Nbobtc\Command\Command('move', array("jackpot", $winner['username'], $each_receives / 100000000));
 
             /** @var \Nbobtc\Http\Message\Response */
             $response = $client->sendCommand($command);
-            $output = json_decode($response->getBody()->getContents());
+            $stmt->execute(array('add' => $each_receives, 'username' => $winner['username']));
+
             echo "<br>";
         }
+
+        $stmt = $conn->prepare('UPDATE balances SET balance = :balance WHERE username = :username');
+        $stmt->execute(array('balance' => 0, 'username' => 'jackpot'));
         /*********************************/
 
         $jackpot_last = $jackpot_in_bits;
@@ -159,25 +171,33 @@ WHERE gamexuser.win = 1 AND game_id = :game_id');
 
         /****TRANSFERRING BITCOIN FROM NEXT JACKPOT TO JACKPOT ****/
 
-        $command = new \Nbobtc\Command\Command('getbalance', "nextjackpot");
-        /** @var \Nbobtc\Http\Message\Response */
-        $response = $client->sendCommand($command);
-        $output = json_decode($response->getBody()->getContents());
-        //Getting jackpot
-        $next_jackpot_balance = $output->result;
+        $stmt = $conn->prepare('SELECT balance FROM balances WHERE username = :username');
+        $stmt->execute(array('username' => 'next_jackpot'));
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $next_jackpot_balance = $row['balance'];
 
-        $command = new \Nbobtc\Command\Command('move', array("nextjackpot", "jackpot", $next_jackpot_balance));
+        $next_jackpot_balance_in_bitcoin = $next_jackpot_balance / 100000000;
+
+
+        $command = new \Nbobtc\Command\Command('move', array("nextjackpot", "jackpot", $next_jackpot_balance_in_bitcoin));
         /** @var \Nbobtc\Http\Message\Response */
         $response = $client->sendCommand($command);
+
+        /*TO JACKPOT*/
+        $stmt = $conn->prepare('UPDATE balances SET balance = :balance WHERE username = :username');
+        $stmt->execute(array('balance' => $next_jackpot_balance, 'username' => 'jackpot'));
+
+        $stmt = $conn->prepare('UPDATE balances SET balance = :balance WHERE username = :username');
+        $stmt->execute(array('balance' => 0, 'username' => 'next_jackpot'));
+
+
 
         /**********************************************************/
 
-        $command = new \Nbobtc\Command\Command('getbalance', "jackpot");
-        /** @var \Nbobtc\Http\Message\Response */
-        $response = $client->sendCommand($command);
-        $output = json_decode($response->getBody()->getContents());
-        //Getting jackpot
-        $new_jackpot = $output->result * 1000000;
+        $stmt = $conn->prepare('SELECT balance FROM balances WHERE username = :username');
+        $stmt->execute(array('username' => 'jackpot'));
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $new_jackpot = $row['balance'] / 100;
 
         //Selecting games history
         $stmt = $conn->prepare('SELECT game_id, date_format(game_date, \'%h:%i %p\') AS time, winner_number, amount FROM game
@@ -195,7 +215,7 @@ WHERE gamexuser.win = 1 AND game_id = :game_id');
         }
 
         //Selecting players
-        $stmt = $conn->prepare('SELECT u.username AS username, gu.win AS win, gu.bet AS bet, gu.profit AS profit
+        $stmt = $conn->prepare('SELECT u.username_display AS username, gu.win AS win, gu.bet AS bet, gu.profit AS profit
      FROM user AS u 
      INNER JOIN gamexuser AS gu
      ON u.user_id = gu.user_id

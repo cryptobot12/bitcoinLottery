@@ -965,6 +965,7 @@ function bet(arrayOfNumbers) {
     var my_numbers = JSON.stringify(arrayOfNumbers);
     $.ajax({
         url: "ajax/play", success: function (result) {
+            console.log(result);
             var response = JSON.parse(result);
 
             $("#my_balance").html(response['balance']);
