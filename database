@@ -125,7 +125,15 @@ CREATE TABLE stats
 
 CREATE TABLE deposit
 (
-
+  deposit_id BIGINT AUTO_INCREMENT PRIMARY KEY ,
+  user_id BIGINT NOT NULL ,
+  txid VARCHAR(64) NOT NULL,
+  amount BIGINT NOT NULL ,
+  status BOOLEAN NOT NULL ,
+  inserted_on TIMESTAMP NOT NULL ,
+  FOREIGN KEY (user_id)
+    REFERENCES user(user_id)
+  ON DELETE CASCADE
 
 );
 
@@ -136,7 +144,8 @@ CREATE TABLE withdrawal
   txid          VARCHAR(64) NOT NULL,
   amount        BIGINT NOT NULL,
   fee           BIGINT NOT NULL,
-  inserted_on   DATETIME    NOT NULL,
+  status   BOOLEAN NOT NULL ,
+  inserted_on   TIMESTAMP    NOT NULL,
   FOREIGN KEY (user_id)
   REFERENCES user (user_id)
     ON DELETE CASCADE
@@ -194,8 +203,8 @@ INSERT INTO balances(username, balance) VALUES ('jackpot', 0);
 INSERT INTO balances(username, balance) VALUES ('next_jackpot', 0);
 INSERT INTO balances(username, balance) VALUES ('profit', 0);
 
-INSERT INTO stats VALUES (0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-INSERT INTO game (timedate, winner_number, amount) VALUES (CURRENT_TIMESTAMP, 0, 0);
+INSERT INTO stats VALUES (0, 0, 0, 0, 0, 0, 0, 0);
+INSERT INTO game (game_date, winner_number, amount, number_of_players) VALUES (CURRENT_TIMESTAMP, 0, 0, 0);
 
 DROP TABLE numberxuser;
 
