@@ -11,7 +11,7 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
 //Load composer's autoloader
-require_once '/var/www/html/bitcoinLottery/vendor/autoload.php';
+require_once '/var/www/bitcoinpvp.net/html/vendor/autoload.php';
 
 include '../function.php';
 include "../globals.php";
@@ -54,7 +54,7 @@ if ($captcha_success->success) {
             ->addCurlOption(CURLOPT_VERBOSE, true)
             ->addCurlOption(CURLOPT_STDERR, '/var/logs/curl.err');
 
-        $client = new \Nbobtc\Http\Client('http://puppetmaster:vz6qGFsHBv5auSSDhTPWPktVu@localhost:18332');
+        $client = new \Nbobtc\Http\Client('http://puppetmaster:vz6qGFsHBv5auSSDhTPWPktVu@localhost:8332');
         $client->withDriver($driver);
 
         try {

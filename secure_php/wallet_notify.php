@@ -7,9 +7,9 @@
  */
 
 
-require_once '/var/www/html/bitcoinLottery/vendor/autoload.php';
+require_once '/var/www/bitcoinpvp.net/html/vendor/autoload.php';
 
-include '/var/www/html/bitcoinLottery/globals.php';
+include '/var/www/html/bitcoinpvp.net/html/globals.php';
 $tx = $argv[1];
 
 $driver = new \Nbobtc\Http\Driver\CurlDriver();
@@ -17,7 +17,7 @@ $driver
     ->addCurlOption(CURLOPT_VERBOSE, true)
     ->addCurlOption(CURLOPT_STDERR, '/var/logs/curl.err');
 
-$client = new \Nbobtc\Http\Client('http://puppetmaster:vz6qGFsHBv5auSSDhTPWPktVu@localhost:18332');
+$client = new \Nbobtc\Http\Client('http://puppetmaster:vz6qGFsHBv5auSSDhTPWPktVu@localhost:8332');
 $client->withDriver($driver);
 
 $command = new \Nbobtc\Command\Command('gettransaction', $tx);

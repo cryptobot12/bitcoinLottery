@@ -9,7 +9,7 @@ session_start();
  * Date: 10/19/2017
  * Time: 12:44 PM
  */
-require_once '/var/www/html/bitcoinLottery/vendor/autoload.php';
+require_once '/var/www/bitcoinpvp.net/html/vendor/autoload.php';
 
 include "../globals.php";
 include "../inc/login_checker.php";
@@ -50,7 +50,7 @@ if ($logged_in) {
                 ->addCurlOption(CURLOPT_VERBOSE, true)
                 ->addCurlOption(CURLOPT_STDERR, '/var/logs/curl.err');
 
-            $client = new \Nbobtc\Http\Client('http://puppetmaster:vz6qGFsHBv5auSSDhTPWPktVu@localhost:18332');
+            $client = new \Nbobtc\Http\Client('http://puppetmaster:vz6qGFsHBv5auSSDhTPWPktVu@localhost:8332');
             $client->withDriver($driver);
 
             try {
