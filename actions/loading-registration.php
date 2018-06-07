@@ -197,7 +197,7 @@ if ($captcha_success->success) {
                     $mail->isHTML(true);                                  // Set email format to HTML
                     $mail->Subject = 'Verify your email address';
                     $mail->Body = '<div style="width: 700px; margin: 0 auto;">
-    <div style="background: black"><img src="http://www.bitcoinpvp.net/img/nav-logo.png" height="40"></div>
+    <div style="background: black"><img src="https://www.bitcoinpvp.net/img/nav-logo.png" height="40"></div>
 
     <div style="width: 75%; margin: 50px auto; color: black;">
         <p>Greetings <span style="color: red;"><b>' . $username . '</b></span>,<br>

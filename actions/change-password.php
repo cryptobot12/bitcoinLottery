@@ -71,7 +71,7 @@ try {
                     $mail->Subject = 'Password Updated';
                     $mail->Body = '
 <div style="width: 700px; margin: 0 auto;">
-    <div style="background: black"><img src="http://www.bitcoinpvp.net/img/nav-logo.png" height="40"></div>
+    <div style="background: black"><img src="https://www.bitcoinpvp.net/img/nav-logo.png" height="40"></div>
 
     <div style="width: 75%; margin: 50px auto; color: black;">
 

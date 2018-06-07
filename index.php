@@ -32,7 +32,7 @@ try {
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
     $jackpot = $row['balance'] / 100;
 
-    $stmt = $conn->prepare('SELECT message, username, sentat FROM chat LIMIT 60');
+    $stmt = $conn->prepare('SELECT chat.message, u.username_display AS username, chat.sentat FROM chat INNER JOIN user u ON chat.user_id = u.user_id LIMIT 60');
     $stmt->execute();
     $messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -82,7 +82,7 @@ try {
     $last_number_of_players = $row['number_of_players'];
 
     //Selecting players from last game
-    $stmt = $conn->prepare('SELECT u.username AS username, gu.win AS win, gu.bet AS bet, gu.profit AS profit
+    $stmt = $conn->prepare('SELECT u.username_display AS username, gu.win AS win, gu.bet AS bet, gu.profit AS profit
      FROM user AS u 
      INNER JOIN gamexuser AS gu
      ON u.user_id = gu.user_id
